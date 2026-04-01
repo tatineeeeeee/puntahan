@@ -62,15 +62,16 @@
 
 ## W5 — Content + Discovery
 
-### Phase 7: Destination Detail Page (W5 D1-2)
-- [ ] Dynamic route: src/app/destination/[slug]/page.tsx
-- [ ] Hero image with gradient overlay
-- [ ] Destination name, region badge, category tags
-- [ ] Description section
-- [ ] "Best Time to Visit" display (dry season, rainy season, festival season)
-- [ ] Festival/events list for this destination
-- [ ] Tags display
-- [ ] SEO metadata (generateMetadata)
+### Phase 7: Destination Detail Page (W5 D1-2) — DONE
+- [x] Dynamic route: src/app/destination/[slug]/page.tsx
+- [x] Hero image with gradient overlay
+- [x] Destination name, region badge, category tags
+- [x] Description section
+- [x] "Best Time to Visit" display
+- [x] Festival/events list for this destination
+- [x] Tags display
+- [x] SEO metadata (generateMetadata)
+- [x] Header with Logo, nav, auth (Sign in / UserButton)
 
 ### Phase 8: Photo Gallery (W5 D3)
 - [ ] Community photo grid per destination (masonry or uniform grid)

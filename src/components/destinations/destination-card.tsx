@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Doc } from "../../../convex/_generated/dataModel";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +26,7 @@ export function DestinationCard({ destination, className }: DestinationCardProps
     "default";
 
   return (
+    <Link href={`/destination/${destination.slug}`}>
     <Card className={cn("flex flex-col transition-shadow hover:shadow-md", className)}>
       {/* Placeholder hero area */}
       <div className="h-40 bg-warm-gray/10 flex items-center justify-center">
@@ -66,5 +68,6 @@ export function DestinationCard({ destination, className }: DestinationCardProps
         </span>
       </CardFooter>
     </Card>
+    </Link>
   );
 }

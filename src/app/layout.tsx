@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import { ConvexClientProvider } from "@/components/providers/convex-client-provider";
+import { Header } from "@/components/layout/header";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -26,7 +27,10 @@ export default function RootLayout({
         className="min-h-dvh bg-background text-foreground font-sans antialiased"
         suppressHydrationWarning
       >
-        <ConvexClientProvider>{children}</ConvexClientProvider>
+        <ConvexClientProvider>
+          <Header />
+          {children}
+        </ConvexClientProvider>
       </body>
     </html>
   );
