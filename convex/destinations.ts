@@ -22,6 +22,18 @@ export const list = query({
   },
 });
 
+export const search = query({
+  args: {
+    query: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("destinations")
+      .withSearchIndex("search_name", (q) => q.search("name", args.query))
+      .take(20);
+  },
+});
+
 export const getBySlug = query({
   args: { slug: v.string() },
   handler: async (ctx, args) => {

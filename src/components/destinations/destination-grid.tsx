@@ -1,36 +1,65 @@
 "use client";
 
+import { useMemo } from "react";
 import { Doc } from "../../../convex/_generated/dataModel";
 import { DestinationCard } from "./destination-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { SortOption } from "./sort-dropdown";
 
 interface DestinationGridProps {
   destinations: Doc<"destinations">[] | undefined;
   activeCategories: Set<string>;
+  sort: SortOption;
+}
+
+function sortDestinations(
+  items: Doc<"destinations">[],
+  sort: SortOption,
+): Doc<"destinations">[] {
+  const sorted = [...items];
+  switch (sort) {
+    case "rating":
+      return sorted.sort((a, b) => b.avgRating - a.avgRating);
+    case "budget-low":
+      return sorted.sort((a, b) => a.budgetMin - b.budgetMin);
+    case "budget-high":
+      return sorted.sort((a, b) => b.budgetMax - a.budgetMax);
+    case "name":
+      return sorted.sort((a, b) => a.name.localeCompare(b.name));
+    default:
+      return sorted;
+  }
 }
 
 export function DestinationGrid({
   destinations,
   activeCategories,
+  sort,
 }: DestinationGridProps) {
-  if (destinations === undefined) {
+  const processed = useMemo(() => {
+    if (!destinations) return undefined;
+
+    const filtered =
+      activeCategories.size > 0
+        ? destinations.filter((d) =>
+            d.categories.some((c) => activeCategories.has(c)),
+          )
+        : destinations;
+
+    return sortDestinations(filtered, sort);
+  }, [destinations, activeCategories, sort]);
+
+  if (processed === undefined) {
     return <DestinationGridSkeleton />;
   }
 
-  const filtered =
-    activeCategories.size > 0
-      ? destinations.filter((d) =>
-          d.categories.some((c) => activeCategories.has(c)),
-        )
-      : destinations;
-
-  if (filtered.length === 0) {
+  if (processed.length === 0) {
     return <EmptyState />;
   }
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {filtered.map((dest) => (
+      {processed.map((dest) => (
         <DestinationCard key={dest._id} destination={dest} />
       ))}
     </div>

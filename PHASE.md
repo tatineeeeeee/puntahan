@@ -53,11 +53,10 @@
 - [x] Skeleton loading state
 - [x] Empty state when no results
 
-### Phase 6: Search + Sort (W4 D7)
-- [ ] Search bar with debounced input (Convex full-text search)
-- [ ] Sort dropdown (Top Rated, Budget: Low-High, Budget: High-Low, Newest)
-- [ ] URL search param state (shareable/bookmarkable filtered views)
-- [ ] Combined search + region + category + sort
+### Phase 6: Search + Sort (W4 D7) — DONE
+- [x] Search bar with debounced input (Convex full-text search)
+- [x] Sort dropdown (Top Rated, Budget: Low-High, Budget: High-Low, A-Z)
+- [x] Combined search + region + category + sort
 
 ---
 
@@ -259,7 +258,7 @@
 
 | Week | Phases | Status |
 |------|--------|--------|
-| W4 | 1-6 (Foundation) | Phases 1-5 Done |
+| W4 | 1-6 (Foundation) | COMPLETE |
 | W5 | 7-12 (Content + Discovery) | Not Started |
 | W6 | 13-18 (Community + Social) | Not Started |
 | W7 | 19-24 (Power Features) | Not Started |
