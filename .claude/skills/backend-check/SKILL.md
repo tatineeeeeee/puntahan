@@ -1,7 +1,6 @@
 ---
 name: backend-check
 description: Review Convex backend code for query efficiency, mutation safety, schema design, and Convex-specific best practices. Use when reviewing convex/ directory files.
-allowed-tools: Read, Grep, Glob, Agent
 ---
 
 Review the specified Convex backend code for correctness and quality. If no file is specified, audit the entire `convex/` directory.

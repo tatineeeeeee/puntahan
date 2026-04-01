@@ -1,52 +1,46 @@
 ---
 name: ux-review
-description: Review UI/UX for accessibility, usability, responsive design, and design system consistency. Use when reviewing components, pages, or layouts.
-allowed-tools: Read, Grep, Glob, Agent
+description: Quick 2-minute UX scan of a component or page. Catches obvious a11y violations, broken responsive patterns, and design system drift. Use for fast feedback during development.
 ---
 
-Review the specified component or page for UX quality. If no file is specified, review all recently changed files.
+Quick UX scan of the specified file(s). If no file specified, scan recently changed components. This is the fast version — use `/ux-audit` for a deep dive.
 
-## Checklist
+## What to Check (keep it fast)
 
-### Accessibility (a11y)
-- Semantic HTML (`<nav>`, `<main>`, `<article>`, `<button>` — not `<div onClick>`)
-- All images have meaningful `alt` text (or `alt=""` for decorative)
-- ARIA labels on interactive elements without visible text
-- Keyboard navigable — every interactive element reachable via Tab, activated via Enter/Space
-- Focus indicators visible (never `outline: none` without replacement)
-- Color contrast meets WCAG AA (4.5:1 for text, 3:1 for large text)
-- Form inputs have associated `<label>` elements
-- Error messages linked to inputs via `aria-describedby`
+### Accessibility — the obvious stuff
+- `<div onClick>` instead of `<button>` → flag it
+- Images missing `alt` → flag it
+- Form inputs without `<label>` → flag it
+- `outline-none` without a replacement focus style → flag it
+- Color as only indicator (red text for errors, no icon) → flag it
 
-### Responsive Design
-- Works at 320px, 375px, 768px, 1024px, 1440px widths
-- No horizontal scroll on mobile
-- Touch targets minimum 44x44px on mobile
-- Text readable without zoom on mobile (min 16px base)
-- Images use `next/image` with proper `sizes` prop
-- Grid switches from multi-column to single-column on mobile (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`)
+### Responsive — the breaking stuff
+- Fixed widths (`w-[500px]`) that will overflow on mobile → flag it
+- Missing responsive grid breakpoints (`grid-cols-3` without `grid-cols-1` for mobile) → flag it
+- Tiny touch targets (buttons/links smaller than 44px on mobile) → flag it
+- Text that will be unreadable on mobile (text-xs for body content) → flag it
 
-### Design System Compliance
-- Uses project color tokens (coral, teal, warm-white, sand, charcoal, warm-gray, sunset) — no hardcoded hex values
-- Typography uses DM Sans at correct weights (400/500/700)
-- Region badges use correct region colors (NCR blue, Luzon green, Visayas yellow, Mindanao purple)
-- Consistent spacing scale (Tailwind spacing utilities)
-- Cards use sand background with rounded corners
+### Design System — the drift
+- Hardcoded hex colors instead of project tokens (coral, teal, sand, etc.) → flag it
+- Wrong font (not DM Sans) or wrong weight for context → flag it
+- Inconsistent spacing (mixing arbitrary values like `p-[13px]` with scale values) → flag it
+- Region badges using wrong colors → flag it
 
-### User Experience
-- Loading states for async data (skeleton loaders, not spinners)
-- Empty states when no data (not blank screens)
-- Error states with helpful messages and retry actions
-- Optimistic updates for user actions (votes, form submissions)
-- Clear visual hierarchy — primary CTA (coral) stands out
-- Navigation is intuitive — user knows where they are
+### States — the forgotten stuff
+- Loading state missing (no skeleton, no spinner, just blank) → flag it
+- Empty state missing (zero results shows nothing) → flag it
+- Error state missing (mutation failure not handled) → flag it
 
-## Output Format
+## Output
 
-Report as a table:
+Keep it short. Table format:
 
-| Severity | Category | Issue | File:Line | Fix |
-|----------|----------|-------|-----------|-----|
-| Critical | ... | ... | ... | ... |
-| Warning  | ... | ... | ... | ... |
-| Suggestion | ... | ... | ... | ... |
+| Issue | Location | Fix |
+|-------|----------|-----|
+| `<div onClick>` — use `<button>` | file:line | Change tag |
+| No loading state | file:line | Add skeleton |
+| Hardcoded `#FF6B6B` | file:line | Use `text-coral` |
+
+If nothing found: **"Looks good."**
+
+No scores, no summaries, no fluff. Just the issues.

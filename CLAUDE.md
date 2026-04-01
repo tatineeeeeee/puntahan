@@ -37,11 +37,47 @@ Convex backend lives at project root `convex/`, NOT inside `src/`.
 
 ## Quality Slash Commands
 
-- `/frontend-check` — Review components for hydration errors, React patterns, performance, Next.js 16 rules
-- `/backend-check` — Review Convex functions for query efficiency, mutation safety, schema design
-- `/security-audit` — Audit auth, RLS, input validation, secrets exposure, data handling
-- `/ux-review` — Review accessibility, responsive design, design system compliance, UX patterns
-- `/hydration-check` — Scan client components for hydration mismatch risks
+| Command | What it does | When to use |
+|---------|-------------|-------------|
+| `/test-check` | TypeScript, ESLint, Convex type checks — pass/fail report | After every code change |
+| `/frontend-check` | Hydration errors, React patterns, Next.js 16 rules | After touching components or pages |
+| `/backend-check` | Query efficiency, mutation safety, schema design | After touching `convex/` files |
+| `/hydration-check` | Scan for hydration mismatch risks specifically | After creating/modifying client components |
+| `/security-audit` | Auth bypasses, missing validation, exposed secrets | After touching auth, Convex functions, or API routes |
+| `/code-review` | Senior dev PR-style review of all changes | Before committing — the final gate |
+| `/perf-check` | Render efficiency, query patterns, bundle size, CWV risks | Before shipping or when things feel slow |
+| `/ux-review` | Quick 2-min scan: a11y, responsive, design system drift | During development for fast feedback |
+| `/ux-audit` | Deep audit: WCAG AA, breakpoints, tokens, flows | Before shipping a feature |
+
+---
+
+## Quality Gate — Run After Every Phase
+
+After completing any phase, run the appropriate quality checks before committing. No phase is done until checks pass.
+
+### Always run (every phase)
+1. `/test-check` — must pass with zero errors
+2. `/code-review` — must be APPROVE or all blockers resolved
+
+### Run based on what changed
+
+| What you touched | Run these |
+|-----------------|-----------|
+| Components, pages, layouts (`src/`) | `/frontend-check` → `/hydration-check` → `/ux-review` |
+| Convex functions (`convex/`) | `/backend-check` |
+| Auth flow, webhooks, protected routes | `/security-audit` |
+| UI-heavy phase (new pages, design system) | `/ux-audit` (deep version) |
+| Performance-sensitive (queries, lists, images) | `/perf-check` |
+
+### Phase completion checklist
+```
+[ ] All code written and working
+[ ] /test-check — PASS
+[ ] Relevant quality checks run (see table above)
+[ ] All blockers from checks resolved
+[ ] /code-review — APPROVE
+[ ] Commit with descriptive message
+```
 
 ---
 

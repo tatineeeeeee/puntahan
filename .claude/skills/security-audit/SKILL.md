@@ -1,7 +1,6 @@
 ---
 name: security-audit
 description: Audit code for security vulnerabilities — auth bypasses, missing validation, exposed secrets, unsafe data handling. Use when reviewing Convex functions, API routes, or auth flows.
-allowed-tools: Read, Grep, Glob, Agent
 ---
 
 Perform a full security audit on the codebase or specified files. If no file is specified, audit the entire project.

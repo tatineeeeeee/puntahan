@@ -1,7 +1,6 @@
 ---
 name: frontend-check
 description: Review frontend code for hydration errors, performance, React best practices, and Next.js 16 patterns. Use when reviewing components, pages, hooks, or client/server boundaries.
-allowed-tools: Read, Grep, Glob, Agent
 ---
 
 Review the specified frontend code for correctness and quality. If no file is specified, scan all components and pages.

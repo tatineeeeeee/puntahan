@@ -1,7 +1,6 @@
 ---
 name: hydration-check
 description: Scan for hydration mismatch risks in React/Next.js components. Use after creating or modifying client components.
-allowed-tools: Read, Grep, Glob, Agent
 ---
 
 Scan the specified files (or all `"use client"` components if none specified) for hydration mismatch risks.
