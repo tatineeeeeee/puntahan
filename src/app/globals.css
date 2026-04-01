@@ -21,16 +21,19 @@
   --font-sans: var(--font-dm-sans);
 }
 
-/* Dark mode prep (Phase 24) — define variables, not yet wired to toggle */
-:root {
-  --dark-background: #1C1917;
-  --dark-surface: #292524;
-  --dark-foreground: #FEF3C7;
-  --dark-muted: #A8A29E;
+/* Dark mode — swaps CSS variables when data-theme="dark" on <html> */
+[data-theme="dark"] {
+  --color-background: #1C1917;
+  --color-foreground: #FEF3C7;
+  --color-warm-white: #1C1917;
+  --color-sand: #292524;
+  --color-charcoal: #FEF3C7;
+  --color-warm-gray: #A8A29E;
 }
 
 body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+  transition: background-color 0.2s, color 0.2s;
 }

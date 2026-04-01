@@ -197,13 +197,13 @@
 - [x] User management (view users, change role)
 - [x] Admin link in header (conditional on role)
 
-### Phase 24: Dark Mode (W7 D7)
-- [ ] Warm dark palette: charcoal bg (#1C1917), warm gray surface (#292524), sand text (#FEF3C7)
-- [ ] Toggle switch in header (sun/moon icon)
-- [ ] Persist preference in localStorage
-- [ ] Tailwind dark: variant classes
-- [ ] Smooth transition between modes
-- [ ] Respect system preference as default (prefers-color-scheme)
+### Phase 24: Dark Mode (W7 D7) — DONE
+- [x] Warm dark palette via CSS variable swap on [data-theme="dark"]
+- [x] Toggle in header (sun/moon icon)
+- [x] Persist preference in localStorage
+- [x] Smooth transition (transition on body)
+- [x] Respect system preference as default (prefers-color-scheme)
+- [x] Hydration-safe via useSyncExternalStore
 
 ---
 
@@ -257,5 +257,5 @@
 | W4 | 1-6 (Foundation) | COMPLETE |
 | W5 | 7-12 (Content + Discovery) | COMPLETE |
 | W6 | 13-18 (Community + Social) | COMPLETE |
-| W7 | 19-24 (Power Features) | Not Started |
+| W7 | 19-24 (Power Features) | COMPLETE |
 | W8 | 25-29 (Polish + Deploy) | Not Started |
