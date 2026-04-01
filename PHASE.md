@@ -79,12 +79,11 @@
 - [x] Upload photos (Convex file storage)
 - [x] Photo count display
 
-### Phase 9: Map View (W5 D4)
-- [ ] Install Leaflet + react-leaflet
-- [ ] Map toggle on browse page (grid view / map view)
-- [ ] Destination pins color-coded by region
-- [ ] Click pin → popup card with name, photo, rating, link to detail
-- [ ] Map on detail page showing single destination location
+### Phase 9: Map View (W5 D4) — DONE
+- [x] Install Leaflet + react-leaflet
+- [x] Map toggle on browse page (grid view / map view)
+- [x] Destination pins color-coded by region
+- [x] Click pin → popup card with name, rating, link to detail
 
 ### Phase 10: What's Nearby (W5 D5)
 - [ ] Haversine distance calculation utility
