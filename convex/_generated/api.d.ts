@@ -12,6 +12,7 @@ import type * as bookmarks from "../bookmarks.js";
 import type * as destinations from "../destinations.js";
 import type * as http from "../http.js";
 import type * as itineraries from "../itineraries.js";
+import type * as leaderboard from "../leaderboard.js";
 import type * as notifications from "../notifications.js";
 import type * as photos from "../photos.js";
 import type * as seed from "../seed.js";
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   destinations: typeof destinations;
   http: typeof http;
   itineraries: typeof itineraries;
+  leaderboard: typeof leaderboard;
   notifications: typeof notifications;
   photos: typeof photos;
   seed: typeof seed;

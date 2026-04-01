@@ -35,6 +35,12 @@ export function Header() {
               Itineraries
             </Link>
             <Link
+              href="/leaderboard"
+              className="text-sm font-medium text-charcoal hover:text-teal transition-colors"
+            >
+              Leaderboard
+            </Link>
+            <Link
               href="/profile"
               className="text-sm font-medium text-charcoal hover:text-teal transition-colors"
             >

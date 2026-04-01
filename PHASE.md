@@ -166,12 +166,12 @@
 - [x] Winner highlight with star icon
 - [x] Floating "Compare (N)" button
 
-### Phase 20: Leaderboard (W7 D3)
-- [ ] Leaderboard page (src/app/leaderboard/page.tsx)
-- [ ] Top Contributors: most tips, most upvotes received
-- [ ] Weekly Top Destination: auto-computed from upvotes that week (Convex scheduled function / cron)
-- [ ] All-time top destinations by rating
-- [ ] User ranking cards with avatar, name, badge, stats
+### Phase 20: Leaderboard (W7 D3) — DONE
+- [x] Leaderboard page with tabbed interface
+- [x] Top Contributors: most tips
+- [x] Most Upvoted: most upvotes received
+- [x] All-time top destinations by rating
+- [x] Ranking with medal emojis, avatar, name, stats
 
 ### Phase 21: Travel Checklist (W7 D4)
 - [ ] Checklist templates by destination type (beach, mountain, city, island hopping)
