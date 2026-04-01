@@ -20,6 +20,14 @@
   --font-sans: var(--font-dm-sans);
 }
 
+/* Dark mode prep (Phase 24) — define variables, not yet wired to toggle */
+:root {
+  --dark-background: #1C1917;
+  --dark-surface: #292524;
+  --dark-foreground: #FEF3C7;
+  --dark-muted: #A8A29E;
+}
+
 body {
   background: var(--color-background);
   color: var(--color-foreground);
