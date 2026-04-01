@@ -129,13 +129,13 @@
 - [x] Badge display on profile page with progress bars
 - [x] Badge icon next to username on tip cards
 
-### Phase 16: Notifications (W6 D5)
-- [ ] notifications table in Convex schema
-- [ ] Real-time notifications via Convex reactive queries
-- [ ] Notification types: tip upvoted, new tip on bookmarked destination, badge earned
-- [ ] Notification bell icon in header with unread count
-- [ ] Notification dropdown list
-- [ ] Mark as read / mark all as read
+### Phase 16: Notifications (W6 D5) — DONE
+- [x] notifications table in Convex schema
+- [x] Real-time notifications via Convex reactive queries
+- [x] Notification types: tip upvoted (with trigger in votes.ts)
+- [x] Notification bell icon in header with unread count
+- [x] Notification dropdown list
+- [x] Mark as read / mark all as read
 
 ### Phase 17: Itinerary Builder (W6 D6-7)
 - [ ] itineraries table in Convex schema (name, days[], userId, isPublic, sharedWith[])

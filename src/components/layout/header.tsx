@@ -5,6 +5,7 @@ import { SignInButton, UserButton } from "@clerk/nextjs";
 import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { Logo } from "@/components/ui/logo";
 import { Skeleton } from "@/components/ui/skeleton";
+import { NotificationBell } from "./notification-bell";
 
 export function Header() {
   return (
@@ -33,6 +34,7 @@ export function Header() {
             >
               Profile
             </Link>
+            <NotificationBell />
             <UserButton />
           </Authenticated>
         </div>

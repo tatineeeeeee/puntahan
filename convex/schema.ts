@@ -105,6 +105,17 @@ export default defineSchema({
     .index("by_destination", ["destinationId"])
     .index("by_user", ["uploadedBy"]),
 
+  notifications: defineTable({
+    userId: v.id("users"),
+    type: v.string(), // "tip_upvoted" | "new_tip_on_bookmarked" | "badge_earned"
+    message: v.string(),
+    relatedId: v.optional(v.string()),
+    isRead: v.boolean(),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_and_read", ["userId", "isRead"]),
+
   itineraries: defineTable({
     userId: v.id("users"),
     name: v.string(),

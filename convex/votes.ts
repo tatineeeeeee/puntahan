@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
 
 export const castVote = mutation({
   args: {
@@ -78,6 +79,15 @@ export const castVote = mutation({
         await ctx.db.patch(tip.userId, {
           upvotesReceived: tipAuthor.upvotesReceived + 1,
         });
+        // Notify tip author of upvote (don't notify self)
+        if (tip.userId !== user._id) {
+          await ctx.runMutation(internal.notifications.create, {
+            userId: tip.userId,
+            type: "tip_upvoted",
+            message: "Your tip received an upvote!",
+            relatedId: tip._id,
+          });
+        }
       }
       return args.direction;
     }
