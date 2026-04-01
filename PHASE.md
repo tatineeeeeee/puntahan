@@ -31,12 +31,12 @@
 - [x] Rating component (star display)
 - [x] Dark mode CSS variables (prep for Phase 24)
 
-### Phase 3: Schema + Seed (W4 D3)
-- [ ] Convex schema: destinations, tips, votes, users, bookmarks, itineraries
-- [ ] Indexes for all query patterns
-- [ ] Search index on destination name
-- [ ] Seed 20+ real PH destinations with categories/tags/seasons/festivals
-- [ ] Destination categories: Beach, Mountain, Historical, Island Hopping, Waterfall, City, Food Trip
+### Phase 3: Schema + Seed (W4 D3) — DONE
+- [x] Convex schema: destinations, tips, votes, users, bookmarks, itineraries
+- [x] Indexes for all query patterns
+- [x] Search index on destination name
+- [x] Seed 23 real PH destinations with categories/tags/seasons/festivals
+- [x] Destination categories: Beach, Mountain, Historical, Island Hopping, Waterfall, City, Food Trip
 
 ### Phase 4: Auth Flow (W4 D4)
 - [ ] convex/auth.config.ts
@@ -259,7 +259,7 @@
 
 | Week | Phases | Status |
 |------|--------|--------|
-| W4 | 1-6 (Foundation) | Phases 1-2 Done |
+| W4 | 1-6 (Foundation) | Phases 1-3 Done |
 | W5 | 7-12 (Content + Discovery) | Not Started |
 | W6 | 13-18 (Community + Social) | Not Started |
 | W7 | 19-24 (Power Features) | Not Started |
