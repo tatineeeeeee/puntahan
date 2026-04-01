@@ -141,4 +141,19 @@ export default defineSchema({
     .index("by_user", ["userId"])
     .index("by_user_and_public", ["userId", "isPublic"])
     .index("by_share_token", ["shareToken"]),
+
+  checklists: defineTable({
+    userId: v.id("users"),
+    itineraryId: v.optional(v.id("itineraries")),
+    name: v.string(),
+    items: v.array(
+      v.object({
+        text: v.string(),
+        isChecked: v.boolean(),
+      }),
+    ),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_itinerary", ["itineraryId"]),
 });

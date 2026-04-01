@@ -9,6 +9,7 @@
  */
 
 import type * as bookmarks from "../bookmarks.js";
+import type * as checklists from "../checklists.js";
 import type * as destinations from "../destinations.js";
 import type * as http from "../http.js";
 import type * as itineraries from "../itineraries.js";
@@ -28,6 +29,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   bookmarks: typeof bookmarks;
+  checklists: typeof checklists;
   destinations: typeof destinations;
   http: typeof http;
   itineraries: typeof itineraries;

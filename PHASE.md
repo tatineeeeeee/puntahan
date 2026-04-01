@@ -173,12 +173,12 @@
 - [x] All-time top destinations by rating
 - [x] Ranking with medal emojis, avatar, name, stats
 
-### Phase 21: Travel Checklist (W7 D4)
-- [ ] Checklist templates by destination type (beach, mountain, city, island hopping)
-- [ ] Editable checklist with checkboxes
-- [ ] Add custom items
-- [ ] Attach checklist to itinerary
-- [ ] Progress bar (X of Y items packed)
+### Phase 21: Travel Checklist (W7 D4) — DONE
+- [x] Checklist templates by destination type (Beach, Mountain, City, Island Hopping, Historical, Food Trip)
+- [x] Editable checklist with checkboxes
+- [x] Add custom items + remove items
+- [x] Attach checklist to itinerary
+- [x] Progress bar (X of Y items packed)
 
 ### Phase 22: Advanced Filters (W7 D5)
 - [ ] Budget range slider (min-max PHP)
