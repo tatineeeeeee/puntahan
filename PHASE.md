@@ -38,12 +38,12 @@
 - [x] Seed 23 real PH destinations with categories/tags/seasons/festivals
 - [x] Destination categories: Beach, Mountain, Historical, Island Hopping, Waterfall, City, Food Trip
 
-### Phase 4: Auth Flow (W4 D4)
-- [ ] convex/auth.config.ts
-- [ ] convex/http.ts (Clerk webhook handler with svix verification)
-- [ ] convex/users.ts (upsertFromClerk, deleteFromClerk, getCurrentUser)
-- [ ] Sign-in page (src/app/sign-in/[[...sign-in]]/page.tsx)
-- [ ] Protected route config in proxy.ts (submit, profile, admin)
+### Phase 4: Auth Flow (W4 D4) — DONE
+- [x] convex/auth.config.ts
+- [x] convex/http.ts (Clerk webhook handler with svix verification)
+- [x] convex/users.ts (upsertFromClerk, deleteFromClerk, getCurrentUser)
+- [x] Sign-in page (src/app/sign-in/[[...sign-in]]/page.tsx)
+- [x] Protected route config in proxy.ts (submit, profile, admin)
 
 ### Phase 5: Browse Page (W4 D5-6)
 - [ ] Destination card component (photo, name, region badge, budget badge, rating, category tags)
@@ -259,7 +259,7 @@
 
 | Week | Phases | Status |
 |------|--------|--------|
-| W4 | 1-6 (Foundation) | Phases 1-3 Done |
+| W4 | 1-6 (Foundation) | Phases 1-4 Done |
 | W5 | 7-12 (Content + Discovery) | Not Started |
 | W6 | 13-18 (Community + Social) | Not Started |
 | W7 | 19-24 (Power Features) | Not Started |
