@@ -158,12 +158,13 @@
 
 ## W7 — Power Features
 
-### Phase 19: Destination Comparison (W7 D2)
-- [ ] "Compare" checkbox on destination cards
-- [ ] Comparison page (side-by-side 2-3 destinations)
-- [ ] Compare: budget range, avg rating, tips count, best season, region, categories
-- [ ] Visual bars/charts for budget and rating comparison
-- [ ] "Winner" highlight per category
+### Phase 19: Destination Comparison (W7 D2) — DONE
+- [x] "Compare" checkbox on destination cards (max 3)
+- [x] Comparison page (side-by-side destinations)
+- [x] Compare: budget range, avg rating, tips count, best season, categories
+- [x] Visual bars for budget and rating comparison
+- [x] Winner highlight with star icon
+- [x] Floating "Compare (N)" button
 
 ### Phase 20: Leaderboard (W7 D3)
 - [ ] Leaderboard page (src/app/leaderboard/page.tsx)

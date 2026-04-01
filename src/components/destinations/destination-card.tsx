@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Rating } from "@/components/ui/rating";
 import { cn } from "@/lib/utils";
 import { BookmarkButton } from "./bookmark-button";
+import { useComparison } from "@/lib/comparison-context";
 
 const regionBadgeVariant = {
   NCR: "region-ncr",
@@ -25,6 +26,18 @@ export function DestinationCard({ destination, className }: DestinationCardProps
   const variant =
     regionBadgeVariant[destination.region as keyof typeof regionBadgeVariant] ??
     "default";
+  const { isSelected, add, remove: removeCompare } = useComparison();
+  const comparing = isSelected(destination._id);
+
+  function handleCompareToggle(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (comparing) {
+      removeCompare(destination._id);
+    } else {
+      add(destination._id);
+    }
+  }
 
   return (
     <Link href={`/destination/${destination.slug}`}>
@@ -32,6 +45,19 @@ export function DestinationCard({ destination, className }: DestinationCardProps
       {/* Placeholder hero area */}
       <div className="relative h-40 bg-warm-gray/10 flex items-center justify-center">
         <span className="text-warm-gray text-sm">Photo coming soon</span>
+        <button
+          type="button"
+          onClick={handleCompareToggle}
+          className={cn(
+            "absolute top-2 left-2 flex h-6 w-6 items-center justify-center rounded border text-xs transition-colors",
+            comparing
+              ? "border-teal bg-teal text-white"
+              : "border-warm-gray/30 bg-white/80 text-warm-gray hover:border-teal",
+          )}
+          aria-label={comparing ? "Remove from comparison" : "Add to comparison"}
+        >
+          {comparing && "\u2713"}
+        </button>
         <div className="absolute top-2 right-2">
           <BookmarkButton destinationId={destination._id} />
         </div>

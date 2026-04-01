@@ -34,6 +34,14 @@ export const search = query({
   },
 });
 
+export const getByIds = query({
+  args: { ids: v.array(v.id("destinations")) },
+  handler: async (ctx, args) => {
+    const results = await Promise.all(args.ids.map((id) => ctx.db.get(id)));
+    return results.filter((d): d is NonNullable<typeof d> => d !== null);
+  },
+});
+
 export const getBySlug = query({
   args: { slug: v.string() },
   handler: async (ctx, args) => {
