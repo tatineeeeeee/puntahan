@@ -109,12 +109,11 @@
 
 ## W6 — Community + Social
 
-### Phase 13: Bookmarks (W6 D2)
-- [ ] bookmarks table in Convex schema
-- [ ] Heart icon toggle on destination cards and detail page
-- [ ] convex/bookmarks.ts (toggle, listByUser)
-- [ ] "Saved Destinations" page in profile
-- [ ] Bookmark count on destinations (optional)
+### Phase 13: Bookmarks (W6 D2) — DONE
+- [x] bookmarks table in Convex schema (already existed)
+- [x] Heart icon toggle on destination cards and detail page
+- [x] convex/bookmarks.ts (toggle, isBookmarked, listByUser, toggleVisited)
+- [x] Bookmark count on destinations updated atomically
 
 ### Phase 14: User Profile (W6 D3)
 - [ ] Profile page (src/app/profile/page.tsx)

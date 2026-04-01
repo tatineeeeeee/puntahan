@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PhotoGallery } from "./photo-gallery";
 import { PhotoUpload } from "./photo-upload";
 import { NearbyDestinations } from "./nearby-destinations";
+import { BookmarkButton } from "./bookmark-button";
 import { TipList } from "@/components/tips/tip-list";
 
 const regionBadgeVariant = {
@@ -56,6 +57,12 @@ export function DestinationDetail({ slug }: DestinationDetailProps) {
             {destination.name}
           </h1>
           <p className="mt-1 text-white/80">{destination.province}</p>
+        </div>
+        <div className="absolute top-4 right-4">
+          <BookmarkButton
+            destinationId={destination._id}
+            className="text-white hover:text-coral"
+          />
         </div>
       </div>
 

@@ -6,6 +6,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Rating } from "@/components/ui/rating";
 import { cn } from "@/lib/utils";
+import { BookmarkButton } from "./bookmark-button";
 
 const regionBadgeVariant = {
   NCR: "region-ncr",
@@ -29,8 +30,11 @@ export function DestinationCard({ destination, className }: DestinationCardProps
     <Link href={`/destination/${destination.slug}`}>
     <Card className={cn("flex flex-col transition-shadow hover:shadow-md", className)}>
       {/* Placeholder hero area */}
-      <div className="h-40 bg-warm-gray/10 flex items-center justify-center">
+      <div className="relative h-40 bg-warm-gray/10 flex items-center justify-center">
         <span className="text-warm-gray text-sm">Photo coming soon</span>
+        <div className="absolute top-2 right-2">
+          <BookmarkButton destinationId={destination._id} />
+        </div>
       </div>
 
       <CardContent className="flex-1">
