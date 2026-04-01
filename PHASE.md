@@ -85,12 +85,11 @@
 - [x] Destination pins color-coded by region
 - [x] Click pin → popup card with name, rating, link to detail
 
-### Phase 10: What's Nearby (W5 D5)
-- [ ] Haversine distance calculation utility
-- [ ] "Nearby Destinations" section on detail page
-- [ ] Same-province suggestions
-- [ ] Distance display (km)
-- [ ] Horizontal scroll card list
+### Phase 10: What's Nearby (W5 D5) — DONE
+- [x] Haversine distance calculation utility
+- [x] "Nearby Destinations" section on detail page
+- [x] Distance display (km)
+- [x] Horizontal scroll card list
 
 ### Phase 11: Tips System (W5 D6-7)
 - [ ] convex/tips.ts (create, listByDestination, listByUser)

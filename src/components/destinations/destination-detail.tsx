@@ -7,6 +7,7 @@ import { Rating } from "@/components/ui/rating";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PhotoGallery } from "./photo-gallery";
 import { PhotoUpload } from "./photo-upload";
+import { NearbyDestinations } from "./nearby-destinations";
 
 const regionBadgeVariant = {
   NCR: "region-ncr",
@@ -44,8 +45,8 @@ export function DestinationDetail({ slug }: DestinationDetailProps) {
   return (
     <div>
       {/* Hero */}
-      <div className="relative h-64 bg-gradient-to-br from-teal/20 to-coral/20 flex items-end sm:h-80">
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/60 to-transparent" />
+      <div className="relative h-64 bg-linear-to-br from-teal/20 to-coral/20 flex items-end sm:h-80">
+        <div className="absolute inset-0 bg-linear-to-t from-charcoal/60 to-transparent" />
         <div className="relative mx-auto w-full max-w-6xl px-4 pb-6">
           <Badge variant={variant} className="mb-2">
             {destination.region}
@@ -173,6 +174,13 @@ export function DestinationDetail({ slug }: DestinationDetailProps) {
             </div>
           </div>
         </div>
+
+        {/* Nearby */}
+        <NearbyDestinations
+          destinationId={destination._id}
+          latitude={destination.latitude}
+          longitude={destination.longitude}
+        />
       </div>
     </div>
   );
