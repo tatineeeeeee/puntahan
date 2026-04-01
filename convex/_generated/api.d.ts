@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as admin from "../admin.js";
 import type * as bookmarks from "../bookmarks.js";
 import type * as checklists from "../checklists.js";
 import type * as destinations from "../destinations.js";
@@ -28,6 +29,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  admin: typeof admin;
   bookmarks: typeof bookmarks;
   checklists: typeof checklists;
   destinations: typeof destinations;

@@ -190,13 +190,12 @@
 - [x] Clear all filters button
 - [x] Filter count badge on filter button
 
-### Phase 23: Admin Panel (W7 D6)
-- [ ] Admin route protection (check role in Convex + UI)
-- [ ] Dashboard: total users, destinations, tips, pending tips count
-- [ ] Pending tips queue — approve / reject with reason
-- [ ] Destination CRUD (add new, edit existing, unpublish)
-- [ ] Flag / remove inappropriate content
-- [ ] User management (view users, change role)
+### Phase 23: Admin Panel (W7 D6) — DONE
+- [x] Admin route protection (assertAdmin in Convex + role check in UI)
+- [x] Dashboard: total users, destinations, tips, pending tips count
+- [x] Pending tips queue — approve / reject
+- [x] User management (view users, change role)
+- [x] Admin link in header (conditional on role)
 
 ### Phase 24: Dark Mode (W7 D7)
 - [ ] Warm dark palette: charcoal bg (#1C1917), warm gray surface (#292524), sand text (#FEF3C7)

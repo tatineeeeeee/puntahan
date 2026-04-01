@@ -3,9 +3,46 @@
 import Link from "next/link";
 import { SignInButton, UserButton } from "@clerk/nextjs";
 import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 import { Logo } from "@/components/ui/logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NotificationBell } from "./notification-bell";
+
+function NavLinks() {
+  const user = useQuery(api.users.getCurrentUser);
+
+  return (
+    <>
+      <Link
+        href="/itineraries"
+        className="text-sm font-medium text-charcoal hover:text-teal transition-colors"
+      >
+        Itineraries
+      </Link>
+      <Link
+        href="/leaderboard"
+        className="text-sm font-medium text-charcoal hover:text-teal transition-colors"
+      >
+        Leaderboard
+      </Link>
+      <Link
+        href="/profile"
+        className="text-sm font-medium text-charcoal hover:text-teal transition-colors"
+      >
+        Profile
+      </Link>
+      {user?.role === "admin" && (
+        <Link
+          href="/admin"
+          className="text-sm font-medium text-sunset hover:text-sunset/80 transition-colors"
+        >
+          Admin
+        </Link>
+      )}
+    </>
+  );
+}
 
 export function Header() {
   return (
@@ -22,30 +59,13 @@ export function Header() {
           </AuthLoading>
           <Unauthenticated>
             <SignInButton mode="modal">
-              <button className="rounded-lg bg-coral px-4 py-1.5 text-sm font-medium text-white hover:bg-coral/90 transition-colors">
+              <button type="button" className="rounded-lg bg-coral px-4 py-1.5 text-sm font-medium text-white hover:bg-coral/90 transition-colors">
                 Sign in
               </button>
             </SignInButton>
           </Unauthenticated>
           <Authenticated>
-            <Link
-              href="/itineraries"
-              className="text-sm font-medium text-charcoal hover:text-teal transition-colors"
-            >
-              Itineraries
-            </Link>
-            <Link
-              href="/leaderboard"
-              className="text-sm font-medium text-charcoal hover:text-teal transition-colors"
-            >
-              Leaderboard
-            </Link>
-            <Link
-              href="/profile"
-              className="text-sm font-medium text-charcoal hover:text-teal transition-colors"
-            >
-              Profile
-            </Link>
+            <NavLinks />
             <NotificationBell />
             <UserButton />
           </Authenticated>
