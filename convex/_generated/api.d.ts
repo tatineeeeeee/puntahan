@@ -14,6 +14,7 @@ import type * as photos from "../photos.js";
 import type * as seed from "../seed.js";
 import type * as tips from "../tips.js";
 import type * as users from "../users.js";
+import type * as votes from "../votes.js";
 
 import type {
   ApiFromModules,
@@ -28,6 +29,7 @@ declare const fullApi: ApiFromModules<{
   seed: typeof seed;
   tips: typeof tips;
   users: typeof users;
+  votes: typeof votes;
 }>;
 
 /**

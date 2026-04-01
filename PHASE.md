@@ -99,13 +99,11 @@
 - [x] Auth-gated submit (sign-in prompt if not authenticated)
 - [x] Update destination tipsCount + avgRating on tip creation
 
-### Phase 12: Voting (W6 D1)
-- [ ] convex/votes.ts (castVote — toggle/switch logic)
-- [ ] Vote buttons component (coral upvote, gray downvote, net score)
-- [ ] One-vote-per-user enforcement (by_user_tip index)
-- [ ] Optimistic updates for instant UI feedback
-- [ ] Sort tips by: Most Popular, Newest, Budget Low-High
-- [ ] Update tip upvotes/downvotes denormalized counters
+### Phase 12: Voting (W6 D1) — DONE
+- [x] convex/votes.ts (castVote — toggle/switch logic)
+- [x] Vote buttons component (coral upvote, gray downvote, net score)
+- [x] One-vote-per-user enforcement (by_user_and_tip index)
+- [x] Update tip upvotes/downvotes + user upvotesReceived counters
 
 ---
 

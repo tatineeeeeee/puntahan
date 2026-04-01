@@ -1,0 +1,108 @@
+import { v } from "convex/values";
+import { mutation, query } from "./_generated/server";
+
+export const castVote = mutation({
+  args: {
+    tipId: v.id("tips"),
+    direction: v.string(), // "up" | "down"
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
+      .unique();
+    if (!user) throw new Error("User not found");
+
+    const existing = await ctx.db
+      .query("votes")
+      .withIndex("by_user_and_tip", (q) =>
+        q.eq("userId", user._id).eq("tipId", args.tipId),
+      )
+      .unique();
+
+    const tip = await ctx.db.get(args.tipId);
+    if (!tip) throw new Error("Tip not found");
+
+    const tipAuthor = await ctx.db.get(tip.userId);
+
+    if (existing) {
+      if (existing.direction === args.direction) {
+        // Remove vote (toggle off)
+        await ctx.db.delete(existing._id);
+
+        const upDelta = args.direction === "up" ? -1 : 0;
+        const downDelta = args.direction === "down" ? -1 : 0;
+        await ctx.db.patch(args.tipId, {
+          upvotes: tip.upvotes + upDelta,
+          downvotes: tip.downvotes + downDelta,
+        });
+        if (tipAuthor && args.direction === "up") {
+          await ctx.db.patch(tip.userId, {
+            upvotesReceived: tipAuthor.upvotesReceived - 1,
+          });
+        }
+        return null;
+      } else {
+        // Switch vote direction
+        await ctx.db.patch(existing._id, { direction: args.direction });
+
+        const wasUp = existing.direction === "up";
+        await ctx.db.patch(args.tipId, {
+          upvotes: tip.upvotes + (wasUp ? -1 : 1),
+          downvotes: tip.downvotes + (wasUp ? 1 : -1),
+        });
+        if (tipAuthor) {
+          await ctx.db.patch(tip.userId, {
+            upvotesReceived:
+              tipAuthor.upvotesReceived + (wasUp ? -1 : 1),
+          });
+        }
+        return args.direction;
+      }
+    } else {
+      // New vote
+      await ctx.db.insert("votes", {
+        userId: user._id,
+        tipId: args.tipId,
+        direction: args.direction,
+      });
+
+      await ctx.db.patch(args.tipId, {
+        upvotes: tip.upvotes + (args.direction === "up" ? 1 : 0),
+        downvotes: tip.downvotes + (args.direction === "down" ? 1 : 0),
+      });
+      if (tipAuthor && args.direction === "up") {
+        await ctx.db.patch(tip.userId, {
+          upvotesReceived: tipAuthor.upvotesReceived + 1,
+        });
+      }
+      return args.direction;
+    }
+  },
+});
+
+export const getVoteForTip = query({
+  args: { tipId: v.id("tips") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return null;
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
+      .unique();
+    if (!user) return null;
+
+    const vote = await ctx.db
+      .query("votes")
+      .withIndex("by_user_and_tip", (q) =>
+        q.eq("userId", user._id).eq("tipId", args.tipId),
+      )
+      .unique();
+
+    return vote?.direction ?? null;
+  },
+});

@@ -1,10 +1,12 @@
 "use client";
 
+import { Id } from "../../../convex/_generated/dataModel";
 import { Rating } from "@/components/ui/rating";
+import { VoteButtons } from "./vote-buttons";
 
 interface TipCardProps {
   tip: {
-    _id: string;
+    _id: Id<"tips">;
     content: string;
     rating: number;
     totalBudget: number;
@@ -18,7 +20,6 @@ interface TipCardProps {
 }
 
 export function TipCard({ tip }: TipCardProps) {
-  const netVotes = tip.upvotes - tip.downvotes;
   const date = new Date(tip.createdAt).toLocaleDateString("en-PH", {
     month: "short",
     day: "numeric",
@@ -76,9 +77,11 @@ export function TipCard({ tip }: TipCardProps) {
       )}
 
       {/* Votes */}
-      <div className="flex items-center gap-2 text-xs text-warm-gray">
-        <span>{netVotes > 0 ? `+${netVotes}` : netVotes} votes</span>
-      </div>
+      <VoteButtons
+        tipId={tip._id}
+        upvotes={tip.upvotes}
+        downvotes={tip.downvotes}
+      />
     </div>
   );
 }
