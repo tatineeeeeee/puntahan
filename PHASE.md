@@ -22,14 +22,14 @@
 - [x] DM Sans font setup
 - [x] cn() utility (clsx + tailwind-merge)
 
-### Phase 2: Design System (W4 D2)
-- [ ] Logo SVG (map pin + letter P)
-- [ ] Button component (coral primary, teal secondary, ghost variants)
-- [ ] Badge component (region badges, budget badges)
-- [ ] Card component (sand bg, rounded, shadow)
-- [ ] Skeleton component (loading placeholders)
-- [ ] Rating component (star display)
-- [ ] Dark mode CSS variables (prep for Phase 24)
+### Phase 2: Design System (W4 D2) — DONE
+- [x] Logo SVG (map pin + letter P)
+- [x] Button component (coral primary, teal secondary, ghost variants)
+- [x] Badge component (region badges, budget badges)
+- [x] Card component (sand bg, rounded, shadow)
+- [x] Skeleton component (loading placeholders)
+- [x] Rating component (star display)
+- [x] Dark mode CSS variables (prep for Phase 24)
 
 ### Phase 3: Schema + Seed (W4 D3)
 - [ ] Convex schema: destinations, tips, votes, users, bookmarks, itineraries
@@ -259,7 +259,7 @@
 
 | Week | Phases | Status |
 |------|--------|--------|
-| W4 | 1-6 (Foundation) | Phase 1 Done |
+| W4 | 1-6 (Foundation) | Phases 1-2 Done |
 | W5 | 7-12 (Content + Discovery) | Not Started |
 | W6 | 13-18 (Community + Social) | Not Started |
 | W7 | 19-24 (Power Features) | Not Started |
