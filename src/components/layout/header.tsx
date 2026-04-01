@@ -29,6 +29,12 @@ export function Header() {
           </Unauthenticated>
           <Authenticated>
             <Link
+              href="/itineraries"
+              className="text-sm font-medium text-charcoal hover:text-teal transition-colors"
+            >
+              Itineraries
+            </Link>
+            <Link
               href="/profile"
               className="text-sm font-medium text-charcoal hover:text-teal transition-colors"
             >

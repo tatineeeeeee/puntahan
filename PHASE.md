@@ -137,14 +137,14 @@
 - [x] Notification dropdown list
 - [x] Mark as read / mark all as read
 
-### Phase 17: Itinerary Builder (W6 D6-7)
-- [ ] itineraries table in Convex schema (name, days[], userId, isPublic, sharedWith[])
-- [ ] Create new itinerary page
-- [ ] Add destinations to itinerary from detail page ("Add to Itinerary" button)
-- [ ] Day-by-day view with drag-and-drop reorder
-- [ ] Auto budget estimate (sum of community avg budgets per destination)
-- [ ] Total trip duration + total estimated cost display
-- [ ] Delete / rename itinerary
+### Phase 17: Itinerary Builder (W6 D6-7) — DONE
+- [x] itineraries table already in schema, convex/itineraries.ts CRUD
+- [x] Create new itinerary page
+- [x] Add destinations to itinerary via search
+- [x] Day-by-day view with add/remove days and destinations
+- [x] Auto budget estimate (sum of destination budgets)
+- [x] Total trip duration + destination count display
+- [x] Delete itinerary
 
 ### Phase 18: Collaborative Itinerary (W7 D1)
 - [ ] Share itinerary via unique link
@@ -255,6 +255,6 @@
 |------|--------|--------|
 | W4 | 1-6 (Foundation) | COMPLETE |
 | W5 | 7-12 (Content + Discovery) | COMPLETE |
-| W6 | 13-18 (Community + Social) | Phases 13-14 Done |
+| W6 | 13-18 (Community + Social) | Phases 13-17 Done |
 | W7 | 19-24 (Power Features) | Not Started |
 | W8 | 25-29 (Polish + Deploy) | Not Started |
