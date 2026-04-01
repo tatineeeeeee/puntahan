@@ -45,13 +45,13 @@
 - [x] Sign-in page (src/app/sign-in/[[...sign-in]]/page.tsx)
 - [x] Protected route config in proxy.ts (submit, profile, admin)
 
-### Phase 5: Browse Page (W4 D5-6)
-- [ ] Destination card component (photo, name, region badge, budget badge, rating, category tags)
-- [ ] Region tabs (All / NCR / Luzon / Visayas / Mindanao) — color-coded
-- [ ] Category filter pills (Beach, Mountain, Historical, etc.)
-- [ ] Responsive grid (1 col mobile, 2 col tablet, 3 col desktop)
-- [ ] Skeleton loading state
-- [ ] Empty state when no results
+### Phase 5: Browse Page (W4 D5-6) — DONE
+- [x] Destination card component (photo, name, region badge, budget badge, rating, category tags)
+- [x] Region tabs (All / NCR / Luzon / Visayas / Mindanao) — color-coded
+- [x] Category filter pills (Beach, Mountain, Historical, etc.)
+- [x] Responsive grid (1 col mobile, 2 col tablet, 3 col desktop)
+- [x] Skeleton loading state
+- [x] Empty state when no results
 
 ### Phase 6: Search + Sort (W4 D7)
 - [ ] Search bar with debounced input (Convex full-text search)
@@ -259,7 +259,7 @@
 
 | Week | Phases | Status |
 |------|--------|--------|
-| W4 | 1-6 (Foundation) | Phases 1-4 Done |
+| W4 | 1-6 (Foundation) | Phases 1-5 Done |
 | W5 | 7-12 (Content + Discovery) | Not Started |
 | W6 | 13-18 (Community + Social) | Not Started |
 | W7 | 19-24 (Power Features) | Not Started |
