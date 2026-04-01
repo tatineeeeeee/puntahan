@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { ShareModal } from "./share-modal";
+import { CollaboratorAvatars } from "./collaborator-avatars";
 import Link from "next/link";
 
 interface ItineraryDetailProps {
@@ -20,6 +22,7 @@ export function ItineraryDetail({ itineraryId }: ItineraryDetailProps) {
   const remove = useMutation(api.itineraries.remove);
   const [addingDest, setAddingDest] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showShare, setShowShare] = useState(false);
 
   const searchResults = useQuery(
     api.destinations.search,
@@ -39,7 +42,7 @@ export function ItineraryDetail({ itineraryId }: ItineraryDetailProps) {
     return <p className="text-warm-gray">Itinerary not found.</p>;
   }
 
-  const { destinationMap, ...itinerary } = data;
+  const { destinationMap, collaborators, ...itinerary } = data;
 
   // Budget estimate
   const allDestIds = new Set(itinerary.days.flatMap((d) => d.destinationIds));
@@ -97,11 +100,26 @@ export function ItineraryDetail({ itineraryId }: ItineraryDetailProps) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-charcoal">{itinerary.name}</h2>
-        <Button variant="ghost" size="sm" onClick={handleDelete}>
-          Delete
-        </Button>
+        <div className="flex items-center gap-3">
+          <h2 className="text-xl font-bold text-charcoal">{itinerary.name}</h2>
+          {collaborators && <CollaboratorAvatars collaborators={collaborators} />}
+        </div>
+        <div className="flex gap-2">
+          <Button variant="secondary" size="sm" onClick={() => setShowShare(true)}>
+            Share
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleDelete}>
+            Delete
+          </Button>
+        </div>
       </div>
+
+      {showShare && (
+        <ShareModal
+          itineraryId={itineraryId}
+          onClose={() => setShowShare(false)}
+        />
+      )}
 
       {/* Summary */}
       <div className="flex gap-4 text-sm">

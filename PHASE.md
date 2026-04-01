@@ -146,12 +146,13 @@
 - [x] Total trip duration + destination count display
 - [x] Delete itinerary
 
-### Phase 18: Collaborative Itinerary (W7 D1)
-- [ ] Share itinerary via unique link
-- [ ] Access levels: view-only or edit
-- [ ] Real-time sync (Convex reactive queries — multiple users see changes live)
-- [ ] Collaborator avatars display
-- [ ] "Shared with me" section in profile
+### Phase 18: Collaborative Itinerary (W7 D1) — DONE
+- [x] Share itinerary via unique link (share token)
+- [x] Access levels: view-only or edit
+- [x] Real-time sync (Convex reactive queries)
+- [x] Collaborator avatars display
+- [x] Add collaborator by email
+- [x] Shared itinerary view page (/itinerary/[token])
 
 ---
 
@@ -255,6 +256,6 @@
 |------|--------|--------|
 | W4 | 1-6 (Foundation) | COMPLETE |
 | W5 | 7-12 (Content + Discovery) | COMPLETE |
-| W6 | 13-18 (Community + Social) | Phases 13-17 Done |
+| W6 | 13-18 (Community + Social) | COMPLETE |
 | W7 | 19-24 (Power Features) | Not Started |
 | W8 | 25-29 (Polish + Deploy) | Not Started |

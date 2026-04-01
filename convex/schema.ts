@@ -128,10 +128,17 @@ export default defineSchema({
       }),
     ),
     isPublic: v.boolean(),
-    sharedWith: v.array(v.id("users")),
+    sharedWith: v.array(
+      v.object({
+        userId: v.id("users"),
+        accessLevel: v.string(), // "view" | "edit"
+      }),
+    ),
+    shareToken: v.optional(v.string()),
     createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index("by_user", ["userId"])
-    .index("by_user_and_public", ["userId", "isPublic"]),
+    .index("by_user_and_public", ["userId", "isPublic"])
+    .index("by_share_token", ["shareToken"]),
 });
