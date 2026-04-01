@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQuery } from "convex/react";
-import { api } from "convex/_generated/api";
+import { api } from "../../../convex/_generated/api";
 import { RegionTabs } from "./region-tabs";
 import { CategoryFilter } from "./category-filter";
 import { DestinationGrid } from "./destination-grid";

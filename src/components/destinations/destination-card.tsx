@@ -1,6 +1,6 @@
 "use client";
 
-import { Doc } from "convex/_generated/dataModel";
+import { Doc } from "../../../convex/_generated/dataModel";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Rating } from "@/components/ui/rating";
