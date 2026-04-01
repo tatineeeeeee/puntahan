@@ -115,13 +115,13 @@
 - [x] convex/bookmarks.ts (toggle, isBookmarked, listByUser, toggleVisited)
 - [x] Bookmark count on destinations updated atomically
 
-### Phase 14: User Profile (W6 D3)
-- [ ] Profile page (src/app/profile/page.tsx)
-- [ ] Clerk user avatar + name display
-- [ ] Stats: tips count, total upvotes received, destinations visited, bookmarks count
-- [ ] "My Tips" tab — list of user's submitted tips
-- [ ] "Been There" tab — destinations marked as visited
-- [ ] "Saved" tab — bookmarked destinations
+### Phase 14: User Profile (W6 D3) — DONE
+- [x] Profile page (src/app/profile/page.tsx)
+- [x] Clerk user avatar + name display
+- [x] Stats: tips count, total upvotes received, destinations visited, bookmarks count
+- [x] "My Tips" tab — list of user's submitted tips
+- [x] "Been There" tab — destinations marked as visited
+- [x] "Saved" tab — bookmarked destinations
 
 ### Phase 15: Badges + Reputation (W6 D4)
 - [ ] Badge definitions: Explorer (5 tips), Local Guide (20 tips), Trailblazer (50 upvotes received), Wanderer (10 "Been There"), Photographer (20 photos uploaded)
@@ -255,7 +255,7 @@
 | Week | Phases | Status |
 |------|--------|--------|
 | W4 | 1-6 (Foundation) | COMPLETE |
-| W5 | 7-12 (Content + Discovery) | Not Started |
-| W6 | 13-18 (Community + Social) | Not Started |
+| W5 | 7-12 (Content + Discovery) | COMPLETE |
+| W6 | 13-18 (Community + Social) | Phases 13-14 Done |
 | W7 | 19-24 (Power Features) | Not Started |
 | W8 | 25-29 (Polish + Deploy) | Not Started |
