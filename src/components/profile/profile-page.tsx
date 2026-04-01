@@ -8,6 +8,7 @@ import { Rating } from "@/components/ui/rating";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { BadgeShelf } from "./badge-shelf";
 
 const tabs = ["My Tips", "Been There", "Saved"] as const;
 type Tab = (typeof tabs)[number];
@@ -83,6 +84,16 @@ export function ProfilePage() {
           <p className="text-xs text-warm-gray">Saved</p>
         </div>
       </div>
+
+      {/* Badges */}
+      <BadgeShelf
+        stats={{
+          tipsCount: user.tipsCount,
+          upvotesReceived: user.upvotesReceived,
+          destinationsVisited: user.destinationsVisited,
+          photosUploaded: user.photosUploaded,
+        }}
+      />
 
       {/* Tabs */}
       <div className="mt-8 flex gap-1 border-b border-warm-gray/10" role="tablist">

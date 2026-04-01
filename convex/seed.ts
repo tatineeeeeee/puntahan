@@ -410,6 +410,17 @@ const destinations = [
   },
 ] as const;
 
+export const clear = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const all = await ctx.db.query("destinations").collect();
+    for (const doc of all) {
+      await ctx.db.delete(doc._id);
+    }
+    console.log(`Deleted ${all.length} destinations.`);
+  },
+});
+
 export const seed = internalMutation({
   args: {},
   handler: async (ctx) => {

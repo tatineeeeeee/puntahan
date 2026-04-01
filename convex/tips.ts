@@ -80,6 +80,10 @@ export const listByDestination = query({
           ...tip,
           userName: user?.name ?? "Anonymous",
           userImage: user?.imageUrl ?? null,
+          userTipsCount: user?.tipsCount ?? 0,
+          userUpvotesReceived: user?.upvotesReceived ?? 0,
+          userDestinationsVisited: user?.destinationsVisited ?? 0,
+          userPhotosUploaded: user?.photosUploaded ?? 0,
         };
       }),
     );

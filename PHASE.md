@@ -123,12 +123,11 @@
 - [x] "Been There" tab — destinations marked as visited
 - [x] "Saved" tab — bookmarked destinations
 
-### Phase 15: Badges + Reputation (W6 D4)
-- [ ] Badge definitions: Explorer (5 tips), Local Guide (20 tips), Trailblazer (50 upvotes received), Wanderer (10 "Been There"), Photographer (20 photos uploaded)
-- [ ] Auto-computed based on user stats
-- [ ] Badge display on profile page
-- [ ] Badge icon next to username on tip cards
-- [ ] Badge unlock notification
+### Phase 15: Badges + Reputation (W6 D4) — DONE
+- [x] Badge definitions: Explorer (5 tips), Local Guide (20 tips), Trailblazer (50 upvotes), Wanderer (10 visited), Photographer (20 photos)
+- [x] Auto-computed based on user stats
+- [x] Badge display on profile page with progress bars
+- [x] Badge icon next to username on tip cards
 
 ### Phase 16: Notifications (W6 D5)
 - [ ] notifications table in Convex schema

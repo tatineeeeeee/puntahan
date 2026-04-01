@@ -2,6 +2,8 @@
 
 import { Id } from "../../../convex/_generated/dataModel";
 import { Rating } from "@/components/ui/rating";
+import { BadgeIcon } from "@/components/ui/badge-icon";
+import { getHighestBadge } from "@/lib/badges";
 import { VoteButtons } from "./vote-buttons";
 
 interface TipCardProps {
@@ -16,10 +18,20 @@ interface TipCardProps {
     createdAt: number;
     userName: string;
     userImage: string | null;
+    userTipsCount: number;
+    userUpvotesReceived: number;
+    userDestinationsVisited: number;
+    userPhotosUploaded: number;
   };
 }
 
 export function TipCard({ tip }: TipCardProps) {
+  const highestBadge = getHighestBadge({
+    tipsCount: tip.userTipsCount,
+    upvotesReceived: tip.userUpvotesReceived,
+    destinationsVisited: tip.userDestinationsVisited,
+    photosUploaded: tip.userPhotosUploaded,
+  });
   const date = new Date(tip.createdAt).toLocaleDateString("en-PH", {
     month: "short",
     day: "numeric",
@@ -42,7 +54,10 @@ export function TipCard({ tip }: TipCardProps) {
           </div>
         )}
         <div className="flex-1">
-          <p className="text-sm font-medium text-charcoal">{tip.userName}</p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-sm font-medium text-charcoal">{tip.userName}</p>
+            {highestBadge && <BadgeIcon badge={highestBadge} size="sm" />}
+          </div>
           <p className="text-xs text-warm-gray">{date}</p>
         </div>
         <Rating value={tip.rating} size="sm" />
