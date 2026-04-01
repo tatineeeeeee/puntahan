@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PhotoGallery } from "./photo-gallery";
 import { PhotoUpload } from "./photo-upload";
 import { NearbyDestinations } from "./nearby-destinations";
+import { TipList } from "@/components/tips/tip-list";
 
 const regionBadgeVariant = {
   NCR: "region-ncr",
@@ -173,6 +174,14 @@ export function DestinationDetail({ slug }: DestinationDetailProps) {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Tips */}
+        <div>
+          <h2 className="text-lg font-bold text-charcoal mb-4">
+            Travel Tips
+          </h2>
+          <TipList destinationId={destination._id} />
         </div>
 
         {/* Nearby */}

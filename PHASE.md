@@ -91,13 +91,13 @@
 - [x] Distance display (km)
 - [x] Horizontal scroll card list
 
-### Phase 11: Tips System (W5 D6-7)
-- [ ] convex/tips.ts (create, listByDestination, listByUser)
-- [ ] Submit tip form: content textarea, rating stars, budget breakdown (dynamic category + amount rows), photo upload
-- [ ] Tip card component (user avatar, content, budget table, photos, timestamp)
-- [ ] Tip list on destination detail page
-- [ ] Auth-gated submit (redirect to sign-in if not authenticated)
-- [ ] Update destination tipsCount + avgRating on tip creation
+### Phase 11: Tips System (W5 D6-7) — DONE
+- [x] convex/tips.ts (create, listByDestination, listByUser)
+- [x] Submit tip form: content textarea, rating stars, budget breakdown
+- [x] Tip card component (user avatar, content, budget table, timestamp)
+- [x] Tip list on destination detail page
+- [x] Auth-gated submit (sign-in prompt if not authenticated)
+- [x] Update destination tipsCount + avgRating on tip creation
 
 ### Phase 12: Voting (W6 D1)
 - [ ] convex/votes.ts (castVote — toggle/switch logic)
