@@ -5,6 +5,8 @@ import { api } from "../../../convex/_generated/api";
 import { Badge } from "@/components/ui/badge";
 import { Rating } from "@/components/ui/rating";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PhotoGallery } from "./photo-gallery";
+import { PhotoUpload } from "./photo-upload";
 
 const regionBadgeVariant = {
   NCR: "region-ncr",
@@ -82,6 +84,19 @@ export function DestinationDetail({ slug }: DestinationDetailProps) {
               {destination.categories.map((cat) => (
                 <Badge key={cat}>{cat}</Badge>
               ))}
+            </div>
+
+            {/* Photos */}
+            <div>
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-bold text-charcoal">
+                  Photos ({destination.photosCount})
+                </h2>
+                <PhotoUpload destinationId={destination._id} />
+              </div>
+              <div className="mt-3">
+                <PhotoGallery destinationId={destination._id} />
+              </div>
             </div>
 
             {/* Tags */}

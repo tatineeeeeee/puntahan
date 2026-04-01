@@ -73,11 +73,11 @@
 - [x] SEO metadata (generateMetadata)
 - [x] Header with Logo, nav, auth (Sign in / UserButton)
 
-### Phase 8: Photo Gallery (W5 D3)
-- [ ] Community photo grid per destination (masonry or uniform grid)
-- [ ] Lightbox viewer (click to enlarge, arrow navigation)
-- [ ] Upload photos (Convex file storage)
-- [ ] Photo count display
+### Phase 8: Photo Gallery (W5 D3) — DONE
+- [x] Community photo grid per destination (uniform grid)
+- [x] Lightbox viewer (click to enlarge, arrow/keyboard navigation)
+- [x] Upload photos (Convex file storage)
+- [x] Photo count display
 
 ### Phase 9: Map View (W5 D4)
 - [ ] Install Leaflet + react-leaflet

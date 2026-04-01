@@ -95,6 +95,16 @@ export default defineSchema({
     .index("by_destination", ["destinationId"])
     .index("by_user_and_destination", ["userId", "destinationId"]),
 
+  photos: defineTable({
+    destinationId: v.id("destinations"),
+    uploadedBy: v.id("users"),
+    storageId: v.string(),
+    caption: v.optional(v.string()),
+    uploadedAt: v.number(),
+  })
+    .index("by_destination", ["destinationId"])
+    .index("by_user", ["uploadedBy"]),
+
   itineraries: defineTable({
     userId: v.id("users"),
     name: v.string(),
