@@ -180,15 +180,15 @@
 - [x] Attach checklist to itinerary
 - [x] Progress bar (X of Y items packed)
 
-### Phase 22: Advanced Filters (W7 D5)
-- [ ] Budget range slider (min-max PHP)
-- [ ] Minimum rating filter (star selector)
-- [ ] Best season filter (Dry / Rainy / Any)
-- [ ] Multi-region select (combine NCR + Visayas etc.)
-- [ ] Activity type multi-select (Beach AND Mountain)
-- [ ] "Has photos" toggle
-- [ ] Clear all filters button
-- [ ] Filter count badge on filter button
+### Phase 22: Advanced Filters (W7 D5) — DONE
+- [x] Budget range inputs (min-max PHP)
+- [x] Minimum rating filter (0-5 selector)
+- [x] Best season filter (Dry / Rainy / Any)
+- [x] Multi-region select
+- [x] Activity type multi-select
+- [x] "Has photos" toggle
+- [x] Clear all filters button
+- [x] Filter count badge on filter button
 
 ### Phase 23: Admin Panel (W7 D6)
 - [ ] Admin route protection (check role in Convex + UI)

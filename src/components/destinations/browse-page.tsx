@@ -1,14 +1,14 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { RegionTabs } from "./region-tabs";
-import { CategoryFilter } from "./category-filter";
 import { SearchBar } from "./search-bar";
 import { SortDropdown, type SortOption } from "./sort-dropdown";
 import { DestinationGrid } from "./destination-grid";
+import { AdvancedFilterPanel } from "@/components/search/advanced-filter-panel";
+import { DEFAULT_FILTERS, filterDestinations, type FilterState } from "@/lib/filter-utils";
 import { cn } from "@/lib/utils";
 
 const MapView = dynamic(() => import("./map-view").then((m) => m.MapView), {
@@ -19,34 +19,23 @@ const MapView = dynamic(() => import("./map-view").then((m) => m.MapView), {
 });
 
 export function BrowsePage() {
-  const [region, setRegion] = useState<string | undefined>(undefined);
-  const [activeCategories, setActiveCategories] = useState<Set<string>>(
-    new Set(),
-  );
   const [searchQuery, setSearchQuery] = useState("");
   const [sort, setSort] = useState<SortOption>("rating");
   const [view, setView] = useState<"grid" | "map">("grid");
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
 
-  const destinations = useQuery(api.destinations.list, { region });
+  const destinations = useQuery(api.destinations.list, {});
   const searchResults = useQuery(
     api.destinations.search,
     searchQuery.length >= 2 ? { query: searchQuery } : "skip",
   );
 
-  const displayedDestinations =
-    searchQuery.length >= 2 ? searchResults : destinations;
+  const source = searchQuery.length >= 2 ? searchResults : destinations;
 
-  const handleToggleCategory = useCallback((category: string) => {
-    setActiveCategories((prev) => {
-      const next = new Set(prev);
-      if (next.has(category)) {
-        next.delete(category);
-      } else {
-        next.add(category);
-      }
-      return next;
-    });
-  }, []);
+  const filtered = useMemo(() => {
+    if (!source) return undefined;
+    return filterDestinations(source, filters);
+  }, [source, filters]);
 
   return (
     <div className="space-y-6">
@@ -92,19 +81,15 @@ export function BrowsePage() {
           </div>
         </div>
       </div>
-      <RegionTabs activeRegion={region} onRegionChange={setRegion} />
-      <CategoryFilter
-        activeCategories={activeCategories}
-        onToggle={handleToggleCategory}
-      />
+      <AdvancedFilterPanel filters={filters} onChange={setFilters} />
       {view === "grid" ? (
         <DestinationGrid
-          destinations={displayedDestinations}
-          activeCategories={activeCategories}
+          destinations={filtered}
+          activeCategories={new Set()}
           sort={sort}
         />
-      ) : displayedDestinations ? (
-        <MapView destinations={displayedDestinations} />
+      ) : filtered ? (
+        <MapView destinations={filtered} />
       ) : (
         <div className="h-125 w-full rounded-xl bg-sand animate-pulse" />
       )}
