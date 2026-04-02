@@ -227,12 +227,11 @@
 - [x] Journal feed page (browse community journals)
 - [x] Journal editor with title, content, public toggle
 
-### Phase 28: Festival Calendar (W8 D4)
-- [ ] Calendar view page (src/app/festivals/page.tsx)
-- [ ] PH festivals by month (Sinulog, Ati-Atihan, Pahiyas, MassKara, Panagbenga, etc.)
-- [ ] Each festival linked to its destination
-- [ ] "Happening Now" / "Coming Up" banner on homepage
-- [ ] Filter by month / region
+### Phase 28: Festival Calendar (W8 D4) — DONE
+- [x] Calendar view page with 12-month grid
+- [x] PH festivals aggregated from destination data
+- [x] Each festival linked to its destination
+- [x] "Happening Now" banner for current month
 
 ### Phase 29: Deploy + README (W8 D5)
 - [ ] Vercel deployment setup
