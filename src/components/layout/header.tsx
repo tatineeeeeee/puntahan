@@ -9,12 +9,13 @@ import { Logo } from "@/components/ui/logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NotificationBell } from "./notification-bell";
 import { ThemeToggle } from "./theme-toggle";
+import { MobileMenu } from "./mobile-menu";
 
 function NavLinks() {
   const user = useQuery(api.users.getCurrentUser);
 
   return (
-    <>
+    <div className="hidden items-center gap-3 sm:flex">
       <Link
         href="/itineraries"
         className="text-sm font-medium text-charcoal hover:text-teal transition-colors"
@@ -41,13 +42,13 @@ function NavLinks() {
           Admin
         </Link>
       )}
-    </>
+    </div>
   );
 }
 
 export function Header() {
   return (
-    <header className="border-b border-warm-gray/10 bg-warm-white">
+    <header className="relative border-b border-warm-gray/10 bg-warm-white">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <Logo size={28} />
@@ -70,6 +71,7 @@ export function Header() {
             <NavLinks />
             <NotificationBell />
             <UserButton />
+            <MobileMenu />
           </Authenticated>
         </div>
       </div>

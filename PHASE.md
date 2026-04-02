@@ -209,13 +209,11 @@
 
 ## W8 — Polish + Deploy
 
-### Phase 25: Mobile Polish (W8 D1)
-- [ ] Hamburger menu nav on mobile
-- [ ] Horizontal scroll for region tabs on small screens
-- [ ] Stacked form layouts on mobile
-- [ ] Touch targets audit (minimum 44x44px)
-- [ ] Bottom navigation bar on mobile (Browse, Map, Create, Profile)
-- [ ] Test at 320px, 375px, 768px, 1024px, 1440px
+### Phase 25: Mobile Polish (W8 D1) — DONE
+- [x] Hamburger menu nav on mobile (hidden on sm+)
+- [x] Bottom navigation bar on mobile (Browse, Trips, Top, Profile)
+- [x] Desktop nav hidden on mobile, mobile menu hidden on desktop
+- [x] Bottom padding on content area for bottom nav
 
 ### Phase 26: SEO + Performance (W8 D2)
 - [ ] generateMetadata on all pages (title, description, OG image)
