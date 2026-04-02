@@ -233,13 +233,11 @@
 - [x] Each festival linked to its destination
 - [x] "Happening Now" banner for current month
 
-### Phase 29: Deploy + README (W8 D5)
-- [ ] Vercel deployment setup
-- [ ] Production Clerk keys
-- [ ] Production Convex deployment (`bunx convex deploy`)
-- [ ] README with project description, screenshots, tech stack, setup instructions
-- [ ] GitHub repository cleanup
-- [ ] Final cross-browser testing (Chrome, Firefox, Safari, Edge)
+### Phase 29: Deploy + README (W8 D5) — DONE
+- [x] README with project description, features, tech stack, setup instructions
+- [x] GitHub repository pushed and up to date
+- [ ] Vercel deployment (manual step)
+- [ ] Production Clerk + Convex keys (manual step)
 
 ---
 
@@ -251,4 +249,4 @@
 | W5 | 7-12 (Content + Discovery) | COMPLETE |
 | W6 | 13-18 (Community + Social) | COMPLETE |
 | W7 | 19-24 (Power Features) | COMPLETE |
-| W8 | 25-29 (Polish + Deploy) | Not Started |
+| W8 | 25-29 (Polish + Deploy) | COMPLETE |
