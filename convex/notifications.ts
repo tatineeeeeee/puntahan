@@ -1,10 +1,11 @@
 import { v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
+import { getCurrentUserOrThrow, getCurrentUser } from "./helpers";
 
 export const create = internalMutation({
   args: {
     userId: v.id("users"),
-    type: v.string(),
+    type: v.union(v.literal("tip_upvoted"), v.literal("new_tip_on_bookmarked"), v.literal("badge_earned")),
     message: v.string(),
     relatedId: v.optional(v.string()),
   },
@@ -23,13 +24,7 @@ export const create = internalMutation({
 export const listForUser = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return [];
-
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
-      .unique();
+    const user = await getCurrentUser(ctx);
     if (!user) return [];
 
     return await ctx.db
@@ -43,13 +38,7 @@ export const listForUser = query({
 export const unreadCount = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return 0;
-
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
-      .unique();
+    const user = await getCurrentUser(ctx);
     if (!user) return 0;
 
     const unread = await ctx.db
@@ -57,7 +46,7 @@ export const unreadCount = query({
       .withIndex("by_user_and_read", (q) =>
         q.eq("userId", user._id).eq("isRead", false),
       )
-      .collect();
+      .take(100);
 
     return unread.length;
   },
@@ -66,8 +55,12 @@ export const unreadCount = query({
 export const markAsRead = mutation({
   args: { notificationId: v.id("notifications") },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
+    const user = await getCurrentUserOrThrow(ctx);
+
+    const notification = await ctx.db.get(args.notificationId);
+    if (!notification || notification.userId !== user._id) {
+      throw new Error("Not authorized");
+    }
 
     await ctx.db.patch(args.notificationId, { isRead: true });
   },
@@ -76,21 +69,14 @@ export const markAsRead = mutation({
 export const markAllAsRead = mutation({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
-
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
-      .unique();
-    if (!user) throw new Error("User not found");
+    const user = await getCurrentUserOrThrow(ctx);
 
     const unread = await ctx.db
       .query("notifications")
       .withIndex("by_user_and_read", (q) =>
         q.eq("userId", user._id).eq("isRead", false),
       )
-      .collect();
+      .take(500);
 
     for (const notif of unread) {
       await ctx.db.patch(notif._id, { isRead: true });

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useQuery } from "convex/react";
 import { useConvexAuth } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -38,10 +39,12 @@ export function JournalFeed() {
             <div key={j._id} className="rounded-xl bg-sand p-5 space-y-2">
               <div className="flex items-center gap-3">
                 {j.userImage ? (
-                  <img
+                  <Image
                     src={j.userImage}
                     alt={j.userName}
-                    className="h-8 w-8 rounded-full object-cover"
+                    width={32}
+                    height={32}
+                    className="rounded-full object-cover"
                   />
                 ) : (
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-teal text-sm font-bold text-white">

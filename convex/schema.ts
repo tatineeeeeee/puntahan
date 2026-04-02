@@ -7,7 +7,7 @@ export default defineSchema({
     email: v.string(),
     name: v.optional(v.string()),
     imageUrl: v.optional(v.string()),
-    role: v.string(), // "user" | "admin"
+    role: v.union(v.literal("user"), v.literal("admin")),
     tipsCount: v.number(),
     upvotesReceived: v.number(),
     destinationsVisited: v.number(),
@@ -16,13 +16,15 @@ export default defineSchema({
   })
     .index("by_clerk_id", ["clerkUserId"])
     .index("by_email", ["email"])
-    .index("by_role", ["role"]),
+    .index("by_role", ["role"])
+    .index("by_tips_count", ["tipsCount"])
+    .index("by_upvotes_received", ["upvotesReceived"]),
 
   destinations: defineTable({
     name: v.string(),
     slug: v.string(),
     description: v.string(),
-    region: v.string(), // "NCR" | "Luzon" | "Visayas" | "Mindanao"
+    region: v.union(v.literal("NCR"), v.literal("Luzon"), v.literal("Visayas"), v.literal("Mindanao")),
     province: v.string(),
     latitude: v.number(),
     longitude: v.number(),
@@ -33,7 +35,7 @@ export default defineSchema({
     bookmarksCount: v.number(),
     budgetMin: v.number(),
     budgetMax: v.number(),
-    budgetCategory: v.string(), // "Budget" | "Mid-range" | "Luxury"
+    budgetCategory: v.union(v.literal("Budget"), v.literal("Mid-range"), v.literal("Luxury")),
     bestTimeToVisit: v.optional(v.string()),
     festivals: v.array(
       v.object({
@@ -79,7 +81,7 @@ export default defineSchema({
   votes: defineTable({
     userId: v.id("users"),
     tipId: v.id("tips"),
-    direction: v.string(), // "up" | "down"
+    direction: v.union(v.literal("up"), v.literal("down")),
   })
     .index("by_user_and_tip", ["userId", "tipId"])
     .index("by_tip", ["tipId"])
@@ -107,7 +109,7 @@ export default defineSchema({
 
   notifications: defineTable({
     userId: v.id("users"),
-    type: v.string(), // "tip_upvoted" | "new_tip_on_bookmarked" | "badge_earned"
+    type: v.union(v.literal("tip_upvoted"), v.literal("new_tip_on_bookmarked"), v.literal("badge_earned")),
     message: v.string(),
     relatedId: v.optional(v.string()),
     isRead: v.boolean(),
@@ -131,7 +133,7 @@ export default defineSchema({
     sharedWith: v.array(
       v.object({
         userId: v.id("users"),
-        accessLevel: v.string(), // "view" | "edit"
+        accessLevel: v.union(v.literal("view"), v.literal("edit")),
       }),
     ),
     shareToken: v.optional(v.string()),
@@ -141,6 +143,15 @@ export default defineSchema({
     .index("by_user", ["userId"])
     .index("by_user_and_public", ["userId", "isPublic"])
     .index("by_share_token", ["shareToken"]),
+
+  itinerary_shares: defineTable({
+    itineraryId: v.id("itineraries"),
+    userId: v.id("users"),
+    accessLevel: v.union(v.literal("view"), v.literal("edit")),
+  })
+    .index("by_user", ["userId"])
+    .index("by_itinerary", ["itineraryId"])
+    .index("by_itinerary_and_user", ["itineraryId", "userId"]),
 
   checklists: defineTable({
     userId: v.id("users"),

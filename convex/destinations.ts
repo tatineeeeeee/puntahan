@@ -3,7 +3,7 @@ import { query } from "./_generated/server";
 
 export const list = query({
   args: {
-    region: v.optional(v.string()),
+    region: v.optional(v.union(v.literal("NCR"), v.literal("Luzon"), v.literal("Visayas"), v.literal("Mindanao"))),
   },
   handler: async (ctx, args) => {
     let q;
@@ -18,7 +18,7 @@ export const list = query({
         .withIndex("by_published", (idx) => idx.eq("isPublished", true));
     }
 
-    return await q.collect();
+    return await q.take(500);
   },
 });
 

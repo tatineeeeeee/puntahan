@@ -1,14 +1,6 @@
 import { v } from "convex/values";
-import { mutation, query, type QueryCtx, type MutationCtx } from "./_generated/server";
-
-async function getCurrentUser(ctx: QueryCtx | MutationCtx) {
-  const identity = await ctx.auth.getUserIdentity();
-  if (!identity) return null;
-  return await ctx.db
-    .query("users")
-    .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
-    .unique();
-}
+import { mutation, query } from "./_generated/server";
+import { getCurrentUser } from "./helpers";
 
 export const create = mutation({
   args: {
@@ -72,13 +64,26 @@ export const listByUser = query({
     return await ctx.db
       .query("checklists")
       .withIndex("by_user", (q) => q.eq("userId", user._id))
-      .collect();
+      .take(100);
   },
 });
 
 export const getByItinerary = query({
   args: { itineraryId: v.id("itineraries") },
   handler: async (ctx, args) => {
+    const itinerary = await ctx.db.get(args.itineraryId);
+    if (!itinerary) return null;
+
+    // Verify access: public itinerary, owner, or collaborator
+    if (!itinerary.isPublic) {
+      const user = await getCurrentUser(ctx);
+      const isOwner = user && itinerary.userId === user._id;
+      const isCollaborator = user && itinerary.sharedWith.some(
+        (s: { userId: typeof user._id }) => s.userId === user._id,
+      );
+      if (!isOwner && !isCollaborator) return null;
+    }
+
     return await ctx.db
       .query("checklists")
       .withIndex("by_itinerary", (q) => q.eq("itineraryId", args.itineraryId))

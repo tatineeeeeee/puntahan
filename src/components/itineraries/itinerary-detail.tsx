@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
@@ -17,6 +18,7 @@ interface ItineraryDetailProps {
 }
 
 export function ItineraryDetail({ itineraryId }: ItineraryDetailProps) {
+  const router = useRouter();
   const data = useQuery(api.itineraries.getById, { id: itineraryId });
   const update = useMutation(api.itineraries.update);
   const remove = useMutation(api.itineraries.remove);
@@ -93,7 +95,7 @@ export function ItineraryDetail({ itineraryId }: ItineraryDetailProps) {
 
   async function handleDelete() {
     await remove({ id: itineraryId });
-    window.location.href = "/itineraries";
+    router.push("/itineraries");
   }
 
   return (

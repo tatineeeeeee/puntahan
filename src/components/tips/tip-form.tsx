@@ -81,6 +81,7 @@ export function TipForm({ destinationId }: TipFormProps) {
               key={star}
               type="button"
               onClick={() => setRating(star)}
+              aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
               className="focus:outline-none"
             >
               <Rating value={star <= rating ? 1 : 0} max={1} size="md" />

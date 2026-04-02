@@ -55,7 +55,7 @@ export function BrowsePage() {
                 "px-3 py-2 text-sm transition-colors",
                 view === "grid"
                   ? "bg-charcoal text-white"
-                  : "bg-white text-charcoal hover:bg-sand",
+                  : "bg-warm-white text-charcoal hover:bg-sand",
               )}
               aria-label="Grid view"
             >
@@ -70,7 +70,7 @@ export function BrowsePage() {
                 "px-3 py-2 text-sm transition-colors",
                 view === "map"
                   ? "bg-charcoal text-white"
-                  : "bg-white text-charcoal hover:bg-sand",
+                  : "bg-warm-white text-charcoal hover:bg-sand",
               )}
               aria-label="Map view"
             >

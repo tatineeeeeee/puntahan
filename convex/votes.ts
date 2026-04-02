@@ -1,21 +1,15 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { getCurrentUserOrThrow, getCurrentUser } from "./helpers";
 
 export const castVote = mutation({
   args: {
     tipId: v.id("tips"),
-    direction: v.string(), // "up" | "down"
+    direction: v.union(v.literal("up"), v.literal("down")),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
-
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
-      .unique();
-    if (!user) throw new Error("User not found");
+    const user = await getCurrentUserOrThrow(ctx);
 
     const existing = await ctx.db
       .query("votes")
@@ -97,13 +91,7 @@ export const castVote = mutation({
 export const getVoteForTip = query({
   args: { tipId: v.id("tips") },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return null;
-
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
-      .unique();
+    const user = await getCurrentUser(ctx);
     if (!user) return null;
 
     const vote = await ctx.db

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Id } from "../../../convex/_generated/dataModel";
 import { Rating } from "@/components/ui/rating";
 import { BadgeIcon } from "@/components/ui/badge-icon";
@@ -43,10 +44,12 @@ export function TipCard({ tip }: TipCardProps) {
       {/* Header */}
       <div className="flex items-center gap-3">
         {tip.userImage ? (
-          <img
+          <Image
             src={tip.userImage}
             alt={tip.userName}
-            className="h-8 w-8 rounded-full object-cover"
+            width={32}
+            height={32}
+            className="rounded-full object-cover"
           />
         ) : (
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-teal text-sm font-bold text-white">

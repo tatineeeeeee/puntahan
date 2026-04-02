@@ -17,7 +17,7 @@ export function ShareModal({ itineraryId, onClose }: ShareModalProps) {
   const addCollaborator = useMutation(api.itineraries.addCollaborator);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [email, setEmail] = useState("");
-  const [accessLevel, setAccessLevel] = useState("view");
+  const [accessLevel, setAccessLevel] = useState<"view" | "edit">("view");
   const [copied, setCopied] = useState(false);
 
   async function handleGenerateLink() {
@@ -51,7 +51,7 @@ export function ShareModal({ itineraryId, onClose }: ShareModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/50" onClick={onClose}>
       <div
-        className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg space-y-4"
+        className="w-full max-w-md rounded-xl bg-warm-white p-6 shadow-lg space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-lg font-bold text-charcoal">Share Itinerary</h3>
@@ -90,7 +90,7 @@ export function ShareModal({ itineraryId, onClose }: ShareModalProps) {
             />
             <select
               value={accessLevel}
-              onChange={(e) => setAccessLevel(e.target.value)}
+              onChange={(e) => setAccessLevel(e.target.value as "view" | "edit")}
               className="rounded-lg border border-warm-gray/20 px-2 text-sm"
               aria-label="Access level"
             >

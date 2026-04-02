@@ -13,6 +13,7 @@ import type * as bookmarks from "../bookmarks.js";
 import type * as checklists from "../checklists.js";
 import type * as destinations from "../destinations.js";
 import type * as festivals from "../festivals.js";
+import type * as helpers from "../helpers.js";
 import type * as http from "../http.js";
 import type * as itineraries from "../itineraries.js";
 import type * as journals from "../journals.js";
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   checklists: typeof checklists;
   destinations: typeof destinations;
   festivals: typeof festivals;
+  helpers: typeof helpers;
   http: typeof http;
   itineraries: typeof itineraries;
   journals: typeof journals;

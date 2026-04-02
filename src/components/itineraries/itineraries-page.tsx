@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
 import { useConvexAuth } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -10,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 
 export function ItinerariesPage() {
+  const router = useRouter();
   const { isAuthenticated } = useConvexAuth();
   const itineraries = useQuery(
     api.itineraries.listByUser,
@@ -35,7 +37,7 @@ export function ItinerariesPage() {
     const id = await createItinerary({ name: name.trim() });
     setName("");
     setShowCreate(false);
-    window.location.href = `/itineraries?selected=${id}`;
+    router.push(`/itineraries?selected=${id}`);
   }
 
   return (

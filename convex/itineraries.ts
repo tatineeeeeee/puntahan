@@ -1,23 +1,17 @@
 import { v } from "convex/values";
-import { mutation, query, type QueryCtx, type MutationCtx } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
+import { getCurrentUser } from "./helpers";
 
 function generateToken(): string {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
   let result = "";
-  for (let i = 0; i < 12; i++) {
-    result += chars[Math.floor(Math.random() * chars.length)];
+  for (let i = 0; i < 16; i++) {
+    result += chars[bytes[i] % chars.length];
   }
   return result;
-}
-
-async function getCurrentUser(ctx: QueryCtx | MutationCtx) {
-  const identity = await ctx.auth.getUserIdentity();
-  if (!identity) return null;
-  return await ctx.db
-    .query("users")
-    .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
-    .unique();
 }
 
 export const create = mutation({
@@ -48,6 +42,16 @@ export const getById = query({
   handler: async (ctx, args) => {
     const itinerary = await ctx.db.get(args.id);
     if (!itinerary) return null;
+
+    // Public itineraries are accessible to everyone
+    if (!itinerary.isPublic) {
+      const user = await getCurrentUser(ctx);
+      const isOwner = user && itinerary.userId === user._id;
+      const isCollaborator = user && itinerary.sharedWith.some(
+        (s: { userId: Id<"users"> }) => s.userId === user._id,
+      );
+      if (!isOwner && !isCollaborator) return null;
+    }
 
     const allDestIds = new Set(
       itinerary.days.flatMap((d: { destinationIds: Id<"destinations">[] }) => d.destinationIds),
@@ -108,7 +112,7 @@ export const listByUser = query({
     return await ctx.db
       .query("itineraries")
       .withIndex("by_user", (q) => q.eq("userId", user._id))
-      .collect();
+      .take(100);
   },
 });
 
@@ -118,14 +122,16 @@ export const listSharedWithMe = query({
     const user = await getCurrentUser(ctx);
     if (!user) return [];
 
-    // Get all itineraries and filter for shared ones
-    // (In production, you'd want a separate index for this)
-    const all = await ctx.db.query("itineraries").collect();
-    return all.filter((it) =>
-      it.sharedWith.some(
-        (s: { userId: Id<"users"> }) => s.userId === user._id,
-      ),
+    // Query the denormalized itinerary_shares table for efficient lookup
+    const shares = await ctx.db
+      .query("itinerary_shares")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .take(100);
+
+    const itineraries = await Promise.all(
+      shares.map((s) => ctx.db.get(s.itineraryId)),
     );
+    return itineraries.filter(Boolean);
   },
 });
 
@@ -160,13 +166,13 @@ export const update = mutation({
     );
     if (!isOwner && !isEditor) throw new Error("Not authorized");
 
-    const patch: Record<string, unknown> = { updatedAt: Date.now() };
-    if (args.name !== undefined) patch.name = args.name;
-    if (args.description !== undefined) patch.description = args.description;
-    if (args.days !== undefined) patch.days = args.days;
-    if (args.isPublic !== undefined) patch.isPublic = args.isPublic;
-
-    await ctx.db.patch(args.id, patch);
+    await ctx.db.patch(args.id, {
+      updatedAt: Date.now(),
+      ...(args.name !== undefined && { name: args.name }),
+      ...(args.description !== undefined && { description: args.description }),
+      ...(args.days !== undefined && { days: args.days }),
+      ...(args.isPublic !== undefined && { isPublic: args.isPublic }),
+    });
   },
 });
 
@@ -179,6 +185,15 @@ export const remove = mutation({
     const itinerary = await ctx.db.get(args.id);
     if (!itinerary || itinerary.userId !== user._id) {
       throw new Error("Not authorized");
+    }
+
+    // Clean up denormalized share records
+    const shares = await ctx.db
+      .query("itinerary_shares")
+      .withIndex("by_itinerary", (q) => q.eq("itineraryId", args.id))
+      .take(100);
+    for (const share of shares) {
+      await ctx.db.delete(share._id);
     }
 
     await ctx.db.delete(args.id);
@@ -209,7 +224,7 @@ export const addCollaborator = mutation({
   args: {
     id: v.id("itineraries"),
     email: v.string(),
-    accessLevel: v.string(),
+    accessLevel: v.union(v.literal("view"), v.literal("edit")),
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUser(ctx);
@@ -236,6 +251,13 @@ export const addCollaborator = mutation({
         ...itinerary.sharedWith,
         { userId: targetUser._id, accessLevel: args.accessLevel },
       ],
+    });
+
+    // Denormalized share record for efficient lookups
+    await ctx.db.insert("itinerary_shares", {
+      itineraryId: args.id,
+      userId: targetUser._id,
+      accessLevel: args.accessLevel,
     });
   },
 });

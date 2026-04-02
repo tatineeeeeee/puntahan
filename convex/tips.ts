@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { getCurrentUserOrThrow, getCurrentUser } from "./helpers";
 
 export const create = mutation({
   args: {
@@ -14,14 +15,17 @@ export const create = mutation({
     ),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
+    const user = await getCurrentUserOrThrow(ctx);
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
-      .unique();
-    if (!user) throw new Error("User not found");
+    if (args.rating < 1 || args.rating > 5) {
+      throw new Error("Rating must be between 1 and 5");
+    }
+    if (args.content.length < 10 || args.content.length > 5000) {
+      throw new Error("Content must be between 10 and 5000 characters");
+    }
+
+    const dest = await ctx.db.get(args.destinationId);
+    if (!dest || !dest.isPublished) throw new Error("Destination not found");
 
     const totalBudget = args.budgetBreakdown.reduce(
       (sum, item) => sum + item.amount,
@@ -42,9 +46,8 @@ export const create = mutation({
       isApproved: true,
     });
 
-    // Update destination stats atomically
-    const dest = await ctx.db.get(args.destinationId);
-    if (dest) {
+    // Update destination stats
+    {
       const newCount = dest.tipsCount + 1;
       const newAvg =
         (dest.avgRating * dest.tipsCount + args.rating) / newCount;
@@ -68,10 +71,10 @@ export const listByDestination = query({
   handler: async (ctx, args) => {
     const tips = await ctx.db
       .query("tips")
-      .withIndex("by_destination", (q) =>
-        q.eq("destinationId", args.destinationId),
+      .withIndex("by_destination_and_approved", (q) =>
+        q.eq("destinationId", args.destinationId).eq("isApproved", true),
       )
-      .collect();
+      .take(200);
 
     return await Promise.all(
       tips.map(async (tip) => {
@@ -93,19 +96,13 @@ export const listByDestination = query({
 export const listByUser = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return [];
-
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
-      .unique();
+    const user = await getCurrentUser(ctx);
     if (!user) return [];
 
     const tips = await ctx.db
       .query("tips")
       .withIndex("by_user", (q) => q.eq("userId", user._id))
-      .collect();
+      .take(200);
 
     return await Promise.all(
       tips.map(async (tip) => {

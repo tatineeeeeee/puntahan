@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
@@ -44,12 +45,15 @@ export function PhotoGallery({ destinationId }: PhotoGalleryProps) {
           <button
             key={photo._id}
             onClick={() => setLightboxIndex(i)}
-            className="aspect-square overflow-hidden rounded-lg focus:outline-none focus:ring-2 focus:ring-teal"
+            className="relative aspect-square overflow-hidden rounded-lg focus:outline-none focus:ring-2 focus:ring-teal"
+            aria-label={`View photo: ${photo.caption ?? "Community photo"}`}
           >
-            <img
+            <Image
               src={photo.url}
               alt={photo.caption ?? "Community photo"}
-              className="h-full w-full object-cover transition-transform hover:scale-105"
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+              className="object-cover transition-transform hover:scale-105"
             />
           </button>
         ))}

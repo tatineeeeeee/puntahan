@@ -29,8 +29,14 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <ConvexClientProvider>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-coral focus:px-4 focus:py-2 focus:text-white focus:shadow-lg"
+          >
+            Skip to content
+          </a>
           <Header />
-          <div className="pb-16 sm:pb-0">{children}</div>
+          <div id="main-content" className="pb-16 sm:pb-0">{children}</div>
           <BottomNav />
         </ConvexClientProvider>
       </body>

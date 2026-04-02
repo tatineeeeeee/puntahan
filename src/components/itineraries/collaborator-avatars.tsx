@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface Collaborator {
@@ -27,10 +28,12 @@ export function CollaboratorAvatars({
           className="relative h-7 w-7 rounded-full border-2 border-white overflow-hidden"
         >
           {c.imageUrl ? (
-            <img
+            <Image
               src={c.imageUrl}
               alt={c.name}
-              className="h-full w-full object-cover"
+              width={28}
+              height={28}
+              className="object-cover"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-teal text-[10px] font-bold text-white">

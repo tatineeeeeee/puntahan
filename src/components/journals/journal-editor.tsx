@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useMutation } from "convex/react";
 import { useConvexAuth } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -9,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 export function JournalEditor() {
+  const router = useRouter();
   const { isAuthenticated } = useConvexAuth();
   const createJournal = useMutation(api.journals.create);
   const [title, setTitle] = useState("");
@@ -38,7 +40,7 @@ export function JournalEditor() {
         destinationIds: [],
         isPublic,
       });
-      window.location.href = "/journals";
+      router.push("/journals");
     } finally {
       setSubmitting(false);
     }
@@ -80,7 +82,7 @@ export function JournalEditor() {
           <Button type="submit" disabled={submitting || !title.trim() || !content.trim()}>
             {submitting ? "Publishing..." : "Publish Journal"}
           </Button>
-          <Button type="button" variant="ghost" onClick={() => window.history.back()}>
+          <Button type="button" variant="ghost" onClick={() => router.back()}>
             Cancel
           </Button>
         </div>

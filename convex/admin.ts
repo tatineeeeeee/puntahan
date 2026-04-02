@@ -1,28 +1,21 @@
 import { v } from "convex/values";
-import { mutation, query, type QueryCtx, type MutationCtx } from "./_generated/server";
-
-async function assertAdmin(ctx: QueryCtx | MutationCtx) {
-  const identity = await ctx.auth.getUserIdentity();
-  if (!identity) throw new Error("Not authenticated");
-
-  const user = await ctx.db
-    .query("users")
-    .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
-    .unique();
-  if (!user || user.role !== "admin") throw new Error("Not authorized");
-
-  return user;
-}
+import { mutation, query } from "./_generated/server";
+import { assertAdmin } from "./helpers";
 
 export const dashboardStats = query({
   args: {},
   handler: async (ctx) => {
     await assertAdmin(ctx);
 
-    const users = await ctx.db.query("users").collect();
-    const destinations = await ctx.db.query("destinations").collect();
-    const tips = await ctx.db.query("tips").collect();
-    const pendingTips = tips.filter((t) => !t.isApproved);
+    const [users, destinations, tips, pendingTips] = await Promise.all([
+      ctx.db.query("users").take(1000),
+      ctx.db.query("destinations").take(1000),
+      ctx.db.query("tips").take(1000),
+      ctx.db
+        .query("tips")
+        .withIndex("by_approved", (q) => q.eq("isApproved", false))
+        .take(100),
+    ]);
 
     return {
       totalUsers: users.length,
@@ -41,7 +34,7 @@ export const pendingTips = query({
     const tips = await ctx.db
       .query("tips")
       .withIndex("by_approved", (q) => q.eq("isApproved", false))
-      .collect();
+      .take(100);
 
     return await Promise.all(
       tips.map(async (tip) => {
@@ -87,14 +80,14 @@ export const allUsers = query({
   args: {},
   handler: async (ctx) => {
     await assertAdmin(ctx);
-    return await ctx.db.query("users").collect();
+    return await ctx.db.query("users").take(500);
   },
 });
 
 export const updateUserRole = mutation({
   args: {
     userId: v.id("users"),
-    role: v.string(),
+    role: v.union(v.literal("user"), v.literal("admin")),
   },
   handler: async (ctx, args) => {
     await assertAdmin(ctx);

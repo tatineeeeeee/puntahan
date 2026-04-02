@@ -1,11 +1,11 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { getCurrentUserOrThrow } from "./helpers";
 
 export const generateUploadUrl = mutation({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
+    await getCurrentUserOrThrow(ctx);
     return await ctx.storage.generateUploadUrl();
   },
 });
@@ -17,14 +17,7 @@ export const savePhoto = mutation({
     caption: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
-
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
-      .unique();
-    if (!user) throw new Error("User not found");
+    const user = await getCurrentUserOrThrow(ctx);
 
     await ctx.db.insert("photos", {
       destinationId: args.destinationId,
@@ -55,7 +48,7 @@ export const listByDestination = query({
       .withIndex("by_destination", (q) =>
         q.eq("destinationId", args.destinationId),
       )
-      .collect();
+      .take(100);
 
     return await Promise.all(
       photos.map(async (photo) => ({

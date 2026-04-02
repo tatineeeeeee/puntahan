@@ -1,19 +1,13 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { getCurrentUserOrThrow, getCurrentUser } from "./helpers";
 
 export const toggle = mutation({
   args: {
     destinationId: v.id("destinations"),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
-
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
-      .unique();
-    if (!user) throw new Error("User not found");
+    const user = await getCurrentUserOrThrow(ctx);
 
     const existing = await ctx.db
       .query("bookmarks")
@@ -57,13 +51,7 @@ export const toggle = mutation({
 export const isBookmarked = query({
   args: { destinationId: v.id("destinations") },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return false;
-
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
-      .unique();
+    const user = await getCurrentUser(ctx);
     if (!user) return false;
 
     const bookmark = await ctx.db
@@ -80,19 +68,13 @@ export const isBookmarked = query({
 export const listByUser = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return [];
-
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
-      .unique();
+    const user = await getCurrentUser(ctx);
     if (!user) return [];
 
     const bookmarks = await ctx.db
       .query("bookmarks")
       .withIndex("by_user", (q) => q.eq("userId", user._id))
-      .collect();
+      .take(500);
 
     return await Promise.all(
       bookmarks.map(async (bm) => {
@@ -109,14 +91,7 @@ export const listByUser = query({
 export const toggleVisited = mutation({
   args: { destinationId: v.id("destinations") },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
-
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkUserId", identity.subject))
-      .unique();
-    if (!user) throw new Error("User not found");
+    const user = await getCurrentUserOrThrow(ctx);
 
     const bookmark = await ctx.db
       .query("bookmarks")
