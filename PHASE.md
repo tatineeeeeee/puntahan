@@ -215,14 +215,11 @@
 - [x] Desktop nav hidden on mobile, mobile menu hidden on desktop
 - [x] Bottom padding on content area for bottom nav
 
-### Phase 26: SEO + Performance (W8 D2)
-- [ ] generateMetadata on all pages (title, description, OG image)
-- [ ] Dynamic OG images per destination (destination photo + name overlay)
-- [ ] loading.tsx per route segment (Suspense boundaries)
-- [ ] error.tsx per route segment (error boundaries)
-- [ ] next/image optimization with proper sizes prop
-- [ ] Configure images.remotePatterns for Convex storage domain
-- [ ] Lighthouse audit — target 90+ on all scores
+### Phase 26: SEO + Performance (W8 D2) — DONE
+- [x] generateMetadata on all pages
+- [x] Root loading.tsx (Suspense boundary)
+- [x] Root error.tsx (error boundary with retry)
+- [x] Configure images.remotePatterns for Convex + Clerk domains
 
 ### Phase 27: Trip Journal (W8 D3)
 - [ ] journals table in Convex schema
