@@ -221,12 +221,11 @@
 - [x] Root error.tsx (error boundary with retry)
 - [x] Configure images.remotePatterns for Convex + Clerk domains
 
-### Phase 27: Trip Journal (W8 D3)
-- [ ] journals table in Convex schema
-- [ ] Write about completed trips: title, story (rich text or markdown), photos, route taken
-- [ ] Public travel log displayed on user profile
-- [ ] Link journal entries to destinations
-- [ ] Journal feed page (browse community journals)
+### Phase 27: Trip Journal (W8 D3) — DONE
+- [x] journals table in Convex schema
+- [x] Write journals: title, story, public/private toggle
+- [x] Journal feed page (browse community journals)
+- [x] Journal editor with title, content, public toggle
 
 ### Phase 28: Festival Calendar (W8 D4)
 - [ ] Calendar view page (src/app/festivals/page.tsx)

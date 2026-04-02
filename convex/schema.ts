@@ -156,4 +156,16 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_itinerary", ["itineraryId"]),
+
+  journals: defineTable({
+    userId: v.id("users"),
+    title: v.string(),
+    content: v.string(),
+    destinationIds: v.array(v.id("destinations")),
+    isPublic: v.boolean(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_public", ["isPublic"]),
 });
