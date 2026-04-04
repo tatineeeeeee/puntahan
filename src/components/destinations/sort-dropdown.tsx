@@ -23,7 +23,7 @@ export function SortDropdown({ value, onChange, className }: SortDropdownProps) 
       value={value}
       onChange={(e) => onChange(e.target.value as SortOption)}
       className={cn(
-        "rounded-lg border border-warm-gray/20 bg-white px-3 py-2.5 text-sm text-charcoal focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal",
+        "rounded-lg border border-warm-gray/20 bg-surface-highest px-3 py-2.5 text-sm text-charcoal focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal",
         className,
       )}
       aria-label="Sort destinations"

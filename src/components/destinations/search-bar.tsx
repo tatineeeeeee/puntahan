@@ -46,7 +46,7 @@ export function SearchBar({ value, onChange, className }: SearchBarProps) {
         placeholder="Search destinations..."
         value={local}
         onChange={(e) => setLocal(e.target.value)}
-        className="w-full rounded-lg border border-warm-gray/20 bg-white py-2.5 pl-10 pr-4 text-sm text-charcoal placeholder:text-warm-gray/60 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
+        className="w-full rounded-lg border border-warm-gray/20 bg-surface-highest py-2.5 pl-10 pr-4 text-sm text-charcoal placeholder:text-warm-gray/60 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
       />
     </div>
   );

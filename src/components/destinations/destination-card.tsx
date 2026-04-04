@@ -50,7 +50,7 @@ export function DestinationCard({ destination, className }: DestinationCardProps
             "flex h-6 w-6 items-center justify-center rounded border text-xs transition-colors",
             comparing
               ? "border-teal bg-teal text-white"
-              : "border-warm-gray/30 bg-white/80 text-warm-gray hover:border-teal",
+              : "border-warm-gray/30 bg-surface-highest/80 text-warm-gray hover:border-teal",
           )}
           aria-label={comparing ? "Remove from comparison" : "Add to comparison"}
         >

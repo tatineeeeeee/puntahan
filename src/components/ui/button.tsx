@@ -7,7 +7,7 @@ const variantStyles = {
   secondary:
     "bg-teal text-white hover:bg-teal/90 focus-visible:ring-teal/50",
   ghost:
-    "border border-warm-gray/30 text-charcoal hover:bg-sand focus-visible:ring-charcoal/20",
+    "border border-warm-gray/30 text-charcoal hover:bg-surface-hover focus-visible:ring-charcoal/20",
 } as const;
 
 const sizeStyles = {

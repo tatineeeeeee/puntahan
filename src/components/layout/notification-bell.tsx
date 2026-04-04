@@ -38,7 +38,7 @@ export function NotificationBell() {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="relative rounded-full p-1.5 text-charcoal hover:bg-sand transition-colors"
+        className="relative rounded-full p-1.5 text-charcoal hover:bg-surface-hover transition-colors"
         aria-label="Notifications"
       >
         <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -52,7 +52,7 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 rounded-xl bg-white shadow-lg border border-warm-gray/10 z-50">
+        <div className="absolute right-0 top-full mt-2 w-80 rounded-xl bg-surface-highest shadow-lg border border-warm-gray/10 dark:border-warm-gray/20 z-50">
           <div className="flex items-center justify-between border-b border-warm-gray/10 px-4 py-2.5">
             <p className="text-sm font-bold text-charcoal">Notifications</p>
             {(count ?? 0) > 0 && (

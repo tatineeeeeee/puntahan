@@ -1,7 +1,9 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
-@theme inline {
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme {
   --color-coral: #FF6B6B;
   --color-teal: #0D9488;
   --color-warm-white: #FFFBF5;
@@ -18,17 +20,36 @@
   --color-background: #FFFBF5;
   --color-foreground: #1C1917;
 
+  --color-surface-hover: #FDF0B8;
+  --color-surface-highest: #FFFFFF;
+
   --font-sans: var(--font-dm-sans);
 }
 
-/* Dark mode — swaps CSS variables when data-theme="dark" on <html> */
+/* Dark mode — warm charcoal palette with surface hierarchy */
 [data-theme="dark"] {
-  --color-background: #1C1917;
-  --color-foreground: #FEF3C7;
-  --color-warm-white: #1C1917;
-  --color-sand: #292524;
-  --color-charcoal: #FEF3C7;
-  --color-warm-gray: #A8A29E;
+  /* Surfaces (warm charcoal, brown-tinted) */
+  --color-background: #1A1614;
+  --color-warm-white: #1A1614;
+  --color-sand: #2C2623;
+  --color-surface-hover: #3D3530;
+  --color-surface-highest: #4A423C;
+
+  /* Text (warm off-whites) */
+  --color-foreground: #F5EDE4;
+  --color-charcoal: #F5EDE4;
+  --color-warm-gray: #A89F97;
+
+  /* Accents (desaturated 15%) */
+  --color-coral: #E8736F;
+  --color-teal: #2BA89E;
+  --color-sunset: #E8944A;
+
+  /* Region badges (desaturated) */
+  --color-ncr: #5B9BF0;
+  --color-luzon: #34D399;
+  --color-visayas: #F0B94A;
+  --color-mindanao: #9D7CF0;
 }
 
 body {
