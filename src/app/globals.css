@@ -58,3 +58,19 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
   transition: background-color 0.2s, color 0.2s;
 }
+
+/* Print styles — clean itinerary output */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  header, nav, footer,
+  .print\:hidden,
+  #bottom-nav {
+    display: none !important;
+  }
+  * {
+    box-shadow: none !important;
+  }
+}

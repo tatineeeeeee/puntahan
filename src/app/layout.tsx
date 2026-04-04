@@ -14,7 +14,20 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "puntahan — Discover the Philippines",
   description:
-    "Community-driven travel guide for Philippine destinations",
+    "Community-driven travel guide for Philippine destinations. Browse, upvote, and share travel spots organized by region.",
+  openGraph: {
+    title: "puntahan — Discover the Philippines",
+    description:
+      "Community-driven travel guide for Philippine destinations. Browse, upvote, and share travel spots organized by region.",
+    siteName: "puntahan",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "puntahan — Discover the Philippines",
+    description:
+      "Community-driven travel guide for Philippine destinations.",
+  },
 };
 
 export default function RootLayout({

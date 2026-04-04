@@ -6,6 +6,7 @@ import { api } from "../../../convex/_generated/api";
 import { Badge } from "@/components/ui/badge";
 import { Rating } from "@/components/ui/rating";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import { PhotoGallery } from "./photo-gallery";
 import { PhotoUpload } from "./photo-upload";
 import { NearbyDestinations } from "./nearby-destinations";
@@ -76,6 +77,25 @@ export function DestinationDetail({ slug }: DestinationDetailProps) {
           />
         </div>
       </div>
+
+      {/* Advisory Banner */}
+      {destination.advisory && (
+        <div
+          className={cn(
+            "mx-auto max-w-6xl px-4 py-3 mt-4 rounded-xl text-sm font-medium",
+            destination.advisory.level === "info" && "bg-teal/10 text-teal",
+            destination.advisory.level === "warning" && "bg-sunset/10 text-sunset",
+            destination.advisory.level === "alert" && "bg-coral/10 text-coral",
+          )}
+        >
+          <span className="mr-2">
+            {destination.advisory.level === "info" && "ℹ️"}
+            {destination.advisory.level === "warning" && "⚠️"}
+            {destination.advisory.level === "alert" && "🚨"}
+          </span>
+          {destination.advisory.message}
+        </div>
+      )}
 
       {/* Content */}
       <div className="mx-auto max-w-6xl px-4 py-8">

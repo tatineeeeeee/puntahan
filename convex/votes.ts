@@ -2,6 +2,34 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { getCurrentUserOrThrow, getCurrentUser } from "./helpers";
+import { Id } from "./_generated/dataModel";
+import { MutationCtx } from "./_generated/server";
+
+async function recalcWeightedScore(ctx: MutationCtx, tipId: Id<"tips">) {
+  const tip = await ctx.db.get(tipId);
+  if (!tip) return;
+
+  // Get all votes for this tip and compute weighted score
+  const votes = await ctx.db
+    .query("votes")
+    .withIndex("by_tip", (q) => q.eq("tipId", tipId))
+    .collect();
+
+  let score = 0;
+  for (const vote of votes) {
+    const voter = await ctx.db.get(vote.userId);
+    if (!voter) continue;
+    const base = vote.direction === "up" ? 1 : -1;
+    const weight =
+      (1 + Math.log2((voter.tipsCount || 0) + 1)) *
+      (1 + Math.log2((voter.upvotesReceived || 0) + 1));
+    score += base * weight;
+  }
+
+  await ctx.db.patch(tipId, {
+    weightedScore: Math.round(score * 10) / 10,
+  });
+}
 
 export const castVote = mutation({
   args: {
@@ -39,6 +67,7 @@ export const castVote = mutation({
             upvotesReceived: tipAuthor.upvotesReceived - 1,
           });
         }
+        await recalcWeightedScore(ctx, args.tipId);
         return null;
       } else {
         // Switch vote direction
@@ -55,6 +84,7 @@ export const castVote = mutation({
               tipAuthor.upvotesReceived + (wasUp ? -1 : 1),
           });
         }
+        await recalcWeightedScore(ctx, args.tipId);
         return args.direction;
       }
     } else {
@@ -83,6 +113,7 @@ export const castVote = mutation({
           });
         }
       }
+      await recalcWeightedScore(ctx, args.tipId);
       return args.direction;
     }
   },

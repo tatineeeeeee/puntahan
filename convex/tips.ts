@@ -13,6 +13,7 @@ export const create = mutation({
         amount: v.number(),
       }),
     ),
+    photosStorageIds: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUserOrThrow(ctx);
@@ -41,7 +42,8 @@ export const create = mutation({
       totalBudget,
       upvotes: 0,
       downvotes: 0,
-      photosStorageIds: [],
+      photosStorageIds: (args.photosStorageIds ?? []).slice(0, 3),
+      weightedScore: 0,
       createdAt: Date.now(),
       isApproved: true,
     });
@@ -79,8 +81,12 @@ export const listByDestination = query({
     return await Promise.all(
       tips.map(async (tip) => {
         const user = await ctx.db.get(tip.userId);
+        const photoUrls = await Promise.all(
+          tip.photosStorageIds.map((id) => ctx.storage.getUrl(id)),
+        );
         return {
           ...tip,
+          photoUrls: photoUrls.filter((url): url is string => url !== null),
           userName: user?.name ?? "Anonymous",
           userImage: user?.imageUrl ?? null,
           userTipsCount: user?.tipsCount ?? 0,
@@ -90,6 +96,25 @@ export const listByDestination = query({
         };
       }),
     );
+  },
+});
+
+export const getProvinceTipCounts = query({
+  args: { userId: v.optional(v.id("users")) },
+  handler: async (ctx, args) => {
+    if (!args.userId) return {};
+    const tips = await ctx.db
+      .query("tips")
+      .withIndex("by_user", (q) => q.eq("userId", args.userId!))
+      .collect();
+    const counts: Record<string, number> = {};
+    for (const tip of tips) {
+      const dest = await ctx.db.get(tip.destinationId);
+      if (dest) {
+        counts[dest.province] = (counts[dest.province] ?? 0) + 1;
+      }
+    }
+    return counts;
   },
 });
 

@@ -16,7 +16,9 @@ interface TipCardProps {
     budgetBreakdown: { category: string; amount: number }[];
     upvotes: number;
     downvotes: number;
+    weightedScore?: number;
     createdAt: number;
+    photoUrls?: string[];
     userName: string;
     userImage: string | null;
     userTipsCount: number;
@@ -68,6 +70,22 @@ export function TipCard({ tip }: TipCardProps) {
 
       {/* Content */}
       <p className="text-sm leading-relaxed text-charcoal/80">{tip.content}</p>
+
+      {/* Photos */}
+      {tip.photoUrls && tip.photoUrls.length > 0 && (
+        <div className="flex gap-2 overflow-x-auto">
+          {tip.photoUrls.map((url) => (
+            <Image
+              key={url}
+              src={url}
+              alt="Tip photo"
+              width={160}
+              height={120}
+              className="rounded-lg object-cover"
+            />
+          ))}
+        </div>
+      )}
 
       {/* Budget */}
       {tip.budgetBreakdown.length > 0 && (

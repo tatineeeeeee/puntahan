@@ -7,8 +7,9 @@ import { Tabs } from "@/components/ui/tabs";
 import { DashboardTab } from "./dashboard-tab";
 import { PendingTipsTab } from "./pending-tips-tab";
 import { UsersTab } from "./users-tab";
+import { AdvisoriesTab } from "./advisories-tab";
 
-const tabs = ["Dashboard", "Pending Tips", "Users"] as const;
+const tabs = ["Dashboard", "Pending Tips", "Users", "Advisories"] as const;
 
 export function AdminPage() {
   const currentUser = useQuery(api.users.getCurrentUser);
@@ -43,6 +44,7 @@ export function AdminPage() {
             {activeTab === "Dashboard" && <DashboardTab />}
             {activeTab === "Pending Tips" && <PendingTipsTab />}
             {activeTab === "Users" && <UsersTab />}
+            {activeTab === "Advisories" && <AdvisoriesTab />}
           </>
         )}
       </Tabs>

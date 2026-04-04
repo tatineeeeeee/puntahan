@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useMutation } from "convex/react";
 import { useConvexAuth } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -19,14 +19,45 @@ const defaultCategories = ["Food", "Transport", "Accommodation", "Activities"];
 export function TipForm({ destinationId }: TipFormProps) {
   const { isAuthenticated } = useConvexAuth();
   const createTip = useMutation(api.tips.create);
+  const generateUploadUrl = useMutation(api.photos.generateUploadUrl);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [content, setContent] = useState("");
   const [rating, setRating] = useState(0);
   const [budgetRows, setBudgetRows] = useState(
     defaultCategories.map((cat) => ({ category: cat, amount: 0 })),
   );
+  const [photoIds, setPhotoIds] = useState<string[]>([]);
+  const [photoPreviewUrls, setPhotoPreviewUrls] = useState<string[]>([]);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+
+  async function handlePhotoSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !file.type.startsWith("image/") || photoIds.length >= 3) return;
+
+    setUploadingPhoto(true);
+    try {
+      const uploadUrl = await generateUploadUrl();
+      const result = await fetch(uploadUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      const { storageId } = await result.json();
+      setPhotoIds((prev) => [...prev, storageId]);
+      setPhotoPreviewUrls((prev) => [...prev, URL.createObjectURL(file)]);
+    } finally {
+      setUploadingPhoto(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  function removePhoto(index: number) {
+    setPhotoIds((prev) => prev.filter((_, i) => i !== index));
+    setPhotoPreviewUrls((prev) => prev.filter((_, i) => i !== index));
+  }
 
   if (!isAuthenticated) {
     return (
@@ -56,12 +87,15 @@ export function TipForm({ destinationId }: TipFormProps) {
         content: content.trim(),
         rating,
         budgetBreakdown: breakdown,
+        photosStorageIds: photoIds.length > 0 ? photoIds : undefined,
       });
       setContent("");
       setRating(0);
       setBudgetRows(
         defaultCategories.map((cat) => ({ category: cat, amount: 0 })),
       );
+      setPhotoIds([]);
+      setPhotoPreviewUrls([]);
       setShowForm(false);
     } finally {
       setSubmitting(false);
@@ -136,6 +170,56 @@ export function TipForm({ destinationId }: TipFormProps) {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Photos */}
+      <div>
+        <p className="mb-2 text-sm font-medium text-charcoal">
+          Photos (max 3)
+        </p>
+        {photoPreviewUrls.length > 0 && (
+          <div className="mb-2 flex gap-2">
+            {photoPreviewUrls.map((url, i) => (
+              <div key={url} className="relative h-20 w-20">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={url}
+                  alt={`Preview ${i + 1}`}
+                  className="h-full w-full rounded-lg object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => removePhoto(i)}
+                  className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-coral text-[10px] font-bold text-white"
+                  aria-label={`Remove photo ${i + 1}`}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        {photoIds.length < 3 && (
+          <>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoSelect}
+              className="hidden"
+              aria-label="Upload tip photo"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              disabled={uploadingPhoto}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {uploadingPhoto ? "Uploading..." : "Add Photo"}
+            </Button>
+          </>
+        )}
       </div>
 
       <div className="flex gap-2">

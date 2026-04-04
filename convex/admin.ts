@@ -94,3 +94,29 @@ export const updateUserRole = mutation({
     await ctx.db.patch(args.userId, { role: args.role });
   },
 });
+
+export const setAdvisory = mutation({
+  args: {
+    destinationId: v.id("destinations"),
+    level: v.union(v.literal("info"), v.literal("warning"), v.literal("alert")),
+    message: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await assertAdmin(ctx);
+    await ctx.db.patch(args.destinationId, {
+      advisory: {
+        level: args.level,
+        message: args.message,
+        updatedAt: Date.now(),
+      },
+    });
+  },
+});
+
+export const clearAdvisory = mutation({
+  args: { destinationId: v.id("destinations") },
+  handler: async (ctx, args) => {
+    await assertAdmin(ctx);
+    await ctx.db.patch(args.destinationId, { advisory: undefined });
+  },
+});

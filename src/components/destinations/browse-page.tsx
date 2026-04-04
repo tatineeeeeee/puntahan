@@ -1,14 +1,21 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { SearchBar } from "./search-bar";
 import { SortDropdown, type SortOption } from "./sort-dropdown";
 import { DestinationGrid } from "./destination-grid";
 import { AdvancedFilterPanel } from "@/components/search/advanced-filter-panel";
-import { DEFAULT_FILTERS, filterDestinations, type FilterState } from "@/lib/filter-utils";
+import {
+  DEFAULT_FILTERS,
+  filterDestinations,
+  filtersToSearchParams,
+  searchParamsToFilters,
+  type FilterState,
+} from "@/lib/filter-utils";
 import { cn } from "@/lib/utils";
 
 const MapView = dynamic(() => import("./map-view").then((m) => m.MapView), {
@@ -19,10 +26,39 @@ const MapView = dynamic(() => import("./map-view").then((m) => m.MapView), {
 });
 
 export function BrowsePage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sort, setSort] = useState<SortOption>("rating");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialized = useRef(false);
+
+  // Initialize from URL on first render
+  const initial = useMemo(() => {
+    if (typeof window === "undefined") return { q: "", sort: "rating", filters: DEFAULT_FILTERS };
+    return searchParamsToFilters(new URLSearchParams(searchParams.toString()));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const [searchQuery, setSearchQuery] = useState(initial.q);
+  const [sort, setSort] = useState<SortOption>(initial.sort as SortOption);
   const [view, setView] = useState<"grid" | "map">("grid");
-  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+  const [filters, setFilters] = useState<FilterState>(initial.filters);
+
+  // Sync state → URL
+  const syncToUrl = useCallback(
+    (q: string, s: SortOption, f: FilterState) => {
+      const params = filtersToSearchParams(f, s, q);
+      const str = params.toString();
+      router.replace(str ? `?${str}` : "/", { scroll: false });
+    },
+    [router],
+  );
+
+  useEffect(() => {
+    if (!initialized.current) {
+      initialized.current = true;
+      return;
+    }
+    syncToUrl(searchQuery, sort, filters);
+  }, [searchQuery, sort, filters, syncToUrl]);
 
   const destinations = useQuery(api.destinations.list, {});
   const searchResults = useQuery(

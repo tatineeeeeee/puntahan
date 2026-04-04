@@ -1,7 +1,9 @@
 import {
   BADGE_DEFINITIONS,
   computeUserBadges,
+  computeLocalGuideBadges,
   type BadgeDefinition,
+  type LocalGuideBadge,
 } from "@/lib/badges";
 import { cn } from "@/lib/utils";
 
@@ -12,11 +14,15 @@ interface BadgeShelfProps {
     destinationsVisited: number;
     photosUploaded: number;
   };
+  provinceTipCounts?: Record<string, number>;
 }
 
-export function BadgeShelf({ stats }: BadgeShelfProps) {
+export function BadgeShelf({ stats, provinceTipCounts }: BadgeShelfProps) {
   const earned = computeUserBadges(stats);
   const earnedIds = new Set(earned.map((b) => b.id));
+  const localGuideBadges = provinceTipCounts
+    ? computeLocalGuideBadges(provinceTipCounts)
+    : [];
 
   return (
     <div className="mt-6">
@@ -31,6 +37,9 @@ export function BadgeShelf({ stats }: BadgeShelfProps) {
             earned={earnedIds.has(badge.id)}
             progress={Math.min(stats[badge.field] / badge.threshold, 1)}
           />
+        ))}
+        {localGuideBadges.map((lg) => (
+          <LocalGuideItem key={lg.province} badge={lg} />
         ))}
       </div>
     </div>
@@ -68,6 +77,23 @@ function BadgeItem({
           />
         </div>
       )}
+    </div>
+  );
+}
+
+function LocalGuideItem({ badge }: { badge: LocalGuideBadge }) {
+  return (
+    <div
+      className="flex flex-col items-center gap-1 rounded-xl p-3 text-center w-24 bg-teal/10"
+      title={`Local Guide: ${badge.tipsCount} tips in ${badge.province}`}
+    >
+      <span className="text-2xl" aria-hidden="true">
+        📍
+      </span>
+      <span className="text-[10px] font-bold uppercase tracking-wide text-charcoal">
+        {badge.province}
+      </span>
+      <span className="text-[9px] text-warm-gray">Local Guide</span>
     </div>
   );
 }

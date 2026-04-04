@@ -107,10 +107,25 @@ export function ItineraryDetail({ itineraryId }: ItineraryDetailProps) {
           {collaborators && <CollaboratorAvatars collaborators={collaborators} />}
         </div>
         <div className="flex gap-2">
+          {itinerary.shareToken && (
+            <Link href={`/itinerary/${itinerary.shareToken}/vote`}>
+              <Button variant="primary" size="sm">
+                Group Vote
+              </Button>
+            </Link>
+          )}
           <Button variant="secondary" size="sm" onClick={() => setShowShare(true)}>
             Share
           </Button>
-          <Button variant="ghost" size="sm" onClick={handleDelete}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => window.print()}
+            className="print:hidden"
+          >
+            Print
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleDelete} className="print:hidden">
             Delete
           </Button>
         </div>

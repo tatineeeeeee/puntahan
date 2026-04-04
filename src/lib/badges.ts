@@ -65,3 +65,20 @@ export function getHighestBadge(stats: UserStats): BadgeDefinition | null {
   const earned = computeUserBadges(stats);
   return earned.length > 0 ? earned[earned.length - 1] : null;
 }
+
+// Local Guide: province-specific badges
+export interface LocalGuideBadge {
+  province: string;
+  tipsCount: number;
+}
+
+const LOCAL_GUIDE_THRESHOLD = 10;
+
+export function computeLocalGuideBadges(
+  provinceTipCounts: Record<string, number>,
+): LocalGuideBadge[] {
+  return Object.entries(provinceTipCounts)
+    .filter(([, count]) => count >= LOCAL_GUIDE_THRESHOLD)
+    .map(([province, tipsCount]) => ({ province, tipsCount }));
+}
+

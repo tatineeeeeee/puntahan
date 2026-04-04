@@ -15,6 +15,10 @@ export function ProfilePage() {
   const user = useQuery(api.users.getCurrentUser);
   const tips = useQuery(api.tips.listByUser);
   const bookmarks = useQuery(api.bookmarks.listByUser);
+  const provinceTipCounts = useQuery(
+    api.tips.getProvinceTipCounts,
+    user ? { userId: user._id } : "skip",
+  );
 
   if (user === undefined) {
     return <ProfileSkeleton />;
@@ -92,6 +96,7 @@ export function ProfilePage() {
           destinationsVisited: user.destinationsVisited,
           photosUploaded: user.photosUploaded,
         }}
+        provinceTipCounts={provinceTipCounts ?? undefined}
       />
 
       {/* Tabs */}

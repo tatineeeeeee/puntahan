@@ -48,6 +48,13 @@ export default defineSchema({
     heroImageUrl: v.optional(v.string()),
     photosCount: v.number(),
     isPublished: v.boolean(),
+    advisory: v.optional(
+      v.object({
+        level: v.union(v.literal("info"), v.literal("warning"), v.literal("alert")),
+        message: v.string(),
+        updatedAt: v.number(),
+      }),
+    ),
   })
     .index("by_slug", ["slug"])
     .index("by_region", ["region"])
@@ -69,6 +76,7 @@ export default defineSchema({
     upvotes: v.number(),
     downvotes: v.number(),
     photosStorageIds: v.array(v.string()),
+    weightedScore: v.number(),
     createdAt: v.number(),
     isApproved: v.boolean(),
   })
@@ -180,4 +188,14 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_public", ["isPublic"]),
+
+  trip_suggestions: defineTable({
+    itineraryId: v.id("itineraries"),
+    destinationId: v.id("destinations"),
+    suggestedBy: v.string(),
+    votes: v.number(),
+    voters: v.array(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_itinerary", ["itineraryId"]),
 });
