@@ -16,8 +16,14 @@ const destinations = [
     budgetMax: 15000,
     budgetCategory: "Mid-range",
     bestTimeToVisit: "Dry season (Nov-May)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1573790387438-4da905039392?w=800&q=80",
     festivals: [
-      { name: "Ati-Atihan", month: 1, description: "Festival honoring the Santo Niño with street dancing" },
+      {
+        name: "Ati-Atihan",
+        month: 1,
+        description: "Festival honoring the Santo Niño with street dancing",
+      },
     ],
   },
   {
@@ -35,6 +41,8 @@ const destinations = [
     budgetMax: 20000,
     budgetCategory: "Mid-range",
     bestTimeToVisit: "Dry season (Nov-May)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&q=80",
     festivals: [],
   },
   {
@@ -52,6 +60,8 @@ const destinations = [
     budgetMax: 12000,
     budgetCategory: "Mid-range",
     bestTimeToVisit: "Dry season (Mar-Oct)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1545663544-b99bc58247a2?w=800&q=80",
     festivals: [],
   },
   {
@@ -69,8 +79,14 @@ const destinations = [
     budgetMax: 6000,
     budgetCategory: "Budget",
     bestTimeToVisit: "Dry season (Feb-Jun)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1529510021255-4a1179e99095?w=800&q=80",
     festivals: [
-      { name: "Imbayah Festival", month: 4, description: "Celebration of Ifugao culture and rice harvest" },
+      {
+        name: "Imbayah Festival",
+        month: 4,
+        description: "Celebration of Ifugao culture and rice harvest",
+      },
     ],
   },
   {
@@ -88,6 +104,8 @@ const destinations = [
     budgetMax: 18000,
     budgetCategory: "Mid-range",
     bestTimeToVisit: "Dry season (Nov-May)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&q=80",
     festivals: [],
   },
   {
@@ -105,6 +123,8 @@ const destinations = [
     budgetMax: 3000,
     budgetCategory: "Budget",
     bestTimeToVisit: "Dry season (Nov-May)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1521295105158-fdc2a8225628?w=800&q=80",
     festivals: [],
   },
   {
@@ -122,8 +142,15 @@ const destinations = [
     budgetMax: 5000,
     budgetCategory: "Budget",
     bestTimeToVisit: "Dry season (Mar-May)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1515511210479-bc02c48ec763?w=800&q=80",
     festivals: [
-      { name: "Sandugo Festival", month: 7, description: "Celebrates the blood compact between Datu Sikatuna and Legazpi" },
+      {
+        name: "Sandugo Festival",
+        month: 7,
+        description:
+          "Celebrates the blood compact between Datu Sikatuna and Legazpi",
+      },
     ],
   },
   {
@@ -141,6 +168,8 @@ const destinations = [
     budgetMax: 4000,
     budgetCategory: "Budget",
     bestTimeToVisit: "Year-round",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1586263426392-3b3e0748f618?w=800&q=80",
     festivals: [],
   },
   {
@@ -158,8 +187,15 @@ const destinations = [
     budgetMax: 7000,
     budgetCategory: "Budget",
     bestTimeToVisit: "Dry season (Nov-May)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1613895807128-560e9e24c006?w=800&q=80",
     festivals: [
-      { name: "Viva Vigan Binatbatan Festival", month: 5, description: "Street dancing and cultural show celebrating Vigan heritage" },
+      {
+        name: "Viva Vigan Binatbatan Festival",
+        month: 5,
+        description:
+          "Street dancing and cultural show celebrating Vigan heritage",
+      },
     ],
   },
   {
@@ -177,6 +213,8 @@ const destinations = [
     budgetMax: 6000,
     budgetCategory: "Budget",
     bestTimeToVisit: "Dry season (Nov-May)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1580058572462-98e2c0e0e2f0?w=800&q=80",
     festivals: [],
   },
   {
@@ -194,8 +232,15 @@ const destinations = [
     budgetMax: 10000,
     budgetCategory: "Mid-range",
     bestTimeToVisit: "Year-round",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1505261476952-32e25cbfc755?w=800&q=80",
     festivals: [
-      { name: "Sinulog", month: 1, description: "One of the largest festivals in the Philippines, honoring the Santo Niño" },
+      {
+        name: "Sinulog",
+        month: 1,
+        description:
+          "One of the largest festivals in the Philippines, honoring the Santo Niño",
+      },
     ],
   },
   {
@@ -213,6 +258,8 @@ const destinations = [
     budgetMax: 8000,
     budgetCategory: "Mid-range",
     bestTimeToVisit: "Dry season (Nov-May)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1581390881194-e38689620e22?w=800&q=80",
     festivals: [],
   },
   {
@@ -230,8 +277,15 @@ const destinations = [
     budgetMax: 7000,
     budgetCategory: "Budget",
     bestTimeToVisit: "Dry season (Nov-May)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1555590858-be28a58c2688?w=800&q=80",
     festivals: [
-      { name: "Magayon Festival", month: 5, description: "Celebrates the beauty of Mayon Volcano and Bicolano culture" },
+      {
+        name: "Magayon Festival",
+        month: 5,
+        description:
+          "Celebrates the beauty of Mayon Volcano and Bicolano culture",
+      },
     ],
   },
   {
@@ -249,8 +303,14 @@ const destinations = [
     budgetMax: 5000,
     budgetCategory: "Budget",
     bestTimeToVisit: "Dry season (Mar-Jun)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1658694532914-1bfdaaa45d61?w=800&q=80",
     festivals: [
-      { name: "Lanzones Festival", month: 10, description: "Celebrates the bountiful lanzones harvest" },
+      {
+        name: "Lanzones Festival",
+        month: 10,
+        description: "Celebrates the bountiful lanzones harvest",
+      },
     ],
   },
   {
@@ -268,8 +328,14 @@ const destinations = [
     budgetMax: 8000,
     budgetCategory: "Mid-range",
     bestTimeToVisit: "Year-round",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1624685863152-4fa71a70d0c1?w=800&q=80",
     festivals: [
-      { name: "Kadayawan Festival", month: 8, description: "Thanksgiving celebration for the bountiful harvest" },
+      {
+        name: "Kadayawan Festival",
+        month: 8,
+        description: "Thanksgiving celebration for the bountiful harvest",
+      },
     ],
   },
   {
@@ -287,6 +353,8 @@ const destinations = [
     budgetMax: 25000,
     budgetCategory: "Luxury",
     bestTimeToVisit: "Dry season (Mar-Jun)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1559724873-1bdc6a081821?w=800&q=80",
     festivals: [],
   },
   {
@@ -304,6 +372,8 @@ const destinations = [
     budgetMax: 5000,
     budgetCategory: "Budget",
     bestTimeToVisit: "Dry season (Nov-May)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=80",
     festivals: [],
   },
   {
@@ -321,6 +391,8 @@ const destinations = [
     budgetMax: 5000,
     budgetCategory: "Budget",
     bestTimeToVisit: "Dry season (Nov-May)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1559628233-100c798642d4?w=800&q=80",
     festivals: [],
   },
   {
@@ -338,6 +410,8 @@ const destinations = [
     budgetMax: 10000,
     budgetCategory: "Mid-range",
     bestTimeToVisit: "Year-round",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1708837952483-1fc8d711bc06?w=800&q=80",
     festivals: [],
   },
   {
@@ -355,6 +429,8 @@ const destinations = [
     budgetMax: 3000,
     budgetCategory: "Budget",
     bestTimeToVisit: "Year-round",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80",
     festivals: [],
   },
   {
@@ -372,6 +448,8 @@ const destinations = [
     budgetMax: 4000,
     budgetCategory: "Budget",
     bestTimeToVisit: "Dry season (Mar-Jun)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1468413253725-0d5181091126?w=800&q=80",
     festivals: [],
   },
   {
@@ -389,6 +467,8 @@ const destinations = [
     budgetMax: 6000,
     budgetCategory: "Budget",
     bestTimeToVisit: "Dry season (Nov-May)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
     festivals: [],
   },
   {
@@ -406,6 +486,8 @@ const destinations = [
     budgetMax: 10000,
     budgetCategory: "Mid-range",
     bestTimeToVisit: "Dry season (Mar-May)",
+    heroImageUrl:
+      "https://images.unsplash.com/photo-1551918120-9739cb430c6d?w=800&q=80",
     festivals: [],
   },
 ] as const;
@@ -449,6 +531,7 @@ export const seed = internalMutation({
         budgetCategory: dest.budgetCategory,
         bestTimeToVisit: dest.bestTimeToVisit,
         festivals: dest.festivals.map((f) => ({ ...f })),
+        heroImageUrl: dest.heroImageUrl,
         photosCount: 0,
         isPublished: true,
       });

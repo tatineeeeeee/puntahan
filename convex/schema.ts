@@ -45,6 +45,7 @@ export default defineSchema({
       }),
     ),
     heroImageStorageId: v.optional(v.string()),
+    heroImageUrl: v.optional(v.string()),
     photosCount: v.number(),
     isPublished: v.boolean(),
   })

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Badge } from "@/components/ui/badge";
@@ -48,6 +49,16 @@ export function DestinationDetail({ slug }: DestinationDetailProps) {
     <div>
       {/* Hero */}
       <div className="relative h-64 bg-linear-to-br from-teal/20 to-coral/20 flex items-end sm:h-80">
+        {destination.heroImageUrl && (
+          <Image
+            src={destination.heroImageUrl}
+            alt={destination.name}
+            fill
+            className="object-cover"
+            sizes="100vw"
+            priority
+          />
+        )}
         <div className="absolute inset-0 bg-linear-to-t from-charcoal/60 to-transparent" />
         <div className="relative mx-auto w-full max-w-6xl px-4 pb-6">
           <Badge variant={variant} className="mb-2">

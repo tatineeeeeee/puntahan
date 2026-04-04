@@ -49,7 +49,5 @@ export function useTheme() {
     applyTheme(current === "light" ? "dark" : "light");
   }, []);
 
-  const mounted = typeof window !== "undefined";
-
-  return { theme, setTheme, toggle, mounted };
+  return { theme, setTheme, toggle };
 }

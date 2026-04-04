@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Doc } from "../../../convex/_generated/dataModel";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -63,9 +64,21 @@ export function DestinationCard({ destination, className }: DestinationCardProps
 
       <Link href={`/destination/${destination.slug}`}>
         <Card className={cn("flex flex-col transition-shadow hover:shadow-md", className)}>
-          {/* Placeholder hero area */}
-          <div className="relative h-40 bg-warm-gray/10 flex items-center justify-center">
-            <span className="text-warm-gray text-sm">Photo coming soon</span>
+          {/* Hero image */}
+          <div className="relative h-40 bg-warm-gray/10">
+            {destination.heroImageUrl ? (
+              <Image
+                src={destination.heroImageUrl}
+                alt={destination.name}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center">
+                <span className="text-warm-gray text-sm">Photo coming soon</span>
+              </div>
+            )}
           </div>
 
           <CardContent className="flex-1">
