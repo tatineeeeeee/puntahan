@@ -16,6 +16,8 @@ import {
   searchParamsToFilters,
   type FilterState,
 } from "@/lib/filter-utils";
+import { RegionCards } from "./region-cards";
+import { BudgetPills } from "./budget-pills";
 import { cn } from "@/lib/utils";
 
 const MapView = dynamic(() => import("./map-view").then((m) => m.MapView), {
@@ -73,6 +75,24 @@ export function BrowsePage() {
     return filterDestinations(source, filters);
   }, [source, filters]);
 
+  function handleRegionToggle(region: string) {
+    setFilters((prev) => {
+      const next = new Set(prev.regions);
+      if (next.has(region)) next.delete(region);
+      else next.add(region);
+      return { ...prev, regions: next };
+    });
+  }
+
+  function handleBudgetCategoryChange(category: string) {
+    setFilters((prev) => ({ ...prev, budgetCategory: category }));
+  }
+
+  const filteredWithoutBudgetCategory = useMemo(() => {
+    if (!source) return undefined;
+    return filterDestinations(source, { ...filters, budgetCategory: "" });
+  }, [source, filters]);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row">
@@ -117,6 +137,15 @@ export function BrowsePage() {
           </div>
         </div>
       </div>
+      <RegionCards
+        activeRegions={filters.regions}
+        onRegionToggle={handleRegionToggle}
+      />
+      <BudgetPills
+        activeCategory={filters.budgetCategory}
+        onCategoryChange={handleBudgetCategoryChange}
+        destinations={filteredWithoutBudgetCategory}
+      />
       <AdvancedFilterPanel filters={filters} onChange={setFilters} />
       {view === "grid" ? (
         <DestinationGrid
