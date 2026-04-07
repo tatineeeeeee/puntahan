@@ -58,7 +58,7 @@ export function DestinationGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
       {processed.map((dest) => (
         <DestinationCard key={dest._id} destination={dest} />
       ))}
@@ -68,10 +68,10 @@ export function DestinationGrid({
 
 function DestinationGridSkeleton() {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
       {Array.from({ length: 6 }, (_, i) => (
         <div key={i} className="rounded-xl bg-sand overflow-hidden">
-          <Skeleton className="h-40 w-full rounded-none" />
+          <Skeleton className="h-48 w-full rounded-none" />
           <div className="p-4 space-y-3">
             <Skeleton className="h-5 w-3/4" />
             <Skeleton className="h-4 w-1/2" />

@@ -63,16 +63,16 @@ export function DestinationCard({ destination, className }: DestinationCardProps
       </div>
 
       <Link href={`/destination/${destination.slug}`}>
-        <Card className={cn("flex flex-col transition-shadow hover:shadow-md", className)}>
+        <Card className={cn("flex flex-col transition-all duration-200 hover:shadow-md hover:-translate-y-1", className)}>
           {/* Hero image */}
-          <div className="relative h-40 bg-warm-gray/10">
+          <div className="relative h-48 bg-warm-gray/10">
             {destination.heroImageUrl ? (
               <Image
                 src={destination.heroImageUrl}
                 alt={destination.name}
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1536px) 33vw, 25vw"
               />
             ) : (
               <div className="flex h-full items-center justify-center">
