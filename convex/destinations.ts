@@ -18,7 +18,41 @@ export const list = query({
         .withIndex("by_published", (idx) => idx.eq("isPublished", true));
     }
 
-    return await q.take(500);
+    const destinations = await q.take(500);
+
+    // N+1 join for tip previews — acceptable for ~23 destinations, won't scale past ~100
+    return await Promise.all(
+      destinations.map(async (dest) => {
+        if (dest.tipsCount === 0) {
+          return { ...dest, topTipPreview: null };
+        }
+
+        const tips = await ctx.db
+          .query("tips")
+          .withIndex("by_destination_and_approved", (t) =>
+            t.eq("destinationId", dest._id).eq("isApproved", true),
+          )
+          .take(200);
+
+        const topTip =
+          tips.sort((a, b) => b.weightedScore - a.weightedScore)[0] ?? null;
+
+        if (!topTip) {
+          return { ...dest, topTipPreview: null };
+        }
+
+        const user = await ctx.db.get(topTip.userId);
+        const content =
+          topTip.content.length > 60
+            ? topTip.content.slice(0, 60) + "…"
+            : topTip.content;
+
+        return {
+          ...dest,
+          topTipPreview: { content, authorName: user?.name ?? "Anonymous" },
+        };
+      }),
+    );
   },
 });
 
@@ -27,10 +61,43 @@ export const search = query({
     query: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const results = await ctx.db
       .query("destinations")
       .withSearchIndex("search_name", (q) => q.search("name", args.query))
       .take(20);
+
+    return await Promise.all(
+      results.map(async (dest) => {
+        if (dest.tipsCount === 0) {
+          return { ...dest, topTipPreview: null };
+        }
+
+        const tips = await ctx.db
+          .query("tips")
+          .withIndex("by_destination_and_approved", (t) =>
+            t.eq("destinationId", dest._id).eq("isApproved", true),
+          )
+          .take(200);
+
+        const topTip =
+          tips.sort((a, b) => b.weightedScore - a.weightedScore)[0] ?? null;
+
+        if (!topTip) {
+          return { ...dest, topTipPreview: null };
+        }
+
+        const user = await ctx.db.get(topTip.userId);
+        const content =
+          topTip.content.length > 60
+            ? topTip.content.slice(0, 60) + "…"
+            : topTip.content;
+
+        return {
+          ...dest,
+          topTipPreview: { content, authorName: user?.name ?? "Anonymous" },
+        };
+      }),
+    );
   },
 });
 

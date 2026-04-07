@@ -13,7 +13,7 @@ const BUDGET_OPTIONS = [
 interface BudgetPillsProps {
   activeCategory: string;
   onCategoryChange: (category: string) => void;
-  destinations: Doc<"destinations">[] | undefined;
+  destinations: (Doc<"destinations"> & { topTipPreview?: { content: string; authorName: string } | null })[] | undefined;
 }
 
 export function BudgetPills({

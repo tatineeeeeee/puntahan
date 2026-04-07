@@ -22,10 +22,10 @@ export const DEFAULT_FILTERS: FilterState = {
   hasPhotos: false,
 };
 
-export function filterDestinations(
-  destinations: Doc<"destinations">[],
+export function filterDestinations<T extends Doc<"destinations">>(
+  destinations: T[],
   filters: FilterState,
-): Doc<"destinations">[] {
+): T[] {
   return destinations.filter((d) => {
     if (d.budgetMin > filters.budgetMax || d.budgetMax < filters.budgetMin) {
       return false;

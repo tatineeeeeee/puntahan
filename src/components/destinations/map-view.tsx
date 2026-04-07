@@ -26,7 +26,7 @@ function createIcon(region: string) {
 }
 
 interface MapViewProps {
-  destinations: Doc<"destinations">[];
+  destinations: (Doc<"destinations"> & { topTipPreview?: { content: string; authorName: string } | null })[];
 }
 
 export function MapView({ destinations }: MapViewProps) {

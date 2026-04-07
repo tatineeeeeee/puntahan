@@ -6,16 +6,20 @@ import { DestinationCard } from "./destination-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { SortOption } from "./sort-dropdown";
 
+type DestinationWithTip = Doc<"destinations"> & {
+  topTipPreview: { content: string; authorName: string } | null;
+};
+
 interface DestinationGridProps {
-  destinations: Doc<"destinations">[] | undefined;
+  destinations: DestinationWithTip[] | undefined;
   activeCategories: Set<string>;
   sort: SortOption;
 }
 
 function sortDestinations(
-  items: Doc<"destinations">[],
+  items: DestinationWithTip[],
   sort: SortOption,
-): Doc<"destinations">[] {
+): DestinationWithTip[] {
   const sorted = [...items];
   switch (sort) {
     case "rating":
@@ -60,7 +64,7 @@ export function DestinationGrid({
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
       {processed.map((dest) => (
-        <DestinationCard key={dest._id} destination={dest} />
+        <DestinationCard key={dest._id} destination={dest} topTipPreview={dest.topTipPreview} />
       ))}
     </div>
   );

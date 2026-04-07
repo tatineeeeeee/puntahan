@@ -19,10 +19,11 @@ const regionBadgeVariant = {
 
 interface DestinationCardProps {
   destination: Doc<"destinations">;
+  topTipPreview?: { content: string; authorName: string } | null;
   className?: string;
 }
 
-export function DestinationCard({ destination, className }: DestinationCardProps) {
+export function DestinationCard({ destination, topTipPreview, className }: DestinationCardProps) {
   const budgetLabel = `₱${destination.budgetMin.toLocaleString()}–${destination.budgetMax.toLocaleString()}`;
   const variant =
     regionBadgeVariant[destination.region as keyof typeof regionBadgeVariant] ??
@@ -108,6 +109,12 @@ export function DestinationCard({ destination, className }: DestinationCardProps
               ))}
             </div>
           </CardContent>
+
+          {topTipPreview && (
+            <p className="mx-4 mt-2 text-xs italic text-warm-gray line-clamp-1">
+              &ldquo;{topTipPreview.content}&rdquo; &mdash; {topTipPreview.authorName}
+            </p>
+          )}
 
           <CardFooter className="flex items-center justify-between border-t border-warm-gray/10 pt-3">
             <Badge variant="budget">{budgetLabel}</Badge>
