@@ -18,6 +18,7 @@ import {
 } from "@/lib/filter-utils";
 import { RegionCards } from "./region-cards";
 import { BudgetPills } from "./budget-pills";
+import { CommunityPicks } from "./community-picks";
 import { cn } from "@/lib/utils";
 
 const MapView = dynamic(() => import("./map-view").then((m) => m.MapView), {
@@ -146,6 +147,7 @@ export function BrowsePage() {
         onCategoryChange={handleBudgetCategoryChange}
         destinations={filteredWithoutBudgetCategory}
       />
+      <CommunityPicks />
       <AdvancedFilterPanel filters={filters} onChange={setFilters} />
       {view === "grid" ? (
         <DestinationGrid

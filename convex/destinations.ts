@@ -52,6 +52,64 @@ export const getBySlug = query({
   },
 });
 
+export const listTopRated = query({
+  args: {},
+  handler: async (ctx) => {
+    const all = await ctx.db
+      .query("destinations")
+      .withIndex("by_published", (idx) => idx.eq("isPublished", true))
+      .collect();
+
+    const withTips = all
+      .filter((d) => d.tipsCount > 0)
+      .sort((a, b) =>
+        b.avgRating !== a.avgRating
+          ? b.avgRating - a.avgRating
+          : b.tipsCount - a.tipsCount,
+      )
+      .slice(0, 4);
+
+    return await Promise.all(
+      withTips.map(async (dest) => {
+        const tips = await ctx.db
+          .query("tips")
+          .withIndex("by_destination_and_approved", (q) =>
+            q.eq("destinationId", dest._id).eq("isApproved", true),
+          )
+          .take(200);
+
+        const topTip =
+          tips.sort((a, b) => b.weightedScore - a.weightedScore)[0] ?? null;
+
+        let authorName = "Anonymous";
+        if (topTip) {
+          const user = await ctx.db.get(topTip.userId);
+          authorName = user?.name ?? "Anonymous";
+        }
+
+        return {
+          _id: dest._id,
+          name: dest.name,
+          slug: dest.slug,
+          region: dest.region,
+          heroImageUrl: dest.heroImageUrl,
+          avgRating: dest.avgRating,
+          tipsCount: dest.tipsCount,
+          topTip: topTip
+            ? {
+                content:
+                  topTip.content.length > 80
+                    ? topTip.content.slice(0, 80) + "…"
+                    : topTip.content,
+                authorName,
+              }
+            : null,
+        };
+      }),
+    );
+  },
+});
+
 export const stats = query({
   args: {},
   handler: async (ctx) => {
