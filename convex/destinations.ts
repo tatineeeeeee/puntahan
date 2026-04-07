@@ -51,3 +51,28 @@ export const getBySlug = query({
       .unique();
   },
 });
+
+export const stats = query({
+  args: {},
+  handler: async (ctx) => {
+    const destinations = await ctx.db
+      .query("destinations")
+      .withIndex("by_published", (idx) => idx.eq("isPublished", true))
+      .collect();
+
+    return {
+      total: destinations.length,
+      byRegion: {
+        NCR: destinations.filter((d) => d.region === "NCR").length,
+        Luzon: destinations.filter((d) => d.region === "Luzon").length,
+        Visayas: destinations.filter((d) => d.region === "Visayas").length,
+        Mindanao: destinations.filter((d) => d.region === "Mindanao").length,
+      },
+      byBudget: {
+        Budget: destinations.filter((d) => d.budgetCategory === "Budget").length,
+        "Mid-range": destinations.filter((d) => d.budgetCategory === "Mid-range").length,
+        Luxury: destinations.filter((d) => d.budgetCategory === "Luxury").length,
+      },
+    };
+  },
+});
