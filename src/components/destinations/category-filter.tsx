@@ -26,6 +26,8 @@ export function CategoryFilter({ activeCategories, onToggle }: CategoryFilterPro
           <button
             key={cat}
             onClick={() => onToggle(cat)}
+            aria-pressed={isActive}
+            aria-label={`Filter by ${cat}`}
             className={cn(
               "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
               isActive

@@ -60,7 +60,7 @@ export function AdvancedFilterPanel({ filters, onChange }: AdvancedFilterPanelPr
             <div className="flex items-center gap-2">
               <input
                 type="number"
-                value={filters.budgetMin}
+                value={filters.budgetMin || ""}
                 onChange={(e) =>
                   onChange({ ...filters, budgetMin: parseInt(e.target.value) || 0 })
                 }
@@ -71,9 +71,9 @@ export function AdvancedFilterPanel({ filters, onChange }: AdvancedFilterPanelPr
               <span className="text-warm-gray">–</span>
               <input
                 type="number"
-                value={filters.budgetMax}
+                value={filters.budgetMax >= 30000 ? "" : filters.budgetMax}
                 onChange={(e) =>
-                  onChange({ ...filters, budgetMax: parseInt(e.target.value) || 30000 })
+                  onChange({ ...filters, budgetMax: e.target.value === "" ? 30000 : parseInt(e.target.value) || 30000 })
                 }
                 className="w-24 rounded-lg border border-warm-gray/20 px-2 py-1 text-sm"
                 placeholder="Max"
@@ -88,21 +88,26 @@ export function AdvancedFilterPanel({ filters, onChange }: AdvancedFilterPanelPr
               Minimum Rating
             </p>
             <div className="flex gap-1">
-              {[0, 1, 2, 3, 4, 5].map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => onChange({ ...filters, minRating: r })}
-                  className={cn(
-                    "rounded-lg px-3 py-1 text-xs font-medium transition-colors",
-                    filters.minRating === r
-                      ? "bg-sunset text-white"
-                      : "bg-warm-white text-charcoal hover:bg-warm-gray/10",
-                  )}
-                >
-                  {r === 0 ? "Any" : `${r}+`}
-                </button>
-              ))}
+              {[0, 1, 2, 3, 4, 5].map((r) => {
+                const isActive = filters.minRating === r;
+                return (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => onChange({ ...filters, minRating: r })}
+                    aria-pressed={isActive}
+                    aria-label={r === 0 ? "Any rating" : `Minimum ${r} stars`}
+                    className={cn(
+                      "rounded-lg px-3 py-1 text-xs font-medium transition-colors",
+                      isActive
+                        ? "bg-sunset text-white"
+                        : "bg-warm-white text-charcoal hover:bg-warm-gray/10",
+                    )}
+                  >
+                    {r === 0 ? "Any" : `${r}+`}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -116,21 +121,25 @@ export function AdvancedFilterPanel({ filters, onChange }: AdvancedFilterPanelPr
                 { value: "any", label: "Any" },
                 { value: "dry", label: "Dry Season" },
                 { value: "rainy", label: "Rainy Season" },
-              ].map((s) => (
-                <button
-                  key={s.value}
-                  type="button"
-                  onClick={() => onChange({ ...filters, season: s.value })}
-                  className={cn(
-                    "rounded-lg px-3 py-1 text-xs font-medium transition-colors",
-                    filters.season === s.value
-                      ? "bg-teal text-white"
-                      : "bg-warm-white text-charcoal hover:bg-warm-gray/10",
-                  )}
-                >
-                  {s.label}
-                </button>
-              ))}
+              ].map((s) => {
+                const isActive = filters.season === s.value;
+                return (
+                  <button
+                    key={s.value}
+                    type="button"
+                    onClick={() => onChange({ ...filters, season: s.value })}
+                    aria-pressed={isActive}
+                    className={cn(
+                      "rounded-lg px-3 py-1 text-xs font-medium transition-colors",
+                      isActive
+                        ? "bg-teal text-white"
+                        : "bg-warm-white text-charcoal hover:bg-warm-gray/10",
+                    )}
+                  >
+                    {s.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -140,23 +149,28 @@ export function AdvancedFilterPanel({ filters, onChange }: AdvancedFilterPanelPr
               Regions
             </p>
             <div className="flex flex-wrap gap-1">
-              {REGIONS.map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() =>
-                    onChange({ ...filters, regions: toggleSet(filters.regions, r) })
-                  }
-                  className={cn(
-                    "rounded-full px-3 py-1 text-xs font-medium transition-colors",
-                    filters.regions.has(r)
-                      ? "bg-charcoal text-white"
-                      : "bg-warm-white text-charcoal hover:bg-warm-gray/10",
-                  )}
-                >
-                  {r}
-                </button>
-              ))}
+              {REGIONS.map((r) => {
+                const isActive = filters.regions.has(r);
+                return (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() =>
+                      onChange({ ...filters, regions: toggleSet(filters.regions, r) })
+                    }
+                    aria-pressed={isActive}
+                    aria-label={`Filter by ${r}`}
+                    className={cn(
+                      "rounded-full px-3 py-1 text-xs font-medium transition-colors",
+                      isActive
+                        ? "bg-charcoal text-white"
+                        : "bg-warm-white text-charcoal hover:bg-warm-gray/10",
+                    )}
+                  >
+                    {r}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -166,23 +180,28 @@ export function AdvancedFilterPanel({ filters, onChange }: AdvancedFilterPanelPr
               Activities
             </p>
             <div className="flex flex-wrap gap-1">
-              {CATEGORIES.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() =>
-                    onChange({ ...filters, categories: toggleSet(filters.categories, c) })
-                  }
-                  className={cn(
-                    "rounded-full px-3 py-1 text-xs font-medium transition-colors",
-                    filters.categories.has(c)
-                      ? "bg-teal text-white"
-                      : "bg-warm-white text-charcoal hover:bg-warm-gray/10",
-                  )}
-                >
-                  {c}
-                </button>
-              ))}
+              {CATEGORIES.map((c) => {
+                const isActive = filters.categories.has(c);
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() =>
+                      onChange({ ...filters, categories: toggleSet(filters.categories, c) })
+                    }
+                    aria-pressed={isActive}
+                    aria-label={`Filter by ${c}`}
+                    className={cn(
+                      "rounded-full px-3 py-1 text-xs font-medium transition-colors",
+                      isActive
+                        ? "bg-teal text-white"
+                        : "bg-warm-white text-charcoal hover:bg-warm-gray/10",
+                    )}
+                  >
+                    {c}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
