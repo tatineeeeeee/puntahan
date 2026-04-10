@@ -24,6 +24,9 @@
   --color-surface-highest: #FFFFFF;
 
   --font-sans: var(--font-dm-sans);
+
+  --hero-gradient-from: rgba(255, 107, 107, 0.08);
+  --hero-gradient-to: rgba(13, 148, 136, 0.06);
 }
 
 /* Dark mode — warm charcoal palette with surface hierarchy */
@@ -44,6 +47,10 @@
   --color-coral: #E8736F;
   --color-teal: #34B8AD;
   --color-sunset: #E8944A;
+
+  /* Hero gradient (stronger in dark) */
+  --hero-gradient-from: rgba(232, 115, 111, 0.18);
+  --hero-gradient-to: rgba(52, 184, 173, 0.14);
 
   /* Region badges (desaturated) */
   --color-ncr: #5B9BF0;

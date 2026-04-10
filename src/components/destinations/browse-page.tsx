@@ -95,7 +95,8 @@ export function BrowsePage() {
   }, [source, filters]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Search toolbar */}
       <div className="flex flex-col gap-3 sm:flex-row">
         <SearchBar
           value={searchQuery}
@@ -111,8 +112,8 @@ export function BrowsePage() {
               className={cn(
                 "flex items-center justify-center min-h-11 min-w-11 px-3 py-2 text-sm transition-colors",
                 view === "grid"
-                  ? "bg-charcoal text-white"
-                  : "bg-warm-white text-charcoal hover:bg-sand",
+                  ? "bg-charcoal text-warm-white"
+                  : "bg-surface-highest text-charcoal hover:bg-sand",
               )}
               aria-label="Grid view"
               aria-pressed={view === "grid"}
@@ -127,8 +128,8 @@ export function BrowsePage() {
               className={cn(
                 "flex items-center justify-center min-h-11 min-w-11 px-3 py-2 text-sm transition-colors",
                 view === "map"
-                  ? "bg-charcoal text-white"
-                  : "bg-warm-white text-charcoal hover:bg-sand",
+                  ? "bg-charcoal text-warm-white"
+                  : "bg-surface-highest text-charcoal hover:bg-sand",
               )}
               aria-label="Map view"
               aria-pressed={view === "map"}
@@ -140,6 +141,8 @@ export function BrowsePage() {
           </div>
         </div>
       </div>
+
+      {/* Filters */}
       <RegionCards
         activeRegions={filters.regions}
         onRegionToggle={handleRegionToggle}
@@ -149,9 +152,9 @@ export function BrowsePage() {
         onCategoryChange={handleBudgetCategoryChange}
         destinations={filteredWithoutBudgetCategory}
       />
-      <CommunityPicks />
-      <TopContributors />
       <AdvancedFilterPanel filters={filters} onChange={setFilters} />
+
+      {/* Main content — immediately after filters */}
       {view === "grid" ? (
         <DestinationGrid
           destinations={filtered}
@@ -163,6 +166,11 @@ export function BrowsePage() {
       ) : (
         <div className="h-125 w-full rounded-xl bg-sand animate-pulse" />
       )}
+
+      {/* Social proof — below main content */}
+      <hr className="border-warm-gray/10" />
+      <CommunityPicks />
+      <TopContributors />
     </div>
   );
 }

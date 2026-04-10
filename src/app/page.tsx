@@ -10,7 +10,7 @@ export default function Home() {
       <main>
         <OnboardingTrigger />
         <HeroSection scrollTargetId="destinations-grid" />
-        <div id="destinations-grid" className="mx-auto max-w-7xl px-4 py-8">
+        <div id="destinations-grid" className="mx-auto max-w-7xl px-4 pt-4 pb-8">
           <BrowsePage />
         </div>
       </main>

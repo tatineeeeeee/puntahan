@@ -28,7 +28,7 @@ export function CommunityPicks() {
 
   return (
     <section>
-      <div className="mb-4">
+      <div className="mb-5 border-l-[3px] border-coral pl-3">
         <h2 className="text-lg font-bold text-charcoal">Community Picks</h2>
         <p className="text-sm text-warm-gray">
           Highest rated by the community

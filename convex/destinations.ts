@@ -159,9 +159,13 @@ export const listTopRated = query({
           name: dest.name,
           slug: dest.slug,
           region: dest.region,
+          province: dest.province,
           heroImageUrl: dest.heroImageUrl,
           avgRating: dest.avgRating,
           tipsCount: dest.tipsCount,
+          budgetMin: dest.budgetMin,
+          budgetMax: dest.budgetMax,
+          budgetCategory: dest.budgetCategory,
           topTip: topTip
             ? {
                 content:

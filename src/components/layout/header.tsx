@@ -50,7 +50,7 @@ function NavLinks() {
 export function Header() {
   return (
     <header className="relative border-b border-warm-gray/10 bg-warm-white">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <Logo size={28} />
           <span className="text-lg font-bold text-charcoal">puntahan</span>

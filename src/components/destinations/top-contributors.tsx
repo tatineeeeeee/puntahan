@@ -19,8 +19,8 @@ export function TopContributors() {
 
   return (
     <section>
-      <div className="mb-4 flex items-center justify-between">
-        <div>
+      <div className="mb-5 flex items-center justify-between">
+        <div className="border-l-[3px] border-teal pl-3">
           <h2 className="text-lg font-bold text-charcoal">
             Top Contributors
           </h2>
@@ -50,7 +50,7 @@ export function TopContributors() {
             <Link
               key={user._id}
               href="/leaderboard"
-              className="flex flex-col items-center gap-2 rounded-xl bg-sand p-3 text-center hover:shadow-md transition-shadow"
+              className="flex flex-col items-center gap-2 rounded-xl border border-warm-gray/10 bg-warm-white p-3 text-center hover:shadow-md transition-shadow"
             >
               {user.imageUrl ? (
                 <Image

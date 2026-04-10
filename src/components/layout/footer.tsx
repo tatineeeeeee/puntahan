@@ -27,7 +27,7 @@ export function Footer() {
 
   return (
     <footer className="border-t border-warm-gray/10 bg-warm-white mt-12">
-      <div className="mx-auto max-w-6xl px-4 py-10">
+      <div className="mx-auto max-w-7xl px-4 py-10">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
           {/* Explore */}
           <nav aria-label="Explore links">
