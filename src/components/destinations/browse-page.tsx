@@ -10,7 +10,6 @@ import { SortDropdown, type SortOption } from "./sort-dropdown";
 import { DestinationGrid } from "./destination-grid";
 import { AdvancedFilterPanel } from "@/components/search/advanced-filter-panel";
 import {
-  DEFAULT_FILTERS,
   filterDestinations,
   filtersToSearchParams,
   searchParamsToFilters,
@@ -35,11 +34,11 @@ export function BrowsePage() {
   const initialized = useRef(false);
 
   // Initialize from URL on first render
-  const initial = useMemo(() => {
-    if (typeof window === "undefined") return { q: "", sort: "rating", filters: DEFAULT_FILTERS };
-    return searchParamsToFilters(new URLSearchParams(searchParams.toString()));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const initial = useMemo(
+    () => searchParamsToFilters(new URLSearchParams(searchParams.toString())),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   const [searchQuery, setSearchQuery] = useState(initial.q);
   const [sort, setSort] = useState<SortOption>(initial.sort as SortOption);
@@ -110,7 +109,7 @@ export function BrowsePage() {
               type="button"
               onClick={() => setView("grid")}
               className={cn(
-                "px-3 py-2 text-sm transition-colors",
+                "flex items-center justify-center min-h-11 min-w-11 px-3 py-2 text-sm transition-colors",
                 view === "grid"
                   ? "bg-charcoal text-white"
                   : "bg-warm-white text-charcoal hover:bg-sand",
@@ -126,7 +125,7 @@ export function BrowsePage() {
               type="button"
               onClick={() => setView("map")}
               className={cn(
-                "px-3 py-2 text-sm transition-colors",
+                "flex items-center justify-center min-h-11 min-w-11 px-3 py-2 text-sm transition-colors",
                 view === "map"
                   ? "bg-charcoal text-white"
                   : "bg-warm-white text-charcoal hover:bg-sand",

@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const title = `${destination.name}, ${destination.province} — puntahan`;
     const description = destination.description.slice(0, 160);
-    const ogImage = destination.heroImageUrl ?? undefined;
+    const ogImage = `/api/og?slug=${encodeURIComponent(slug)}`;
 
     return {
       title,
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       openGraph: {
         title,
         description,
-        images: ogImage ? [{ url: ogImage, width: 800, height: 600 }] : [],
+        images: [{ url: ogImage, width: 1200, height: 630 }],
         siteName: "puntahan",
         type: "article",
       },
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         card: "summary_large_image",
         title,
         description,
-        images: ogImage ? [ogImage] : [],
+        images: [ogImage],
       },
     };
   } catch {

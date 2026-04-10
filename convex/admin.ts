@@ -103,6 +103,7 @@ export const setAdvisory = mutation({
   },
   handler: async (ctx, args) => {
     await assertAdmin(ctx);
+    if (args.message.length > 1000) throw new Error("Message too long");
     await ctx.db.patch(args.destinationId, {
       advisory: {
         level: args.level,

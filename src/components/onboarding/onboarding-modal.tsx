@@ -99,30 +99,34 @@ export function OnboardingModal({ onComplete }: OnboardingModalProps) {
         </div>
 
         {/* Progress dots */}
-        <div className="mt-6 flex justify-center gap-2">
+        <div
+          className="mt-6 flex justify-center gap-2"
+          role="group"
+          aria-label={`Step ${step + 1} of ${steps.length}`}
+        >
           {steps.map((_, i) => (
             <div
               key={i}
               className={`h-2 w-2 rounded-full transition-colors ${
                 i === step ? "bg-coral" : "bg-warm-gray/30"
               }`}
-              aria-label={`Step ${i + 1} of ${steps.length}`}
+              aria-hidden="true"
             />
           ))}
         </div>
 
         {/* Navigation */}
         <div className="mt-6 flex items-center justify-between">
-          <Button variant="ghost" size="sm" onClick={onComplete}>
+          <Button variant="ghost" onClick={onComplete}>
             Skip
           </Button>
           <div className="flex gap-2">
             {step > 0 && (
-              <Button variant="ghost" size="sm" onClick={handleBack}>
+              <Button variant="ghost" onClick={handleBack}>
                 Back
               </Button>
             )}
-            <Button variant="primary" size="sm" onClick={handleNext}>
+            <Button variant="primary" onClick={handleNext}>
               {step === steps.length - 1 ? "Get Started" : "Next"}
             </Button>
           </div>

@@ -4,6 +4,10 @@ import { ConvexClientProvider } from "@/components/providers/convex-client-provi
 import { Header } from "@/components/layout/header";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Footer } from "@/components/layout/footer";
+import { ToastContainer } from "@/components/ui/toast";
+import { ScrollToTop } from "@/components/ui/scroll-to-top";
+import { ScrollProgress } from "@/components/ui/scroll-progress";
+import { PageTracker } from "@/components/analytics/page-tracker";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -55,6 +59,10 @@ export default function RootLayout({
             <Footer />
           </div>
           <BottomNav />
+          <PageTracker />
+          <ScrollProgress />
+          <ScrollToTop />
+          <ToastContainer />
         </ConvexClientProvider>
       </body>
     </html>

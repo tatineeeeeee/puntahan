@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
+import { useLocale } from "@/lib/hooks/use-locale";
+import { t } from "@/lib/i18n";
 
 interface HeroSectionProps {
   scrollTargetId: string;
@@ -11,6 +13,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ scrollTargetId }: HeroSectionProps) {
   const stats = useQuery(api.destinations.stats);
+  const { locale } = useLocale();
 
   function handleScroll() {
     document
@@ -37,12 +40,11 @@ export function HeroSection({ scrollTargetId }: HeroSectionProps) {
         </h1>
 
         <p className="mt-4 text-xl font-bold text-white sm:text-2xl lg:text-3xl">
-          Real tips. Real budgets. Real travelers.
+          {t("hero.subtitle", locale)}
         </p>
 
         <p className="mt-3 max-w-xl text-sm text-white/80 sm:text-base">
-          Community-powered travel guide for the Philippines — honest tips and
-          actual peso breakdowns from people who&apos;ve been there
+          {t("hero.description", locale)}
         </p>
 
         <Button
@@ -51,11 +53,11 @@ export function HeroSection({ scrollTargetId }: HeroSectionProps) {
           className="mt-8"
           onClick={handleScroll}
         >
-          Start Exploring
+          {t("hero.cta", locale)}
         </Button>
 
         <p className="mt-6 text-sm text-white/70">
-          {stats?.total ?? "—"} destinations · 4 regions · community-driven
+          {stats?.total ?? "—"} {t("common.destinations", locale)} · 4 {t("common.regions", locale)} · {t("common.communityDriven", locale)}
         </p>
       </div>
     </section>

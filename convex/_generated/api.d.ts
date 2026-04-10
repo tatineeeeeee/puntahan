@@ -9,6 +9,7 @@
  */
 
 import type * as admin from "../admin.js";
+import type * as analytics from "../analytics.js";
 import type * as bookmarks from "../bookmarks.js";
 import type * as checklists from "../checklists.js";
 import type * as destinations from "../destinations.js";
@@ -20,6 +21,7 @@ import type * as journals from "../journals.js";
 import type * as leaderboard from "../leaderboard.js";
 import type * as notifications from "../notifications.js";
 import type * as photos from "../photos.js";
+import type * as rateLimit from "../rateLimit.js";
 import type * as seed from "../seed.js";
 import type * as tips from "../tips.js";
 import type * as tripSuggestions from "../tripSuggestions.js";
@@ -34,6 +36,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
+  analytics: typeof analytics;
   bookmarks: typeof bookmarks;
   checklists: typeof checklists;
   destinations: typeof destinations;
@@ -45,6 +48,7 @@ declare const fullApi: ApiFromModules<{
   leaderboard: typeof leaderboard;
   notifications: typeof notifications;
   photos: typeof photos;
+  rateLimit: typeof rateLimit;
   seed: typeof seed;
   tips: typeof tips;
   tripSuggestions: typeof tripSuggestions;

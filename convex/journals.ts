@@ -12,6 +12,8 @@ export const create = mutation({
   handler: async (ctx, args) => {
     const user = await getCurrentUser(ctx);
     if (!user) throw new Error("Not authenticated");
+    if (args.title.length > 200) throw new Error("Title too long");
+    if (args.content.length > 10000) throw new Error("Content too long");
 
     return await ctx.db.insert("journals", {
       userId: user._id,

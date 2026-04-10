@@ -18,6 +18,7 @@ export const savePhoto = mutation({
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUserOrThrow(ctx);
+    if (args.caption && args.caption.length > 500) throw new Error("Caption too long");
 
     await ctx.db.insert("photos", {
       destinationId: args.destinationId,

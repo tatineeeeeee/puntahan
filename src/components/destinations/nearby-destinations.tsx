@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -8,6 +9,12 @@ import { Id } from "../../../convex/_generated/dataModel";
 import { haversineDistance } from "@/lib/haversine";
 import { Badge } from "@/components/ui/badge";
 import { Rating } from "@/components/ui/rating";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const NearbyMap = dynamic(
+  () => import("./nearby-map").then((m) => m.NearbyMap),
+  { ssr: false, loading: () => <Skeleton className="h-48 w-full rounded-xl" /> },
+);
 
 interface NearbyDestinationsProps {
   destinationId: Id<"destinations">;
@@ -35,11 +42,28 @@ export function NearbyDestinations({
       .slice(0, 6);
   }, [allDestinations, destinationId, latitude, longitude]);
 
+  const mapPins = useMemo(() => {
+    if (!nearby || nearby.length === 0) return [];
+    return [
+      { name: "Current", slug: "", latitude, longitude, isCurrent: true },
+      ...nearby.map((d) => ({
+        name: d.name,
+        slug: d.slug,
+        latitude: d.latitude,
+        longitude: d.longitude,
+        isCurrent: false,
+      })),
+    ];
+  }, [nearby, latitude, longitude]);
+
   if (!nearby || nearby.length === 0) return null;
 
   return (
     <div>
       <h2 className="text-lg font-bold text-charcoal">Nearby Destinations</h2>
+      <div className="mt-3">
+        <NearbyMap pins={mapPins} center={[latitude, longitude]} />
+      </div>
       <div className="mt-3 flex gap-4 overflow-x-auto pb-2">
         {nearby.map((dest) => (
           <Link

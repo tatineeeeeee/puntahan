@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Rating } from "@/components/ui/rating";
+import { addToast } from "@/lib/hooks/use-toast";
 
 interface TipFormProps {
   destinationId: Id<"destinations">;
@@ -44,6 +45,10 @@ export function TipForm({ destinationId, openTrigger }: TipFormProps) {
   async function handlePhotoSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file || !file.type.startsWith("image/") || photoIds.length >= 3) return;
+    if (file.size > 5 * 1024 * 1024) {
+      addToast("Photo must be under 5 MB", "error");
+      return;
+    }
 
     setUploadingPhoto(true);
     try {
@@ -56,6 +61,8 @@ export function TipForm({ destinationId, openTrigger }: TipFormProps) {
       const { storageId } = await result.json();
       setPhotoIds((prev) => [...prev, storageId]);
       setPhotoPreviewUrls((prev) => [...prev, URL.createObjectURL(file)]);
+    } catch {
+      addToast("Failed to upload photo", "error");
     } finally {
       setUploadingPhoto(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -105,6 +112,9 @@ export function TipForm({ destinationId, openTrigger }: TipFormProps) {
       setPhotoIds([]);
       setPhotoPreviewUrls([]);
       setShowForm(false);
+      addToast("Tip submitted!");
+    } catch {
+      addToast("Failed to submit tip", "error");
     } finally {
       setSubmitting(false);
     }
@@ -124,7 +134,7 @@ export function TipForm({ destinationId, openTrigger }: TipFormProps) {
               type="button"
               onClick={() => setRating(star)}
               aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
-              className="focus:outline-none"
+              className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral/50"
             >
               <Rating value={star <= rating ? 1 : 0} max={1} size="md" />
             </button>
@@ -198,7 +208,7 @@ export function TipForm({ destinationId, openTrigger }: TipFormProps) {
                 <button
                   type="button"
                   onClick={() => removePhoto(i)}
-                  className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-coral text-[10px] font-bold text-white"
+                  className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full bg-coral text-xs font-bold text-white"
                   aria-label={`Remove photo ${i + 1}`}
                 >
                   ✕

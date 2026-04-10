@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getCurrentUserOrThrow, getCurrentUser } from "./helpers";
+import { checkRateLimit } from "./rateLimit";
 
 export const create = mutation({
   args: {
@@ -17,6 +18,7 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUserOrThrow(ctx);
+    await checkRateLimit(ctx, `tip:${user._id}`, 5);
 
     if (args.rating < 1 || args.rating > 5) {
       throw new Error("Rating must be between 1 and 5");

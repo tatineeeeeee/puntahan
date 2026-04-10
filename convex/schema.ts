@@ -198,4 +198,20 @@ export default defineSchema({
     createdAt: v.number(),
   })
     .index("by_itinerary", ["itineraryId"]),
+
+  analytics_events: defineTable({
+    event: v.string(),
+    page: v.optional(v.string()),
+    userId: v.optional(v.id("users")),
+    metadata: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_event_and_date", ["event", "createdAt"]),
+
+  rate_limits: defineTable({
+    key: v.string(),
+    count: v.number(),
+    windowStart: v.number(),
+  })
+    .index("by_key", ["key"]),
 });

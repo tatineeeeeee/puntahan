@@ -22,6 +22,8 @@ export const create = mutation({
   handler: async (ctx, args) => {
     const user = await getCurrentUser(ctx);
     if (!user) throw new Error("Not authenticated");
+    if (args.name.length > 200) throw new Error("Name too long");
+    if (args.description && args.description.length > 2000) throw new Error("Description too long");
 
     return await ctx.db.insert("itineraries", {
       userId: user._id,
@@ -165,6 +167,8 @@ export const update = mutation({
         s.userId === user._id && s.accessLevel === "edit",
     );
     if (!isOwner && !isEditor) throw new Error("Not authorized");
+    if (args.name !== undefined && args.name.length > 200) throw new Error("Name too long");
+    if (args.description !== undefined && args.description.length > 2000) throw new Error("Description too long");
 
     await ctx.db.patch(args.id, {
       updatedAt: Date.now(),

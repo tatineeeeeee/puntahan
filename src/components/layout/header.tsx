@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { NotificationBell } from "./notification-bell";
 import { ThemeToggle } from "./theme-toggle";
 import { MobileMenu } from "./mobile-menu";
+import { LocaleToggle } from "./locale-toggle";
 
 function NavLinks() {
   const user = useQuery(api.users.getCurrentUser);
@@ -56,6 +57,7 @@ export function Header() {
         </Link>
 
         <div className="flex items-center gap-3">
+          <LocaleToggle />
           <ThemeToggle />
           <AuthLoading>
             <Skeleton className="h-8 w-20 rounded-full" />

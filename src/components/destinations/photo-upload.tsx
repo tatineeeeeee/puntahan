@@ -6,6 +6,7 @@ import { useConvexAuth } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
+import { addToast } from "@/lib/hooks/use-toast";
 
 interface PhotoUploadProps {
   destinationId: Id<"destinations">;
@@ -27,6 +28,10 @@ export function PhotoUpload({ destinationId }: PhotoUploadProps) {
     if (!file.type.startsWith("image/")) {
       return;
     }
+    if (file.size > 5 * 1024 * 1024) {
+      addToast("Photo must be under 5 MB", "error");
+      return;
+    }
 
     setUploading(true);
     try {
@@ -38,6 +43,9 @@ export function PhotoUpload({ destinationId }: PhotoUploadProps) {
       });
       const { storageId } = await result.json();
       await savePhoto({ destinationId, storageId });
+      addToast("Photo uploaded!");
+    } catch {
+      addToast("Upload failed", "error");
     } finally {
       setUploading(false);
       if (fileInputRef.current) {
@@ -55,6 +63,7 @@ export function PhotoUpload({ destinationId }: PhotoUploadProps) {
         onChange={handleUpload}
         className="hidden"
         id="photo-upload"
+        aria-label="Upload destination photo"
       />
       <Button
         variant="secondary"

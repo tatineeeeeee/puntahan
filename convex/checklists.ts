@@ -11,6 +11,8 @@ export const create = mutation({
   handler: async (ctx, args) => {
     const user = await getCurrentUser(ctx);
     if (!user) throw new Error("Not authenticated");
+    if (args.name.length > 200) throw new Error("Name too long");
+    if (args.items.some((i) => i.text.length > 500)) throw new Error("Item text too long");
 
     return await ctx.db.insert("checklists", {
       userId: user._id,
@@ -35,6 +37,7 @@ export const updateItems = mutation({
     if (!checklist || checklist.userId !== user._id) {
       throw new Error("Not authorized");
     }
+    if (args.items.some((i) => i.text.length > 500)) throw new Error("Item text too long");
 
     await ctx.db.patch(args.id, { items: args.items });
   },

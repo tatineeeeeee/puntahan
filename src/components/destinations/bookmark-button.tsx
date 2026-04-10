@@ -5,6 +5,7 @@ import { useConvexAuth } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
+import { addToast } from "@/lib/hooks/use-toast";
 
 interface BookmarkButtonProps {
   destinationId: Id<"destinations">;
@@ -24,6 +25,7 @@ export function BookmarkButton({ destinationId, className }: BookmarkButtonProps
     e.stopPropagation();
     if (!isAuthenticated) return;
     await toggle({ destinationId });
+    addToast(isBookmarked ? "Bookmark removed" : "Bookmark added");
   }
 
   return (
