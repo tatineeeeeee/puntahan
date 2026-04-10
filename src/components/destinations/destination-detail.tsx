@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -12,6 +13,7 @@ import { PhotoUpload } from "./photo-upload";
 import { NearbyDestinations } from "./nearby-destinations";
 import { BookmarkButton } from "./bookmark-button";
 import { TipList } from "@/components/tips/tip-list";
+import { ShareTipCta } from "@/components/tips/share-tip-cta";
 
 const regionBadgeVariant = {
   NCR: "region-ncr",
@@ -26,6 +28,13 @@ interface DestinationDetailProps {
 
 export function DestinationDetail({ slug }: DestinationDetailProps) {
   const destination = useQuery(api.destinations.getBySlug, { slug });
+  const tipsSectionRef = useRef<HTMLDivElement>(null);
+  const [openTrigger, setOpenTrigger] = useState(0);
+
+  const handleScrollToTips = useCallback(() => {
+    tipsSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+    setOpenTrigger((c) => c + 1);
+  }, []);
 
   if (destination === undefined) {
     return <DetailSkeleton />;
@@ -215,11 +224,11 @@ export function DestinationDetail({ slug }: DestinationDetailProps) {
         </div>
 
         {/* Tips */}
-        <div>
+        <div ref={tipsSectionRef}>
           <h2 className="text-lg font-bold text-charcoal mb-4">
             Travel Tips
           </h2>
-          <TipList destinationId={destination._id} />
+          <TipList destinationId={destination._id} openTrigger={openTrigger} />
         </div>
 
         {/* Nearby */}
@@ -229,6 +238,14 @@ export function DestinationDetail({ slug }: DestinationDetailProps) {
           longitude={destination.longitude}
         />
       </div>
+
+      {/* Floating CTA */}
+      <ShareTipCta
+        destinationId={destination._id}
+        destinationName={destination.name}
+        tipsSectionRef={tipsSectionRef}
+        onScrollToTips={handleScrollToTips}
+      />
     </div>
   );
 }

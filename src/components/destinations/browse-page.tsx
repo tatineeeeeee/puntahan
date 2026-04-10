@@ -19,6 +19,7 @@ import {
 import { RegionCards } from "./region-cards";
 import { BudgetPills } from "./budget-pills";
 import { CommunityPicks } from "./community-picks";
+import { TopContributors } from "./top-contributors";
 import { cn } from "@/lib/utils";
 
 const MapView = dynamic(() => import("./map-view").then((m) => m.MapView), {
@@ -150,6 +151,7 @@ export function BrowsePage() {
         destinations={filteredWithoutBudgetCategory}
       />
       <CommunityPicks />
+      <TopContributors />
       <AdvancedFilterPanel filters={filters} onChange={setFilters} />
       {view === "grid" ? (
         <DestinationGrid

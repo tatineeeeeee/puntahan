@@ -9,14 +9,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 interface TipListProps {
   destinationId: Id<"destinations">;
+  openTrigger?: number;
 }
 
-export function TipList({ destinationId }: TipListProps) {
+export function TipList({ destinationId, openTrigger }: TipListProps) {
   const tips = useQuery(api.tips.listByDestination, { destinationId });
 
   return (
     <div className="space-y-4">
-      <TipForm destinationId={destinationId} />
+      <TipForm destinationId={destinationId} openTrigger={openTrigger} />
 
       {tips === undefined ? (
         <div className="space-y-3">

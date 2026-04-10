@@ -68,6 +68,21 @@ export const create = mutation({
   },
 });
 
+export const hasUserTipped = query({
+  args: { destinationId: v.id("destinations") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) return false;
+    const tip = await ctx.db
+      .query("tips")
+      .withIndex("by_user_and_destination", (q) =>
+        q.eq("userId", user._id).eq("destinationId", args.destinationId),
+      )
+      .first();
+    return tip !== null;
+  },
+});
+
 export const listByDestination = query({
   args: { destinationId: v.id("destinations") },
   handler: async (ctx, args) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation } from "convex/react";
 import { useConvexAuth } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -12,11 +12,12 @@ import { Rating } from "@/components/ui/rating";
 
 interface TipFormProps {
   destinationId: Id<"destinations">;
+  openTrigger?: number;
 }
 
 const defaultCategories = ["Food", "Transport", "Accommodation", "Activities"];
 
-export function TipForm({ destinationId }: TipFormProps) {
+export function TipForm({ destinationId, openTrigger }: TipFormProps) {
   const { isAuthenticated } = useConvexAuth();
   const createTip = useMutation(api.tips.create);
   const generateUploadUrl = useMutation(api.photos.generateUploadUrl);
@@ -32,6 +33,13 @@ export function TipForm({ destinationId }: TipFormProps) {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+
+  // Allow parent to programmatically open the form
+  useEffect(() => {
+    if (openTrigger && openTrigger > 0) {
+      setShowForm(true);
+    }
+  }, [openTrigger]);
 
   async function handlePhotoSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];

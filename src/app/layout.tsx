@@ -3,6 +3,7 @@ import { DM_Sans } from "next/font/google";
 import { ConvexClientProvider } from "@/components/providers/convex-client-provider";
 import { Header } from "@/components/layout/header";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import { Footer } from "@/components/layout/footer";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -49,7 +50,10 @@ export default function RootLayout({
             Skip to content
           </a>
           <Header />
-          <div id="main-content" className="pb-16 sm:pb-0">{children}</div>
+          <div id="main-content" className="pb-16 sm:pb-0">
+            {children}
+            <Footer />
+          </div>
           <BottomNav />
         </ConvexClientProvider>
       </body>

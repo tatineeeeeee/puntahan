@@ -14,6 +14,8 @@ export const topContributors = query({
       imageUrl: u.imageUrl ?? null,
       tipsCount: u.tipsCount,
       upvotesReceived: u.upvotesReceived,
+      destinationsVisited: u.destinationsVisited,
+      photosUploaded: u.photosUploaded,
     }));
   },
 });
