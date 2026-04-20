@@ -30,7 +30,9 @@ export function UsersTab() {
             <p className="text-sm font-medium text-charcoal">
               {user.name ?? "No name"}
             </p>
-            <p className="text-xs text-warm-gray">{user.email}</p>
+            <p className="text-xs text-warm-gray">
+              {user.tipsCount} tips · {user.upvotesReceived} upvotes
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant={user.role === "admin" ? "budget" : "default"}>
@@ -45,7 +47,7 @@ export function UsersTab() {
                 }
               }}
               className="rounded-lg border border-warm-gray/20 px-2 py-1 text-xs"
-              aria-label={`Role for ${user.name ?? user.email}`}
+              aria-label={`Role for ${user.name ?? "user"}`}
             >
               <option value="user">user</option>
               <option value="admin">admin</option>

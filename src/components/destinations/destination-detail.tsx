@@ -215,6 +215,13 @@ export function DestinationDetail({ slug }: DestinationDetailProps) {
                 </div>
               </div>
             </div>
+
+            {/* Nearby */}
+            <NearbyDestinations
+              destinationId={destination._id}
+              latitude={destination.latitude}
+              longitude={destination.longitude}
+            />
           </div>
         </div>
 
@@ -225,13 +232,6 @@ export function DestinationDetail({ slug }: DestinationDetailProps) {
           </h2>
           <TipList destinationId={destination._id} openTrigger={openTrigger} />
         </div>
-
-        {/* Nearby */}
-        <NearbyDestinations
-          destinationId={destination._id}
-          latitude={destination.latitude}
-          longitude={destination.longitude}
-        />
       </div>
 
       {/* Floating CTA */}

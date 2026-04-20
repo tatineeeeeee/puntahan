@@ -887,3 +887,443 @@ analytics_events: defineTable({
 | 18 | 43 | Error Tracking (Sentry) | S | Infra — observability |
 | 19 | 48 | README & Docs | S | Docs — screenshots, demo video |
 | 20 | 42 | Deploy to Vercel | S | Ship — go live |
+
+---
+
+# Week 11: Security Hardening Pass
+
+Findings from the 2026-04-20 senior-engineer OWASP audit. Do these in order — each closes a specific exploitable gap. Citations are OWASP Top 10 2021 categories.
+
+---
+
+## Phase 63: Rotate Dev Secrets & Audit Git History
+
+**Goal:** The 2026-04-20 audit confirmed `.env.local` contains live Clerk secret key + Clerk webhook signing secret + Convex deploy token. `.gitignore` correctly excludes `.env*` but rotate anyway as defense-in-depth before continuing.
+
+**What to build:**
+1. Clerk dashboard → API Keys → regenerate secret + publishable; update `.env.local`
+2. Clerk dashboard → Webhooks → rotate signing secret; update `CLERK_WEBHOOK_SECRET` in **Convex Dashboard env vars** (not `.env.local`)
+3. Run `git log --all --full-history -- .env.local` to confirm the file was never committed
+4. Add `gitleaks` or `git-secrets` pre-commit hook so this can't regress
+5. Document secret-rotation procedure in `SECURITY.md` (new file, ≤30 lines)
+
+**Files to modify:**
+- `.env.local` (local, not committed)
+- `.husky/pre-commit` or `.github/workflows/ci.yml` — add secret scanning step
+- `SECURITY.md` — NEW
+
+**OWASP:** A02 Cryptographic Failures / A05 Security Misconfiguration
+
+**Effort:** XS | **Priority:** Critical — do first
+
+---
+
+## Phase 64: Authenticate Trip Suggestion Voting
+
+**Goal:** `convex/tripSuggestions.ts` identifies voters by free-text `voterName: v.string()`. Anyone can vote as anyone, bypass the rate limit by changing names each call, and lock the real owner out by voting with their display name first. `voters: v.array(v.string())` can also be inflated to the 1 MB document limit, DoS'ing the suggestion entirely.
+
+**What to build:**
+1. Replace `voterName: v.string()` with `getCurrentUserOrThrow(ctx)` — authenticated identity only
+2. Migrate `voters: v.array(v.string())` → `v.array(v.id("users"))` in schema
+3. Rate-limit `vote` mutation using `checkRateLimit(ctx, \`vote-suggestion:${user._id}\`, 60)`
+4. Rate-limit `suggest` on `user._id`, not on user-supplied name
+5. Decide whether anonymous users can still suggest/vote (probably no — require sign-in for group trip voting)
+6. Data migration: existing `voters` string arrays get cleared or mapped to user IDs via a one-time internal mutation
+
+**Files to modify:**
+- `convex/schema.ts` — `trip_suggestions.voters` type change
+- `convex/tripSuggestions.ts` — auth check, rate limit, validation
+- `src/components/itineraries/voting-page.tsx` — require auth, remove name input
+- `convex/migrations.ts` (or new `internalMutation`) — one-time data backfill
+
+**OWASP:** A01 Broken Access Control / A07 Authentication Failures
+
+**Effort:** S | **Priority:** Critical
+
+---
+
+## Phase 65: Itinerary Share Tokens & Editor Access Hardening
+
+**Goal:** Three distinct access-control gaps in `convex/itineraries.ts`: share tokens never expire or rotate, editors can toggle `isPublic` (leaking owner-private itineraries), and there's no `removeCollaborator` mutation — ex-collaborators keep access forever.
+
+**What to build:**
+1. `revokeShareLink` mutation — sets `shareToken: undefined`, owner-only
+2. `rotateShareLink` mutation — regenerates token, invalidating old one
+3. Optional `shareTokenExpiresAt` field + check in `getByShareToken`
+4. Restrict `isPublic` toggle in `update` to owner only (`if (args.isPublic !== undefined && !isOwner) throw`)
+5. `removeCollaborator({ itineraryId, userId })` mutation — owner-only, cleans both `sharedWith` array and `itinerary_shares` row
+6. UI: "Revoke link" button in share dialog; "Remove" button next to each collaborator
+7. Fix token generation modulo bias in `itineraries.ts:6-15` (use rejection sampling or base36 from `Uint32Array`)
+
+**Files to modify:**
+- `convex/schema.ts` — add `shareTokenExpiresAt?: v.number()` (optional)
+- `convex/itineraries.ts` — new mutations + `update` guard
+- `src/components/itineraries/itinerary-detail.tsx` — UI for revoke/remove
+
+**OWASP:** A01 Broken Access Control / A02 Cryptographic Failures (modulo bias)
+
+**Effort:** S | **Priority:** Critical
+
+---
+
+## Phase 66: Tip Photo Ownership Verification
+
+**Goal:** `convex/tips.ts` accepts `photosStorageIds: v.array(v.string())` with zero ownership check. Any leaked storage ID (via logs, Sentry breadcrumbs, OG cache) can be attached to arbitrary public tips, hijacking someone else's upload. `photos.generateUploadUrl` also has no rate limit and no server-side MIME/size validation — client-only checks are bypassable.
+
+**What to build:**
+1. New `photos` table: `{ storageId, uploadedBy, contentType, sizeBytes, createdAt, attachedTo?: Id<"tips" | "destinations"> }`
+2. `photos.confirmUpload` mutation — called after client POSTs to upload URL; validates content-type (via `ctx.storage.getMetadata`), size (≤5MB), and `uploadedBy === user._id`
+3. `tips.create` validates every `storageId` in `photosStorageIds` has a matching `photos` row owned by the current user
+4. Rate-limit `photos.generateUploadUrl` and `photos.confirmUpload` (20/hour/user)
+5. Reject SVG uploads (serve with `Content-Disposition: attachment` if must support) — SVG can contain JS
+6. Magic-byte check in a server-side action (first 12 bytes of blob) — don't trust Content-Type alone
+
+**Files to modify:**
+- `convex/schema.ts` — add `photos` table + index `by_uploader` on `uploadedBy`
+- `convex/photos.ts` — rewrite `generateUploadUrl`, add `confirmUpload`
+- `convex/tips.ts` — verify photo ownership in `create` and `update`
+- `src/components/destinations/photo-upload.tsx` — add `confirmUpload` call after upload
+- `src/components/tips/tip-form.tsx` — same
+
+**OWASP:** A01 Broken Access Control / A04 Insecure Design
+
+**Effort:** M | **Priority:** High
+
+---
+
+## Phase 67: Analytics, Admin Surface & Rate Limiter Hardening
+
+**Goal:** Three related hardening items: unbounded public `analytics.trackEvent` + unbounded `.collect()` in admin/analytics dashboards + rate-limiter keys being user-controllable in places.
+
+**What to build:**
+1. `analytics.trackEvent` — cap string lengths (`event ≤ 64`, `page ≤ 200`, `metadata ≤ 1000`); rate-limit per user (or session fingerprint for anonymous); reject unknown event types via `v.union(v.literal(...))` instead of `v.string()`
+2. Precompute daily `analytics_rollups` via internal cron — replace the 4× `.collect()` in `analytics.dashboardStats` with a rollup read
+3. Same pattern for `destinations.listTopRated` and `destinations.stats` — materialized list updated on `tips.create` / `votes.castVote`
+4. `admin.allUsers` — return projected subset (name, imageUrl, role, stats) — never expose `email` or `clerkUserId` in admin list views; provide a separate `admin.getUserDetail` that logs the access
+5. Audit every `rate_limits` key — must be keyed on authenticated identity, never user-supplied string. Add a lint comment pattern (`// rate-limit key: <authenticated-id>`) for future endpoints
+6. Scheduled cron: prune `rate_limits` rows where `windowStart < now - WINDOW_MS` (the table currently grows unbounded)
+7. Webhook failure logging in `convex/http.ts` — include svix-id, timestamp; forward to Sentry; alert on repeated failures
+8. `itineraries.addCollaborator` email enumeration fix — return generic success regardless of whether email exists; send email out-of-band
+
+**Files to modify:**
+- `convex/schema.ts` — `analytics_rollups` table, `destination_stats` table
+- `convex/analytics.ts` — bounded validators, rollup queries
+- `convex/admin.ts` — projected user response, audit logging
+- `convex/destinations.ts` — materialized stats reads
+- `convex/rateLimit.ts` — cleanup cron
+- `convex/crons.ts` — schedule rollups + cleanup
+- `convex/http.ts` — enriched failure logging
+- `convex/itineraries.ts` — `addCollaborator` generic response
+
+**OWASP:** A04 Insecure Design / A09 Logging & Monitoring Failures / A07 (email enum)
+
+**Effort:** M | **Priority:** High
+
+---
+
+# Week 12+: Distinctly Filipino Features
+
+12 feature ideas grounded in Philippine travel realities — culture, transport, weather, language, food, disaster response. Ranked top three: 68+69 (Signal Bagyo + Ayuda Mode, build together), 70 (Paano Pumunta), 76 (Kain Tayo).
+
+---
+
+## Phase 68: Signal Bagyo — PAGASA Typhoon Overlay
+
+**Goal:** Real-time typhoon advisory per destination during bagyo season (Jun-Nov). Surfaces Signal 1-5 warnings on destination cards and detail pages, pushes notifications to users with bookmarks or itineraries in affected provinces.
+
+**What to build:**
+1. Nightly Convex cron fetches latest PAGASA Tropical Cyclone Bulletins via the MIT-licensed [`pagasa-parser`](https://github.com/pagasa-parser) npm package (no official PAGASA API exists — parser extracts from PDF/web)
+2. New tables: `typhoon_bulletins` (name, category, bulletin_no, issued_at, raw_payload) and `typhoon_signals` (bulletin_id, province_slug, signal: 1-5)
+3. Destinations get a banner on detail and card: color-coded by signal (yellow=1, orange=2-3, red=4-5), text: "Signal 3 — Bagyong Kiko (as of 5PM)"
+4. New route `/typhoon/[name]` — lists every puntahan destination in the bulletin's path
+5. Scheduled internal mutation: notify users whose `bookmarks` or `itineraries.days` contain affected destinations within 48 hours
+6. Historical frequency display per destination ("July: 3.2 typhoons avg") — aggregate from past bulletins
+
+**Files to create/modify:**
+- `convex/schema.ts` — two new tables
+- `convex/typhoons.ts` — NEW: cron action, list queries, signal lookups
+- `convex/crons.ts` — schedule hourly fetch during typhoon season
+- `src/components/destinations/typhoon-banner.tsx` — NEW
+- `src/app/typhoon/[name]/page.tsx` — NEW
+- `convex/notifications.ts` — typhoon notification type
+
+**External deps:** `pagasa-parser` npm package (MIT)
+
+**Effort:** M | **Priority:** High — strongest portfolio story
+
+---
+
+## Phase 69: Ayuda Mode — Disaster Response Flip
+
+**Goal:** When a destination's typhoon signal hits ≥3 (from Phase 68), the page *flips* from travel guide to mutual aid: community-submitted donation drives, safety check-ins, re-open status reports. This is the feature that says "I understand in PH, travel and disaster response are the same problem."
+
+**What to build:**
+1. Destination page conditionally flips when `activeSignal >= 3`: photo gallery dims, banner replaces with "BAGYONG [NAME] — This area needs help"
+2. New table `relief_drives`: organizer, GCash/bank, needs list (food/water/medicine), verified flag for established NGOs (Caritas, Red Cross, AKAP)
+3. Public mutation to submit a drive; admin verification for NGO-tier flag
+4. New table `safety_checkins`: user, destinationId, status ("safe" | "affected" | "need_help"), timestamp — community-driven (like FB Safety Check)
+5. Post-storm `reopen_reports`: community-verified "which resorts are back, which roads passable"
+6. Moderation: report false drives, auto-archive after typhoon clears
+
+**Files to create/modify:**
+- `convex/schema.ts` — three new tables
+- `convex/relief.ts` — NEW: drives, check-ins, reopen reports
+- `src/components/destinations/ayuda-mode.tsx` — NEW: the flipped UI
+- `src/components/destinations/destination-detail.tsx` — conditional render
+- `src/components/admin/verify-drives-tab.tsx` — NEW admin UI
+
+**Depends on:** Phase 68 (needs active-signal data)
+
+**Effort:** L | **Priority:** High — emotional resonance, portfolio cornerstone
+
+---
+
+## Phase 70: Paano Pumunta — Community Transport Legs
+
+**Goal:** Google Maps doesn't know you take Ceres Liner to Moalboal for ₱180. This is tribal knowledge in Facebook groups. puntahan surfaces it with community-submitted, fare-drift-detected transport chains.
+
+**What to build:**
+1. New table `transport_legs`: `{ destinationId, fromHub, mode: "jeepney"|"tricycle"|"habal-habal"|"bus"|"fastcraft"|"RORO"|"van", farePhp, durationMinutes, operator?, notes, userId, votes }`
+2. Pre-seed with LTFRB 2026 base fares (jeep ₱14+₱2/km, city aircon bus ₱18+₱2.98/km) so it's not empty on launch
+3. Form on each destination: "Add a leg" from a dropdown of common hubs (Manila, Cebu, Davao, CDO, Baguio, Iloilo, Tacloban)
+4. Stacked timeline render per origin hub: total peso + total time, citable sources per leg
+5. Fare-drift detection: if latest 3 submissions for a leg differ >15% from top-voted, flag for review
+6. Filter: "Show only destinations reachable from [hub] for under ₱[amount]"
+
+**Files to create/modify:**
+- `convex/schema.ts` — `transport_legs` + `transport_votes` + `transport_hubs` tables
+- `convex/transport.ts` — NEW: addLeg, voteLeg, listByDestination, detectDrift
+- `src/components/destinations/transport-timeline.tsx` — NEW
+- `src/components/destinations/destination-detail.tsx` — new "Paano Pumunta" section
+
+**Effort:** M | **Priority:** High — solves real Filipino pain, leverages community
+
+---
+
+## Phase 71: Fiesta Mode — Festival-Aware Destination Surfacing
+
+**Goal:** Upgrade the existing festival calendar. Link each festival to destinationId + provinceSlug; warn in itinerary builder when dates overlap a fiesta (crowded, 2× lodging prices); surface community tips for each festival.
+
+**What to build:**
+1. Extend existing `festivals` table: add `destinationIds: v.array(v.id("destinations"))`, `provinceSlug: v.string()`, `expectedCrowdLevel: "low"|"medium"|"high"|"extreme"`
+2. Destination page banner: "MassKara runs Oct 19–25 — expect 2× hotel prices, book now" (only if within 60 days of fiesta)
+3. Itinerary builder warning: "Your Baguio trip overlaps Panagbenga — crowded"
+4. `/fiesta-calendar` grid view by month; click a festival → filters destinations to that province
+5. Community tips sub-thread per festival: parade routes, road closures, where locals watch from
+
+**Files to modify:**
+- `convex/schema.ts` — festival fields
+- `convex/festivals.ts` — listWithDestinations, overlapCheck for itineraries
+- `convex/itineraries.ts` — add festival-overlap warning to queries
+- `src/components/destinations/festival-banner.tsx` — NEW
+- `src/app/festivals/page.tsx` — upgrade to grid + filter view
+
+**Effort:** S | **Priority:** Medium
+
+---
+
+## Phase 72: Pisoboard — Real Peso Median Breakdowns
+
+**Goal:** Budget pills ("Budget/Mid/Luxury") are generic. Filipinos ask "magkano talaga?" — actual peso amounts from actual travelers. Show median peso per category with "kuripot" and "pasabog" toggles (tightwad vs splurge).
+
+**What to build:**
+1. New table `cost_items`: `{ destinationId, category: "transport"|"entrance"|"meals"|"accommodation"|"pasalubong", amountPhp, tier: "kuripot"|"mid"|"pasabog", submittedAt, userId, votes }`
+2. Submission form under each destination: pick category + amount + tier
+3. Per-destination card computing **medians per category** (so outliers don't skew)
+4. "Kuripot mode" / "Pasabog mode" toggle: shows cheapest-only or splurge-only numbers
+5. Derived total: "3-day Sagada for 1 pax: ₱3,450 (kuripot) – ₱8,200 (pasabog)"
+6. Data quality: require 3+ submissions per category before showing numbers; else "Help us — share your peso amount"
+
+**Files to create/modify:**
+- `convex/schema.ts` — `cost_items` table with indexes `by_destination_category`, `by_destination_tier`
+- `convex/costs.ts` — NEW: add, list, computeMedian queries
+- `src/components/destinations/pisoboard.tsx` — NEW
+- `src/components/destinations/destination-detail.tsx` — integrate
+
+**Effort:** M | **Priority:** Medium-High
+
+---
+
+## Phase 73: Diskwento Mode — Senior/PWD 20% Discount Visibility
+
+**Goal:** RA 9994 (seniors) and RA 10754 (PWDs) legally mandate 20% off fare + hotels + restaurants. No PH travel site surfaces it. Profile toggle makes every peso figure across puntahan render with strikethrough + discounted value.
+
+**What to build:**
+1. Profile toggle: "I'm a senior citizen / PWD" (private boolean, never displayed on public profile)
+2. UI layer: when enabled, every `₱X` figure shows `~~₱X~~ ₱0.8X`
+3. Per-destination "Accessibility & discount notes" section: community-submitted reports of which establishments honored the discount without hassle vs which needed escalation
+4. Printable "Know Your Rights" card at `/diskwento/rights` — RA citations, counter-script, NCDA/DSWD hotlines
+5. Optional: filter "Show destinations with 3+ confirmed-compliant establishments"
+
+**Files to create/modify:**
+- `convex/schema.ts` — `users.discountEligibility: v.optional(v.union(v.literal("senior"), v.literal("pwd")))`; new `accessibility_reports` table
+- `convex/users.ts` — `setDiscountEligibility` mutation
+- `convex/accessibility.ts` — NEW: submit, list reports
+- `src/lib/hooks/use-discount.ts` — NEW: context hook
+- `src/components/ui/peso.tsx` — NEW: peso-rendering component that auto-applies discount
+- `src/app/diskwento/rights/page.tsx` — NEW: printable rights card
+- Every place displaying peso figures — replace raw `₱{n}` with `<Peso value={n} />`
+
+**Effort:** S-M | **Priority:** Medium — socially meaningful, low cost
+
+---
+
+## Phase 74: Barkada Split — Filipino-Role Group Expense Splitter
+
+**Goal:** Extend existing group trip voting with a bill-splitter tuned to Filipino group dynamics. Auto-computes "si Juan owes Maria ₱450" net settlements. Role tags ("Kuripot" / "Pasabog" / "Treasurer") make the dynamics explicit. GCash/Maya deep links for settling up.
+
+**What to build:**
+1. New tables: `group_expenses` (payer, amount, category, itineraryId, splitAmong: userIds[], receipt photo?) and `group_settlements` (from, to, amount, itineraryId, settled_at?)
+2. Inside itinerary detail, "Expenses" tab: anyone adds expense; auto-computes debt graph via simplified settlement algorithm
+3. Collaborator role tags in `itineraries.sharedWith`: `kuripot` | `pasabog` | `treasurer`
+4. Treasurer sees all receipts + export CSV; pasabog is suggested as payer for splurge items
+5. Deep link `gcash://send?amount=...&message=...` from settlement row (fallback to copy-amount on iOS/non-GCash users)
+6. "Settled" toggle per settlement; reopen if someone disputes
+
+**Files to create/modify:**
+- `convex/schema.ts` — two new tables; collaborator role enum
+- `convex/expenses.ts` — NEW: add, list, computeSettlements
+- `src/components/itineraries/expenses-tab.tsx` — NEW
+- `src/components/itineraries/itinerary-detail.tsx` — new tab
+
+**Effort:** M | **Priority:** Medium-High
+
+---
+
+## Phase 75: Wika Wiki — Regional Language Phrase Cheat Sheets
+
+**Goal:** Many urban Filipinos don't speak Ilocano, Cebuano, Waray, Hiligaynon, Bikol. You're effectively a tourist in your own country going from Manila to Bohol. Show survival phrases contextually per region with optional community audio clips.
+
+**What to build:**
+1. Static seed: ~30 survival phrases per language (Tagalog, Cebuano, Ilocano, Hiligaynon, Waray, Bikol, Chavacano) — greetings, numbers, "how much", "where's the CR", "thank you"
+2. Destination detail shows language card contextually based on `destination.region` / `province` (Bohol → Cebuano; Ilocos → Ilocano)
+3. Community extension: users add/upvote phrases; optional audio clip upload (reuse existing Convex storage + `photos` pattern from Phase 66)
+4. Copy-to-clipboard button on each phrase
+5. `/wika` route: browse all phrases by language
+
+**Files to create/modify:**
+- `convex/schema.ts` — `phrases` table `{ language, ph, en, audioStorageId?, votes, submittedBy, approved }`
+- `convex/phrases.ts` — NEW: list, submit, upvote
+- `src/components/destinations/phrase-card.tsx` — NEW
+- `src/app/wika/page.tsx` — NEW
+- `convex/seed.ts` — add phrase seed data
+
+**Effort:** S | **Priority:** Medium
+
+---
+
+## Phase 76: Kain Tayo — Regional Food Passport
+
+**Goal:** Food is destination-bound in PH in a way it isn't most places. You don't go to Cebu and not eat lechon. Gamify the existing photo + badge system: collect regional must-eats, earn Food Passport badges per region. Adds pasalubong recommendations per destination.
+
+**What to build:**
+1. New table `dishes`: `{ name, regionSlug, descriptionPh, descriptionEn, bestEatenAt: string[], priceRangePhp, iconStorageId? }` — pre-seeded with ~50 dishes (lechon, sisig, batchoy, pancit habhab, bicol express, Vigan bagnet, pastil, kinilaw, etc.)
+2. Destination detail links to `mustEats: Id<"dishes">[]` (Cebu → lechon, Iloilo → batchoy, Lucban → pancit habhab)
+3. Users log dishes via photo upload (reuses existing photo flow); new table `food_passport_entries: { userId, dishId, photoStorageId, destinationId, tastedAt }`
+4. Badge tier: "Food Passport: [Region]" at 5+ dishes logged in that region; new leaderboard tab "Top Food Explorers"
+5. Pasalubong tab per region: `pasalubong_items` table (Cebu dried mangoes, Davao durian candy, Iloilo barquillos, Vigan bagnet, Baguio strawberry jam) — community-extensible
+6. "You're missing X" nudges on dish list: grayed-out card with "tap to see where" link
+
+**Files to create/modify:**
+- `convex/schema.ts` — `dishes`, `food_passport_entries`, `pasalubong_items` tables
+- `convex/food.ts` — NEW: logDish, listDishesByRegion, computePassport
+- `src/lib/badges.ts` — add food passport badge logic
+- `src/components/destinations/must-eats.tsx` — NEW
+- `src/components/destinations/pasalubong-tab.tsx` — NEW
+- `src/components/profile/food-passport-shelf.tsx` — NEW
+- `convex/seed.ts` — dishes + pasalubong seed
+
+**Effort:** M | **Priority:** High — joyful demo screenshot, extends existing infra
+
+---
+
+## Phase 77: Tita Stay — Homestay & Pamilyahan Directory
+
+**Goal:** Agoda/Booking miss the entire "Tita Baby has a room sa Sagada, ₱500/night, text mo lang" economy. Community-submitted homestays with contact methods (Messenger link, OTP-verified mobile, GCash-receive number), moderated for dead numbers.
+
+**What to build:**
+1. New `accommodations` table: `{ destinationId, type: "homestay"|"hotel"|"resort"|"hostel"|"camping", name, contactMethod: "fb"|"mobile"|"gcash", contactValue, pricePhpPerNight, roomCount, specialty, verified, submittedBy }`
+2. Submission form with type-specific contact fields; mobile numbers verified via SMS OTP (Clerk-adjacent or Convex action + SMS provider)
+3. "Nagbigay ng service" rating instead of stars — community checklist: hot shower, Wi-Fi, food included, AC, friendly tita
+4. `stay_confirmations` table: users report successful stays; 3 confirmations = "community verified" badge on listing
+5. Report dead-number flow; auto-hide after 2 reports until re-verified
+6. Rate-limit submissions (already have rate limiting infra)
+
+**Files to create/modify:**
+- `convex/schema.ts` — `accommodations`, `accommodation_reports`, `stay_confirmations`
+- `convex/accommodations.ts` — NEW
+- `convex/sms.ts` — NEW (OTP verification action)
+- `src/components/accommodations/` — NEW directory
+- `src/app/accommodation/[id]/page.tsx` — NEW
+
+**Effort:** M-L | **Priority:** Medium — high moderation burden
+
+---
+
+## Phase 78: Signal Check — Telco Coverage Reports
+
+**Goal:** "May signal ba ang Globe sa Batanes?" is a universal pre-trip question. Telco coverage maps exist but are aspirational marketing. Community reports give ground truth.
+
+**What to build:**
+1. New `signal_reports` table: `{ destinationId, telco: "Globe"|"Smart"|"DITO"|"TNT"|"TM", strength: 1-5, speedMbps?, lastMeasured, submittedBy }`
+2. Destination page shows three bars: "Globe: 4/5 (n=28), Smart: 2/5 (n=19), DITO: 1/5 (n=6)"
+3. Filter: "Show only destinations with ≥3 signal for [my carrier]"
+4. Optional: PWA offline-first caching — "Download this destination" caches the destination detail page for no-signal use
+5. Aggregation: weight recent reports higher (exponential decay); show "last measured X days ago"
+
+**Files to create/modify:**
+- `convex/schema.ts` — `signal_reports` table
+- `convex/signals.ts` — NEW: submit, listByDestination, aggregate
+- `src/components/destinations/signal-bars.tsx` — NEW
+- `public/sw.js` — Service Worker for offline caching (optional sub-phase)
+
+**Effort:** S | **Priority:** Medium
+
+---
+
+## Phase 79: Balikbayan Mode — OFW Persona Features
+
+**Goal:** Millions of OFWs plan yearly trips home — distinct persona with distinct needs: multi-province family rounds, pasalubong shopping with customs rules, crowd advisories for NAIA during Holy Week / Undas / Christmas.
+
+**What to build:**
+1. Profile toggle: "I'm a Balikbayan / OFW based in [country dropdown]"
+2. Unlocks **multi-province itinerary template**: "Manila 2d → Pampanga 1d lola → Cebu 3d in-laws → Bohol 2d kids" with estimated domestic-flight costs (PAL/Cebu Pacific/AirAsia reference data)
+3. **Pasalubong Planner** module: pick items per destination (reuses Phase 76 pasalubong data), auto-calcs total weight/cost, warns against prohibited customs items (no dried fish in checked bags to US/UAE, no fresh fruit to AU, etc.) — static `customs_rules.json` per country
+4. "Share trip plan with Tita in PH" — reuses existing share-token but public-read-only and Tita can comment (new `itinerary_comments` table for non-collaborator feedback)
+5. Surface crowd advisories: "NAIA Terminal 1 is a warzone Dec 22-24; fly Dec 20 or Dec 26" — static advisory config with in-code dates for Holy Week, Undas, Christmas exodus
+
+**Files to create/modify:**
+- `convex/schema.ts` — `users.balikbayanCountry?`, `itinerary_comments` table
+- `convex/itineraries.ts` — comment mutations
+- `src/lib/customs-rules.ts` — static data per country
+- `src/components/itineraries/pasalubong-planner.tsx` — NEW
+- `src/components/itineraries/crowd-advisory.tsx` — NEW
+- `src/app/profile/page.tsx` — balikbayan toggle
+
+**Depends on:** Phase 76 (pasalubong data)
+
+**Effort:** M | **Priority:** Medium
+
+---
+
+## Build Order — Security First, Then Features
+
+| Order | Phase | Feature | Effort | Category |
+|-------|-------|---------|--------|----------|
+| 1 | 63 | Rotate dev secrets + git audit | XS | Security — critical, do first |
+| 2 | 64 | Authenticate trip suggestion voting | S | Security — critical |
+| 3 | 65 | Itinerary share token & editor hardening | S | Security — critical |
+| 4 | 66 | Tip photo ownership verification | M | Security — high |
+| 5 | 67 | Analytics, admin, rate-limit hardening | M | Security — high |
+| 6 | 68 | Signal Bagyo (PAGASA overlay) | M | Feature — distinctly PH |
+| 7 | 69 | Ayuda Mode (disaster response flip) | L | Feature — portfolio cornerstone |
+| 8 | 70 | Paano Pumunta (community transport) | M | Feature — distinctly PH |
+| 9 | 76 | Kain Tayo (food passport) | M | Feature — joyful demo |
+| 10 | 72 | Pisoboard (peso medians) | M | Feature — useful |
+| 11 | 74 | Barkada Split (group expenses) | M | Feature — cultural |
+| 12 | 71 | Fiesta Mode (festival surfacing) | S | Feature — extends existing |
+| 13 | 73 | Diskwento Mode (senior/PWD) | S-M | Feature — socially meaningful |
+| 14 | 75 | Wika Wiki (regional phrases) | S | Feature — charming |
+| 15 | 78 | Signal Check (telco coverage) | S | Feature — practical |
+| 16 | 79 | Balikbayan Mode (OFW persona) | M | Feature — underserved users |
+| 17 | 77 | Tita Stay (homestay directory) | M-L | Feature — novel, moderation-heavy |

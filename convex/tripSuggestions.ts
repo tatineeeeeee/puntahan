@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { getCurrentUserOrThrow } from "./helpers";
 import { checkRateLimit } from "./rateLimit";
 
 export const listByItinerary = query({
@@ -28,36 +29,39 @@ export const suggest = mutation({
   args: {
     itineraryId: v.id("itineraries"),
     destinationId: v.id("destinations"),
-    suggestedBy: v.string(),
   },
   handler: async (ctx, args) => {
-    const name = args.suggestedBy.trim();
-    if (!name) throw new Error("Name is required");
-    if (name.length > 100) throw new Error("Name must be under 100 characters");
-    await checkRateLimit(ctx, `suggest:${name}`, 10);
+    const user = await getCurrentUserOrThrow(ctx);
+    await checkRateLimit(ctx, `suggest:${user._id}`, 10);
 
-    // Check if this destination was already suggested for this itinerary
-    const existing = await ctx.db
+    const itinerary = await ctx.db.get(args.itineraryId);
+    if (!itinerary) throw new Error("Itinerary not found");
+
+    const alreadySuggested = await ctx.db
       .query("trip_suggestions")
-      .withIndex("by_itinerary", (q) => q.eq("itineraryId", args.itineraryId))
-      .collect();
-
-    const alreadySuggested = existing.find(
-      (s) => s.destinationId === args.destinationId,
-    );
+      .withIndex("by_itinerary_and_destination", (q) =>
+        q.eq("itineraryId", args.itineraryId).eq("destinationId", args.destinationId),
+      )
+      .first();
     if (alreadySuggested) {
       throw new Error("This destination was already suggested");
     }
-    if (existing.length >= 20) {
+
+    const existingCount = await ctx.db
+      .query("trip_suggestions")
+      .withIndex("by_itinerary", (q) => q.eq("itineraryId", args.itineraryId))
+      .take(21);
+    if (existingCount.length >= 20) {
       throw new Error("Maximum suggestions reached for this itinerary");
     }
 
     await ctx.db.insert("trip_suggestions", {
       itineraryId: args.itineraryId,
       destinationId: args.destinationId,
-      suggestedBy: name,
+      suggestedByUserId: user._id,
+      suggestedByName: user.name ?? "Anonymous",
       votes: 1,
-      voters: [name],
+      voterUserIds: [user._id],
       createdAt: Date.now(),
     });
   },
@@ -66,23 +70,21 @@ export const suggest = mutation({
 export const vote = mutation({
   args: {
     suggestionId: v.id("trip_suggestions"),
-    voterName: v.string(),
   },
   handler: async (ctx, args) => {
-    const name = args.voterName.trim();
-    if (!name) throw new Error("Name is required");
-    if (name.length > 100) throw new Error("Name must be under 100 characters");
+    const user = await getCurrentUserOrThrow(ctx);
+    await checkRateLimit(ctx, `vote-suggestion:${user._id}`, 60);
 
     const suggestion = await ctx.db.get(args.suggestionId);
     if (!suggestion) throw new Error("Suggestion not found");
 
-    if (suggestion.voters.includes(name)) {
+    if (suggestion.voterUserIds.includes(user._id)) {
       throw new Error("You already voted for this suggestion");
     }
 
     await ctx.db.patch(args.suggestionId, {
       votes: suggestion.votes + 1,
-      voters: [...suggestion.voters, name],
+      voterUserIds: [...suggestion.voterUserIds, user._id],
     });
   },
 });

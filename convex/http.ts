@@ -34,8 +34,14 @@ http.route({
         "svix-timestamp": svixTimestamp,
         "svix-signature": svixSignature,
       }) as typeof event;
-    } catch {
-      console.error("Webhook verification failed");
+    } catch (err) {
+      // Log identifying context for monitoring. Sentry picks up console.error
+      // via its integration; no bare secrets are included in the output.
+      console.error("Clerk webhook signature verification failed", {
+        svixId,
+        svixTimestamp,
+        error: err instanceof Error ? err.message : String(err),
+      });
       return new Response("Invalid signature", { status: 401 });
     }
 

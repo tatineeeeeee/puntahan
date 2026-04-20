@@ -8,7 +8,6 @@ import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { haversineDistance } from "@/lib/haversine";
 import { Badge } from "@/components/ui/badge";
-import { Rating } from "@/components/ui/rating";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const NearbyMap = dynamic(
@@ -59,31 +58,35 @@ export function NearbyDestinations({
   if (!nearby || nearby.length === 0) return null;
 
   return (
-    <div>
-      <h2 className="text-lg font-bold text-charcoal">Nearby Destinations</h2>
+    <div className="rounded-xl bg-sand p-4">
+      <h3 className="text-sm font-bold uppercase tracking-wide text-charcoal">
+        Nearby Destinations
+      </h3>
       <div className="mt-3">
         <NearbyMap pins={mapPins} center={[latitude, longitude]} />
       </div>
-      <div className="mt-3 flex gap-4 overflow-x-auto pb-2">
-        {nearby.map((dest) => (
-          <Link
-            key={dest._id}
-            href={`/destination/${dest.slug}`}
-            className="flex-none w-56 rounded-xl bg-sand p-3 hover:shadow-md transition-shadow"
-          >
-            <p className="font-bold text-sm text-charcoal truncate">
-              {dest.name}
-            </p>
-            <p className="text-xs text-warm-gray">{dest.province}</p>
-            <div className="mt-1.5 flex items-center gap-2">
-              <Rating value={dest.avgRating} size="sm" />
-              <Badge variant="default" className="text-[10px]">
-                {Math.round(dest.distance)} km
-              </Badge>
-            </div>
-          </Link>
+      <ul className="mt-3 space-y-2">
+        {nearby.slice(0, 4).map((dest) => (
+          <li key={dest._id}>
+            <Link
+              href={`/destination/${dest.slug}`}
+              className="block rounded-lg bg-white/60 p-2 transition-colors hover:bg-white"
+            >
+              <p className="truncate text-sm font-medium text-charcoal">
+                {dest.name}
+              </p>
+              <div className="mt-0.5 flex items-center justify-between gap-2">
+                <span className="truncate text-xs text-warm-gray">
+                  {dest.province}
+                </span>
+                <Badge variant="default" className="flex-none text-[10px]">
+                  {Math.round(dest.distance)} km
+                </Badge>
+              </div>
+            </Link>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

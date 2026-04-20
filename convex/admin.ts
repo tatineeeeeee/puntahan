@@ -80,7 +80,29 @@ export const allUsers = query({
   args: {},
   handler: async (ctx) => {
     await assertAdmin(ctx);
-    return await ctx.db.query("users").take(500);
+    const users = await ctx.db.query("users").take(500);
+    // Project to exclude sensitive fields (email, clerkUserId) by default.
+    // Call `adminGetUserDetail` for a specific user when full detail is needed.
+    return users.map((u) => ({
+      _id: u._id,
+      _creationTime: u._creationTime,
+      name: u.name,
+      imageUrl: u.imageUrl,
+      role: u.role,
+      tipsCount: u.tipsCount,
+      upvotesReceived: u.upvotesReceived,
+      destinationsVisited: u.destinationsVisited,
+      bookmarksCount: u.bookmarksCount,
+      photosUploaded: u.photosUploaded,
+    }));
+  },
+});
+
+export const getUserDetail = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    await assertAdmin(ctx);
+    return await ctx.db.get(args.userId);
   },
 });
 

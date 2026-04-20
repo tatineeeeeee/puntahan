@@ -35,6 +35,23 @@ export const create = mutation({
       0,
     );
 
+    // Verify the user actually uploaded every storageId they're attaching.
+    // Prevents stolen/leaked storage IDs from being re-attached to arbitrary tips.
+    const photosStorageIds = (args.photosStorageIds ?? []).slice(0, 3);
+    for (const storageId of photosStorageIds) {
+      const upload = await ctx.db
+        .query("tip_photo_uploads")
+        .withIndex("by_user_and_storage", (q) =>
+          q.eq("uploadedBy", user._id).eq("storageId", storageId),
+        )
+        .first();
+      if (!upload) {
+        throw new Error(
+          "You can only attach photos you uploaded from this form.",
+        );
+      }
+    }
+
     const tipId = await ctx.db.insert("tips", {
       userId: user._id,
       destinationId: args.destinationId,
@@ -44,7 +61,7 @@ export const create = mutation({
       totalBudget,
       upvotes: 0,
       downvotes: 0,
-      photosStorageIds: (args.photosStorageIds ?? []).slice(0, 3),
+      photosStorageIds,
       weightedScore: 0,
       createdAt: Date.now(),
       isApproved: true,

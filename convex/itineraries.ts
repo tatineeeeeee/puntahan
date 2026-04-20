@@ -1,15 +1,19 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
-import { getCurrentUser } from "./helpers";
+import { getCurrentUser, getCurrentUserOrThrow } from "./helpers";
 
 function generateToken(): string {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  const bytes = new Uint8Array(16);
-  crypto.getRandomValues(bytes);
   let result = "";
-  for (let i = 0; i < 16; i++) {
-    result += chars[bytes[i] % chars.length];
+  // Rejection sampling to avoid modulo bias: 36 * 7 = 252, reject bytes >= 252
+  while (result.length < 16) {
+    const bytes = new Uint8Array(16 - result.length);
+    crypto.getRandomValues(bytes);
+    for (const b of bytes) {
+      if (b < 252) result += chars[b % chars.length];
+      if (result.length === 16) break;
+    }
   }
   return result;
 }
@@ -169,6 +173,10 @@ export const update = mutation({
     if (!isOwner && !isEditor) throw new Error("Not authorized");
     if (args.name !== undefined && args.name.length > 200) throw new Error("Name too long");
     if (args.description !== undefined && args.description.length > 2000) throw new Error("Description too long");
+    // Only owners can change publication status — editors cannot expose a private itinerary
+    if (args.isPublic !== undefined && !isOwner) {
+      throw new Error("Only the owner can change publication status");
+    }
 
     await ctx.db.patch(args.id, {
       updatedAt: Date.now(),
@@ -177,6 +185,62 @@ export const update = mutation({
       ...(args.days !== undefined && { days: args.days }),
       ...(args.isPublic !== undefined && { isPublic: args.isPublic }),
     });
+  },
+});
+
+export const revokeShareLink = mutation({
+  args: { id: v.id("itineraries") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUserOrThrow(ctx);
+    const itinerary = await ctx.db.get(args.id);
+    if (!itinerary || itinerary.userId !== user._id) {
+      throw new Error("Not authorized");
+    }
+    await ctx.db.patch(args.id, { shareToken: undefined });
+  },
+});
+
+export const rotateShareLink = mutation({
+  args: { id: v.id("itineraries") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUserOrThrow(ctx);
+    const itinerary = await ctx.db.get(args.id);
+    if (!itinerary || itinerary.userId !== user._id) {
+      throw new Error("Not authorized");
+    }
+    const token = generateToken();
+    await ctx.db.patch(args.id, { shareToken: token });
+    return token;
+  },
+});
+
+export const removeCollaborator = mutation({
+  args: {
+    id: v.id("itineraries"),
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUserOrThrow(ctx);
+    const itinerary = await ctx.db.get(args.id);
+    if (!itinerary || itinerary.userId !== user._id) {
+      throw new Error("Not authorized");
+    }
+
+    await ctx.db.patch(args.id, {
+      sharedWith: itinerary.sharedWith.filter(
+        (s: { userId: Id<"users"> }) => s.userId !== args.userId,
+      ),
+    });
+
+    const share = await ctx.db
+      .query("itinerary_shares")
+      .withIndex("by_itinerary_and_user", (q) =>
+        q.eq("itineraryId", args.id).eq("userId", args.userId),
+      )
+      .unique();
+    if (share) {
+      await ctx.db.delete(share._id);
+    }
   },
 });
 
@@ -243,12 +307,15 @@ export const addCollaborator = mutation({
       .query("users")
       .withIndex("by_email", (q) => q.eq("email", args.email))
       .unique();
-    if (!targetUser) throw new Error("User not found");
+    // Silent no-op if the email doesn't match a user, to avoid leaking which
+    // emails are registered (email-enumeration oracle). Owner can still see
+    // the current collaborator list to confirm.
+    if (!targetUser) return;
 
     const alreadyShared = itinerary.sharedWith.some(
       (s: { userId: Id<"users"> }) => s.userId === targetUser._id,
     );
-    if (alreadyShared) throw new Error("Already shared with this user");
+    if (alreadyShared) return;
 
     await ctx.db.patch(args.id, {
       sharedWith: [

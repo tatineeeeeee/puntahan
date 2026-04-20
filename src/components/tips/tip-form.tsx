@@ -22,6 +22,7 @@ export function TipForm({ destinationId, openTrigger }: TipFormProps) {
   const { isAuthenticated } = useConvexAuth();
   const createTip = useMutation(api.tips.create);
   const generateUploadUrl = useMutation(api.photos.generateUploadUrl);
+  const registerTipPhoto = useMutation(api.photos.registerTipPhoto);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [content, setContent] = useState("");
@@ -59,6 +60,8 @@ export function TipForm({ destinationId, openTrigger }: TipFormProps) {
         body: file,
       });
       const { storageId } = await result.json();
+      // Claim ownership server-side before attaching to any tip
+      await registerTipPhoto({ storageId });
       setPhotoIds((prev) => [...prev, storageId]);
       setPhotoPreviewUrls((prev) => [...prev, URL.createObjectURL(file)]);
     } catch {

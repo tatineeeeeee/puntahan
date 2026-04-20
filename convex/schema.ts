@@ -114,7 +114,18 @@ export default defineSchema({
     uploadedAt: v.number(),
   })
     .index("by_destination", ["destinationId"])
-    .index("by_user", ["uploadedBy"]),
+    .index("by_user", ["uploadedBy"])
+    .index("by_storage", ["storageId"]),
+
+  tip_photo_uploads: defineTable({
+    uploadedBy: v.id("users"),
+    storageId: v.string(),
+    contentType: v.string(),
+    sizeBytes: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_user_and_storage", ["uploadedBy", "storageId"])
+    .index("by_storage", ["storageId"]),
 
   notifications: defineTable({
     userId: v.id("users"),
@@ -192,12 +203,14 @@ export default defineSchema({
   trip_suggestions: defineTable({
     itineraryId: v.id("itineraries"),
     destinationId: v.id("destinations"),
-    suggestedBy: v.string(),
+    suggestedByUserId: v.id("users"),
+    suggestedByName: v.string(),
     votes: v.number(),
-    voters: v.array(v.string()),
+    voterUserIds: v.array(v.id("users")),
     createdAt: v.number(),
   })
-    .index("by_itinerary", ["itineraryId"]),
+    .index("by_itinerary", ["itineraryId"])
+    .index("by_itinerary_and_destination", ["itineraryId", "destinationId"]),
 
   analytics_events: defineTable({
     event: v.string(),

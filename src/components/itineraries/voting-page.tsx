@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useConvexAuth } from "convex/react";
+import { SignInButton } from "@clerk/nextjs";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
@@ -14,10 +15,11 @@ interface VotingPageProps {
 }
 
 export function VotingPage({ token }: VotingPageProps) {
-  const [voterName, setVoterName] = useState("");
+  const { isAuthenticated, isLoading } = useConvexAuth();
   const [searchQuery, setSearchQuery] = useState("");
 
   const itinerary = useQuery(api.itineraries.getByShareToken, { token });
+  const currentUser = useQuery(api.users.getCurrentUser);
   const suggestions = useQuery(
     api.tripSuggestions.listByItinerary,
     itinerary ? { itineraryId: itinerary._id } : "skip",
@@ -30,7 +32,7 @@ export function VotingPage({ token }: VotingPageProps) {
   const suggest = useMutation(api.tripSuggestions.suggest);
   const vote = useMutation(api.tripSuggestions.vote);
 
-  if (itinerary === undefined) {
+  if (itinerary === undefined || isLoading) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-8 space-y-4">
         <Skeleton className="h-8 w-1/2" />
@@ -48,23 +50,20 @@ export function VotingPage({ token }: VotingPageProps) {
   }
 
   async function handleSuggest(destId: Id<"destinations">) {
-    if (!voterName.trim()) return;
     try {
       await suggest({
         itineraryId: itinerary!._id,
         destinationId: destId,
-        suggestedBy: voterName.trim(),
       });
       setSearchQuery("");
     } catch {
-      // Already suggested — silently ignore
+      // Already suggested or rate-limited — silently ignore
     }
   }
 
   async function handleVote(suggestionId: Id<"trip_suggestions">) {
-    if (!voterName.trim()) return;
     try {
-      await vote({ suggestionId, voterName: voterName.trim() });
+      await vote({ suggestionId });
     } catch {
       // Already voted — silently ignore
     }
@@ -81,16 +80,21 @@ export function VotingPage({ token }: VotingPageProps) {
         </p>
       </div>
 
-      {/* Voter name */}
-      <Input
-        label="Your Name"
-        value={voterName}
-        onChange={(e) => setVoterName(e.target.value)}
-        placeholder="Enter your name to suggest & vote"
-      />
+      {!isAuthenticated && (
+        <div className="rounded-xl bg-sand p-4 text-center">
+          <p className="text-sm text-charcoal mb-3">
+            Sign in to suggest and vote on destinations.
+          </p>
+          <SignInButton mode="modal">
+            <Button variant="primary" size="sm">
+              Sign In to Vote
+            </Button>
+          </SignInButton>
+        </div>
+      )}
 
       {/* Suggest a destination */}
-      {voterName.trim() && (
+      {isAuthenticated && (
         <div className="space-y-2">
           <p className="text-sm font-medium text-charcoal">
             Suggest a Destination
@@ -127,33 +131,39 @@ export function VotingPage({ token }: VotingPageProps) {
             No suggestions yet. Be the first!
           </p>
         ) : (
-          sorted.map((s) => (
-            <div
-              key={s._id}
-              className="flex items-center justify-between rounded-xl bg-sand p-4"
-            >
-              <div>
-                <p className="font-medium text-charcoal">
-                  {s.destinationName}
-                </p>
-                <p className="text-xs text-warm-gray">
-                  {s.destinationProvince} &middot; Suggested by {s.suggestedBy}
-                </p>
+          sorted.map((s) => {
+            const hasVoted = currentUser
+              ? s.voterUserIds.includes(currentUser._id)
+              : false;
+            return (
+              <div
+                key={s._id}
+                className="flex items-center justify-between rounded-xl bg-sand p-4"
+              >
+                <div>
+                  <p className="font-medium text-charcoal">
+                    {s.destinationName}
+                  </p>
+                  <p className="text-xs text-warm-gray">
+                    {s.destinationProvince} &middot; Suggested by{" "}
+                    {s.suggestedByName}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="default">{s.votes} votes</Badge>
+                  {isAuthenticated && !hasVoted && (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => handleVote(s._id)}
+                    >
+                      Vote
+                    </Button>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Badge variant="default">{s.votes} votes</Badge>
-                {voterName.trim() && !s.voters.includes(voterName.trim()) && (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => handleVote(s._id)}
-                  >
-                    Vote
-                  </Button>
-                )}
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

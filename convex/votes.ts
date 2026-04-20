@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { getCurrentUserOrThrow, getCurrentUser } from "./helpers";
+import { checkRateLimit } from "./rateLimit";
 import { Id } from "./_generated/dataModel";
 import { MutationCtx } from "./_generated/server";
 
@@ -38,6 +39,7 @@ export const castVote = mutation({
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUserOrThrow(ctx);
+    await checkRateLimit(ctx, `vote:${user._id}`, 120);
 
     const existing = await ctx.db
       .query("votes")
@@ -59,12 +61,12 @@ export const castVote = mutation({
         const upDelta = args.direction === "up" ? -1 : 0;
         const downDelta = args.direction === "down" ? -1 : 0;
         await ctx.db.patch(args.tipId, {
-          upvotes: tip.upvotes + upDelta,
-          downvotes: tip.downvotes + downDelta,
+          upvotes: Math.max(0, tip.upvotes + upDelta),
+          downvotes: Math.max(0, tip.downvotes + downDelta),
         });
         if (tipAuthor && args.direction === "up") {
           await ctx.db.patch(tip.userId, {
-            upvotesReceived: tipAuthor.upvotesReceived - 1,
+            upvotesReceived: Math.max(0, tipAuthor.upvotesReceived - 1),
           });
         }
         await recalcWeightedScore(ctx, args.tipId);
@@ -75,13 +77,15 @@ export const castVote = mutation({
 
         const wasUp = existing.direction === "up";
         await ctx.db.patch(args.tipId, {
-          upvotes: tip.upvotes + (wasUp ? -1 : 1),
-          downvotes: tip.downvotes + (wasUp ? 1 : -1),
+          upvotes: Math.max(0, tip.upvotes + (wasUp ? -1 : 1)),
+          downvotes: Math.max(0, tip.downvotes + (wasUp ? 1 : -1)),
         });
         if (tipAuthor) {
           await ctx.db.patch(tip.userId, {
-            upvotesReceived:
+            upvotesReceived: Math.max(
+              0,
               tipAuthor.upvotesReceived + (wasUp ? -1 : 1),
+            ),
           });
         }
         await recalcWeightedScore(ctx, args.tipId);
