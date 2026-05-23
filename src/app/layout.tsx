@@ -17,6 +17,9 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://puntahan.vercel.app",
+  ),
   title: "puntahan — Discover the Philippines",
   description:
     "Community-driven travel guide for Philippine destinations. Browse, upvote, and share travel spots organized by region.",
@@ -26,12 +29,21 @@ export const metadata: Metadata = {
       "Community-driven travel guide for Philippine destinations. Browse, upvote, and share travel spots organized by region.",
     siteName: "puntahan",
     type: "website",
+    images: [
+      {
+        url: "/api/og",
+        width: 1200,
+        height: 630,
+        alt: "puntahan — Discover the Philippines",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "puntahan — Discover the Philippines",
     description:
       "Community-driven travel guide for Philippine destinations.",
+    images: ["/api/og"],
   },
 };
 

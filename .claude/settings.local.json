@@ -2,7 +2,16 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:docs.convex.dev)",
-      "WebFetch(domain:clerk.com)"
+      "WebFetch(domain:clerk.com)",
+      "PowerShell(Get-ChildItem -Path \"d:\\\\Justine\\\\puntahan\" -Depth 1 | Where-Object { $_.Name -ne \"node_modules\" } | Select-Object Name, LastWriteTime | Sort-Object LastWriteTime -Descending)",
+      "PowerShell(ls \"d:\\\\Justine\\\\puntahan\" | Where-Object { $_.Name -ne \"node_modules\" })",
+      "WebSearch",
+      "WebFetch(domain:magicui.design)",
+      "Bash(bun add *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'feat: redesign logo mark — Philippine sun map pin with island scene *)",
+      "Bash(git commit -m 'feat: animated theme toggle + BlurFade entry animations *)",
+      "Bash(git commit -m 'chore: SEO metadata, security policy, and infra fixes *)"
     ]
   }
 }
