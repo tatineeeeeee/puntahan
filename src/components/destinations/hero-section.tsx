@@ -130,7 +130,7 @@ export function HeroSection({ scrollTargetId }: HeroSectionProps) {
                           fill
                           className="object-cover transition-transform duration-300 group-hover:scale-105"
                           sizes="(max-width: 640px) 45vw, 200px"
-                          priority={idx === 0}
+                          priority
                         />
                       ) : (
                         <div className="flex h-full items-center justify-center text-sm text-warm-gray">
