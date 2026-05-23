@@ -7,6 +7,7 @@ import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Rating } from "@/components/ui/rating";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BlurFade } from "@/components/ui/blur-fade";
 import { useLocale } from "@/lib/hooks/use-locale";
 import { t } from "@/lib/i18n";
 
@@ -115,9 +116,9 @@ export function HeroSection({ scrollTargetId }: HeroSectionProps) {
           <div>
             {featured.length > 0 ? (
               <div className="mx-auto grid max-w-md grid-cols-2 gap-3">
-                {featured.slice(0, 4).map((dest) => (
+                {featured.slice(0, 4).map((dest, idx) => (
+                  <BlurFade key={dest._id} delay={idx * 0.1} duration={0.5}>
                   <Link
-                    key={dest._id}
                     href={`/destination/${dest.slug}`}
                     className="group overflow-hidden rounded-xl bg-sand shadow-md ring-1 ring-warm-gray/5 transition-all hover:-translate-y-0.5 hover:shadow-lg"
                   >
@@ -129,6 +130,7 @@ export function HeroSection({ scrollTargetId }: HeroSectionProps) {
                           fill
                           className="object-cover transition-transform duration-300 group-hover:scale-105"
                           sizes="(max-width: 640px) 45vw, 200px"
+                          priority={idx === 0}
                         />
                       ) : (
                         <div className="flex h-full items-center justify-center text-sm text-warm-gray">
@@ -154,6 +156,7 @@ export function HeroSection({ scrollTargetId }: HeroSectionProps) {
                       </p>
                     </div>
                   </Link>
+                  </BlurFade>
                 ))}
               </div>
             ) : isLoading ? (

@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { Doc } from "../../../convex/_generated/dataModel";
 import { DestinationCard } from "./destination-card";
+import { BlurFade } from "@/components/ui/blur-fade";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { SortOption } from "./sort-dropdown";
 
@@ -63,8 +64,10 @@ export function DestinationGrid({
 
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-      {processed.map((dest) => (
-        <DestinationCard key={dest._id} destination={dest} topTipPreview={dest.topTipPreview} />
+      {processed.map((dest, i) => (
+        <BlurFade key={dest._id} delay={i * 0.05} inView>
+          <DestinationCard destination={dest} topTipPreview={dest.topTipPreview} />
+        </BlurFade>
       ))}
     </div>
   );
