@@ -23,10 +23,34 @@ export async function GET(request: NextRequest) {
             fontFamily: "sans-serif",
           }}
         >
-          <div style={{ fontSize: 64, fontWeight: 700, color: "white" }}>
+          {/* Logo mark — pin with sun + island scene inside */}
+          <svg
+            width="100"
+            height="100"
+            viewBox="0 0 32 32"
+            fill="none"
+            style={{ marginBottom: 24 }}
+          >
+            {/* Pin silhouette */}
+            <path d="M16,30 C11,26 6,20 6,12 A10,10 0 0 1 26,12 C26,20 21,26 16,30Z" fill="#E8501A"/>
+            {/* Sun — rays naturally contained within pin, no clipPath needed for Satori */}
+            <path d="M16,4 L17.07,8.41 L20.95,6.05 L18.59,9.93 L23,11 L18.59,12.07 L20.95,15.95 L17.07,13.59 L16,18 L14.93,13.59 L11.05,15.95 L13.41,12.07 L9,11 L13.41,9.93 L11.05,6.05 L14.93,8.41Z" fill="#F5B314"/>
+            <circle cx="16" cy="11" r="2.5" fill="#F5B314"/>
+            {/* Ocean */}
+            <path d="M9,21 Q12.5,19.5 16,21 Q19.5,22.5 23,21 L22,28 Q19,30.5 16,30 Q13,30.5 10,28Z" fill="#0D9488"/>
+            {/* Mountain */}
+            <path d="M9,22 Q13,16 16,18 Q19,16 23,22Z" fill="#0A4540"/>
+            {/* Wave */}
+            <path d="M9.5,23 Q13,21.5 16,23 Q19,24.5 22.5,23" stroke="#22C4B8" strokeWidth="0.8" fill="none" strokeLinecap="round"/>
+            {/* Palm trunk */}
+            <path d="M19.5,22.5 Q20.5,20 19,18" stroke="#0D6B5C" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+            {/* Palm fronds */}
+            <path d="M19,18 Q22,15.5 24,16.5 Q22,17.5 19,18 M19,18 Q22.5,17 23,19.5 Q21,18.5 19,18 M19,18 Q16.5,15.5 14.5,16.5 Q16.5,17.5 19,18" stroke="#0D6B5C" strokeWidth="0.7" fill="none" strokeLinecap="round"/>
+          </svg>
+          <div style={{ fontSize: 72, fontWeight: 700, color: "white", letterSpacing: "-1px" }}>
             puntahan
           </div>
-          <div style={{ fontSize: 24, color: "rgba(255,255,255,0.9)", marginTop: 12 }}>
+          <div style={{ fontSize: 26, color: "rgba(255,255,255,0.85)", marginTop: 16 }}>
             Real tips. Real budgets. Real travelers.
           </div>
         </div>
