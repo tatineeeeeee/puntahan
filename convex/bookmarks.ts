@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getCurrentUserOrThrow, getCurrentUser } from "./helpers";
+import { checkRateLimit } from "./rateLimit";
 
 export const toggle = mutation({
   args: {
@@ -8,6 +9,7 @@ export const toggle = mutation({
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUserOrThrow(ctx);
+    await checkRateLimit(ctx, `bookmark:${user._id}`, 60); // 60 bookmark toggles per hour
 
     const existing = await ctx.db
       .query("bookmarks")
@@ -92,6 +94,7 @@ export const toggleVisited = mutation({
   args: { destinationId: v.id("destinations") },
   handler: async (ctx, args) => {
     const user = await getCurrentUserOrThrow(ctx);
+    await checkRateLimit(ctx, `visited:${user._id}`, 60); // 60 visited toggles per hour
 
     const bookmark = await ctx.db
       .query("bookmarks")

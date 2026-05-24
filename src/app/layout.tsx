@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { ConvexClientProvider } from "@/components/providers/convex-client-provider";
 import { Header } from "@/components/layout/header";
 import { BottomNav } from "@/components/layout/bottom-nav";
@@ -76,6 +77,7 @@ export default function RootLayout({
           <ScrollToTop />
           <ToastContainer />
         </ConvexClientProvider>
+        <Analytics />
       </body>
     </html>
   );

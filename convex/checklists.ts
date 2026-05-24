@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getCurrentUser } from "./helpers";
+import { checkRateLimit } from "./rateLimit";
 
 export const create = mutation({
   args: {
@@ -11,6 +12,7 @@ export const create = mutation({
   handler: async (ctx, args) => {
     const user = await getCurrentUser(ctx);
     if (!user) throw new Error("Not authenticated");
+    await checkRateLimit(ctx, `checklist:${user._id}`, 20); // 20 checklists per hour
     if (args.name.length > 200) throw new Error("Name too long");
     if (args.items.some((i) => i.text.length > 500)) throw new Error("Item text too long");
 

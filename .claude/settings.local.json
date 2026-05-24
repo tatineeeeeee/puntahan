@@ -11,7 +11,17 @@
       "Bash(git add *)",
       "Bash(git commit -m 'feat: redesign logo mark — Philippine sun map pin with island scene *)",
       "Bash(git commit -m 'feat: animated theme toggle + BlurFade entry animations *)",
-      "Bash(git commit -m 'chore: SEO metadata, security policy, and infra fixes *)"
+      "Bash(git commit -m 'chore: SEO metadata, security policy, and infra fixes *)",
+      "Bash(git push *)",
+      "PowerShell(git -C \"d:\\\\Justine\\\\puntahan\" diff --stat HEAD)",
+      "PowerShell(git -C \"d:\\\\Justine\\\\puntahan\" add src/components/destinations/hero-section.tsx)",
+      "PowerShell(git -C \"d:\\\\Justine\\\\puntahan\" commit -m \"perf: fix LCP warning by adding priority to all above-fold hero images\")",
+      "PowerShell(git -C \"d:\\\\Justine\\\\puntahan\" push)",
+      "WebFetch(domain:github.com)",
+      "Bash(Get-ChildItem -Path \"d:\\\\Justine\\\\puntahan\" -Force)",
+      "Bash(Select-Object Name)",
+      "Bash(xargs grep -l \"useUser\\\\|useAuth\\\\|currentUser\")",
+      "Bash(bunx tsc *)"
     ]
   }
 }
