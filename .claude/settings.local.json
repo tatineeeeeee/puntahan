@@ -21,7 +21,22 @@
       "Bash(Get-ChildItem -Path \"d:\\\\Justine\\\\puntahan\" -Force)",
       "Bash(Select-Object Name)",
       "Bash(xargs grep -l \"useUser\\\\|useAuth\\\\|currentUser\")",
-      "Bash(bunx tsc *)"
+      "Bash(bunx tsc *)",
+      "Bash(Get-ChildItem -Path \"d:\\\\Justine\\\\puntahan\" -Recurse -Directory -Include \"app\", \"components\")",
+      "Bash(Select-Object -First 20)",
+      "Bash(bun run *)",
+      "Bash(bunx convex *)",
+      "Bash(Get-ChildItem -Path \"d:\\\\Justine\\\\puntahan\\\\src\" -Recurse -Filter \"*.tsx\" -File)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(git commit -m 'design: fix light mode sand token — yellow #FEF3C7 → warm beige #F5F1EE *)",
+      "Bash(git commit -m 'ux: rewrite hero social proof copy and search placeholder *)",
+      "Bash(git commit -m 'a11y: add aria-labels to budget pills and filter panel category buttons *)",
+      "Bash(git commit -m 'a11y: fix region-tabs — invalid tab role replaced with toggle group *)",
+      "Bash(git commit -m 'a11y: add aria-label to region cards + fix Tailwind v4 gradient class *)",
+      "Bash(git commit -m 'a11y: add aria-expanded to mobile menu and notification bell *)",
+      "Bash(git commit -m 'a11y: dialog semantics, checkbox labels, contextual remove buttons *)",
+      "Bash(git commit *)"
     ]
   }
 }
