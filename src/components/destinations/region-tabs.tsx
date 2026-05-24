@@ -17,14 +17,13 @@ interface RegionTabsProps {
 
 export function RegionTabs({ activeRegion, onRegionChange }: RegionTabsProps) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1" role="tablist">
+    <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Filter by region">
       {regions.map((r) => {
         const isActive = activeRegion === r.value;
         return (
           <button
             key={r.label}
-            role="tab"
-            aria-selected={isActive}
+            aria-pressed={isActive ? "true" : "false"}
             onClick={() => onRegionChange(r.value)}
             className={cn(
               "inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors",
