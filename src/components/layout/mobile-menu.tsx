@@ -21,6 +21,7 @@ export function MobileMenu() {
         onClick={() => setOpen(!open)}
         className="rounded p-1.5 text-charcoal hover:bg-sand transition-colors"
         aria-label="Toggle menu"
+        aria-expanded={open === true}
       >
         {open ? (
           <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
