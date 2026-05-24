@@ -37,7 +37,7 @@ export function DestinationCard({ destination, topTipPreview, className }: Desti
     if (comparing) {
       removeCompare(destination._id);
     } else {
-      add(destination._id);
+      add(destination._id, destination.name);
     }
   }
 

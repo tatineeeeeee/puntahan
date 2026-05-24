@@ -3,9 +3,15 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import { Id } from "../../convex/_generated/dataModel";
 
+export interface DestinationRef {
+  id: Id<"destinations">;
+  name: string;
+}
+
 interface ComparisonContextType {
-  selected: Id<"destinations">[];
-  add: (id: Id<"destinations">) => void;
+  selected: DestinationRef[];
+  selectedIds: Id<"destinations">[];
+  add: (id: Id<"destinations">, name: string) => void;
   remove: (id: Id<"destinations">) => void;
   clear: () => void;
   isSelected: (id: Id<"destinations">) => boolean;
@@ -14,44 +20,47 @@ interface ComparisonContextType {
 const ComparisonContext = createContext<ComparisonContextType | null>(null);
 
 const MAX_COMPARE = 3;
+const STORAGE_KEY = "compare_v2";
 
-function readFromStorage(): Id<"destinations">[] {
+function readFromStorage(): DestinationRef[] {
   if (typeof window === "undefined") return [];
   try {
-    const stored = sessionStorage.getItem("compare");
-    return stored ? JSON.parse(stored) : [];
+    const stored = sessionStorage.getItem(STORAGE_KEY);
+    return stored ? (JSON.parse(stored) as DestinationRef[]) : [];
   } catch {
     return [];
   }
 }
 
 export function ComparisonProvider({ children }: { children: ReactNode }) {
-  const [selected, setSelected] = useState<Id<"destinations">[]>(readFromStorage);
+  const [selected, setSelected] = useState<DestinationRef[]>(readFromStorage);
 
   useEffect(() => {
-    sessionStorage.setItem("compare", JSON.stringify(selected));
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(selected));
   }, [selected]);
 
-  const add = useCallback((id: Id<"destinations">) => {
+  const add = useCallback((id: Id<"destinations">, name: string) => {
     setSelected((prev) => {
-      if (prev.length >= MAX_COMPARE || prev.includes(id)) return prev;
-      return [...prev, id];
+      if (prev.length >= MAX_COMPARE || prev.some((s) => s.id === id)) return prev;
+      return [...prev, { id, name }];
     });
   }, []);
 
   const remove = useCallback((id: Id<"destinations">) => {
-    setSelected((prev) => prev.filter((s) => s !== id));
+    setSelected((prev) => prev.filter((s) => s.id !== id));
   }, []);
 
   const clear = useCallback(() => setSelected([]), []);
 
   const isSelected = useCallback(
-    (id: Id<"destinations">) => selected.includes(id),
+    (id: Id<"destinations">) => selected.some((s) => s.id === id),
     [selected],
   );
 
+  const selectedIds = selected.map((s) => s.id);
+
   return (
-    <ComparisonContext.Provider value={{ selected, add, remove, clear, isSelected }}>
+    <ComparisonContext.Provider value={{ selected, selectedIds, add, remove, clear, isSelected }}>
       {children}
     </ComparisonContext.Provider>
   );
