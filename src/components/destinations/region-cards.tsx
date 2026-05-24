@@ -60,6 +60,7 @@ export function RegionCards({ activeRegions, onRegionToggle }: RegionCardsProps)
             key={region.name}
             type="button"
             aria-pressed={isActive}
+            aria-label={`${isActive ? "Deselect" : "Filter by"} ${region.label}${count !== undefined ? ` — ${count} destinations` : ""}`}
             onClick={() => onRegionToggle(region.name)}
             className={cn(
               "group relative h-28 overflow-hidden rounded-xl transition-all sm:h-36",
@@ -77,7 +78,7 @@ export function RegionCards({ activeRegions, onRegionToggle }: RegionCardsProps)
 
             <div
               className={cn(
-                "absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent transition-opacity",
+                "absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent transition-opacity",
                 isActive && "from-black/70",
               )}
             />
