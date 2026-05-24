@@ -43,6 +43,7 @@ export function BudgetPills({
             key={option.value}
             type="button"
             aria-pressed={isActive}
+            aria-label={`${isActive ? "Remove" : "Filter by"} ${option.label} — ${option.detail}${count !== undefined ? `, ${count} destinations` : ""}`}
             onClick={() =>
               onCategoryChange(isActive ? "" : option.value)
             }

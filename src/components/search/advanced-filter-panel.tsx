@@ -46,6 +46,7 @@ export function AdvancedFilterPanel({
             type="button"
             onClick={() => toggleCategory(cat)}
             aria-pressed={isActive}
+            aria-label={`${isActive ? "Remove" : "Filter by"} ${cat}`}
             className={cn(
               "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
               isActive
@@ -67,7 +68,8 @@ export function AdvancedFilterPanel({
         onClick={() =>
           onChange({ ...filters, minRating: filters.minRating >= 4 ? 0 : 4 })
         }
-        aria-pressed={filters.minRating >= 4}
+        aria-pressed={filters.minRating >= 4 ? "true" : "false"}
+        aria-label={filters.minRating >= 4 ? "Remove 4+ stars filter" : "Show only 4-star and above destinations"}
         className={cn(
           "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
           filters.minRating >= 4
@@ -81,7 +83,8 @@ export function AdvancedFilterPanel({
       <button
         type="button"
         onClick={() => onChange({ ...filters, hasPhotos: !filters.hasPhotos })}
-        aria-pressed={filters.hasPhotos}
+        aria-pressed={filters.hasPhotos ? "true" : "false"}
+        aria-label={filters.hasPhotos ? "Remove photos filter" : "Show only destinations with photos"}
         className={cn(
           "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
           filters.hasPhotos
@@ -105,6 +108,7 @@ export function AdvancedFilterPanel({
               season: "any",
             })
           }
+          aria-label="Clear all active filters"
           className="text-xs text-warm-gray hover:text-coral transition-colors"
         >
           Clear
