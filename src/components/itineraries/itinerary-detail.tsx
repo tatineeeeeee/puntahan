@@ -195,6 +195,7 @@ export function ItineraryDetail({ itineraryId }: ItineraryDetailProps) {
                     <button
                       type="button"
                       onClick={() => handleRemoveDestination(dayIndex, destIndex)}
+                      aria-label={`Remove ${dest?.name ?? "destination"}`}
                       className="text-xs text-warm-gray hover:text-coral"
                     >
                       Remove

@@ -73,10 +73,13 @@ export function ShareModal({ itineraryId, onClose }: ShareModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/50" onClick={onClose}>
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="share-modal-title"
         className="w-full max-w-md rounded-xl bg-warm-white p-6 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-lg font-bold text-charcoal">Share Itinerary</h3>
+        <h3 id="share-modal-title" className="text-lg font-bold text-charcoal">Share Itinerary</h3>
 
         {/* Share link */}
         <div>

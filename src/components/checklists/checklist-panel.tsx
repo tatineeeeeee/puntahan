@@ -99,6 +99,7 @@ export function ChecklistPanel({ itineraryId, categories }: ChecklistPanelProps)
               type="checkbox"
               checked={item.isChecked}
               onChange={() => handleToggle(i)}
+              aria-label={item.text}
               className="h-4 w-4 rounded border-warm-gray/30 text-teal focus:ring-teal"
             />
             <span
