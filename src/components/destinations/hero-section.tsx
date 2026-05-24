@@ -101,12 +101,9 @@ export function HeroSection({ scrollTargetId }: HeroSectionProps) {
                 </>
               ) : (
                 <p className="text-xs leading-relaxed text-warm-gray">
-                  Join{" "}
-                  <strong className="text-charcoal">
-                    {stats?.total ?? "23"}
-                  </strong>{" "}
-                  destinations worth of community tips and honest peso
-                  breakdowns.
+                  Honest peso breakdowns from Filipino travelers —
+                  no tourist traps, just{" "}
+                  <strong className="text-charcoal">real costs</strong>.
                 </p>
               )}
             </div>
