@@ -36,7 +36,10 @@
       "Bash(git commit -m 'a11y: add aria-label to region cards + fix Tailwind v4 gradient class *)",
       "Bash(git commit -m 'a11y: add aria-expanded to mobile menu and notification bell *)",
       "Bash(git commit -m 'a11y: dialog semantics, checkbox labels, contextual remove buttons *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(Get-ChildItem -Recurse -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object FullName)",
+      "Bash(git rm *)"
     ]
   }
 }
