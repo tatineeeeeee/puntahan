@@ -7,7 +7,7 @@
   --color-coral: #FF6B6B;
   --color-teal: #0D9488;
   --color-warm-white: #FFFBF5;
-  --color-sand: #FEF3C7;
+  --color-sand: #F5F1EE;
   --color-charcoal: #1C1917;
   --color-warm-gray: #78716C;
   --color-sunset: #FB923C;
@@ -20,7 +20,7 @@
   --color-background: #FFFBF5;
   --color-foreground: #1C1917;
 
-  --color-surface-hover: #FDF0B8;
+  --color-surface-hover: #EDE8E3;
   --color-surface-highest: #FFFFFF;
 
   --font-sans: var(--font-dm-sans);
