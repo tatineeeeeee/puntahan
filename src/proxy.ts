@@ -1,4 +1,3 @@
-// TODO: Migrate to named `proxy` export when Clerk supports Next.js 16 proxy.ts pattern
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isProtectedRoute = createRouteMatcher([
