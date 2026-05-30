@@ -15,7 +15,7 @@ export default function Error({
         An unexpected error occurred. Please try again.
       </p>
       <Button onClick={reset} className="mt-4">
-        Try again
+        Try Again
       </Button>
     </div>
   );
