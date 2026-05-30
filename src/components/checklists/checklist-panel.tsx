@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation, useQuery } from "convex/react";
-import { useConvexAuth } from "convex/react";
+import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
@@ -113,7 +112,7 @@ export function ChecklistPanel({ itineraryId, categories }: ChecklistPanelProps)
               className="text-xs text-warm-gray hover:text-coral"
               aria-label={`Remove ${item.text}`}
             >
-              x
+              ×
             </button>
           </div>
         ))}
