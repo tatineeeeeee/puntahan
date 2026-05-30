@@ -85,6 +85,8 @@ export function ChecklistPanel({ itineraryId, categories }: ChecklistPanelProps)
       {/* Progress bar */}
       <div className="h-2 rounded-full bg-warm-gray/20">
         <div
+          role="progressbar"
+          aria-label={`Packing progress: ${Math.round(progress)}%`}
           className="h-2 rounded-full bg-teal transition-all"
           style={{ width: `${progress}%` }}
         />
