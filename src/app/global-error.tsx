@@ -35,6 +35,7 @@ export default function GlobalError({
             An unexpected error occurred. Please try again.
           </p>
           <button
+            type="button"
             onClick={reset}
             style={{
               marginTop: "1.5rem",
