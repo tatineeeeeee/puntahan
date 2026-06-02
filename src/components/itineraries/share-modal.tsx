@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
@@ -13,6 +13,7 @@ interface ShareModalProps {
 }
 
 export function ShareModal({ itineraryId, onClose }: ShareModalProps) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const data = useQuery(api.itineraries.getById, { id: itineraryId });
   const generateShareLink = useMutation(api.itineraries.generateShareLink);
   const revokeShareLink = useMutation(api.itineraries.revokeShareLink);
@@ -23,6 +24,10 @@ export function ShareModal({ itineraryId, onClose }: ShareModalProps) {
   const [accessLevel, setAccessLevel] = useState<"view" | "edit">("view");
   const [copied, setCopied] = useState(false);
   const [emailStatus, setEmailStatus] = useState<string | null>(null);
+
+  useEffect(() => {
+    dialogRef.current?.showModal();
+  }, []);
 
   const shareUrl = data?.shareToken
     ? `${typeof window !== "undefined" ? window.location.origin : ""}/itinerary/${data.shareToken}`
@@ -71,14 +76,14 @@ export function ShareModal({ itineraryId, onClose }: ShareModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/50" onClick={onClose}>
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="share-modal-title"
-        className="w-full max-w-md rounded-xl bg-warm-white p-6 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <dialog
+      ref={dialogRef}
+      className="modal-dialog"
+      aria-labelledby="share-modal-title"
+      onCancel={(e) => { e.preventDefault(); onClose(); }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="w-full rounded-xl bg-warm-white p-6 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">
         <h3 id="share-modal-title" className="text-lg font-bold text-charcoal">Share Itinerary</h3>
 
         {/* Share link */}
@@ -177,6 +182,6 @@ export function ShareModal({ itineraryId, onClose }: ShareModalProps) {
           </Button>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }

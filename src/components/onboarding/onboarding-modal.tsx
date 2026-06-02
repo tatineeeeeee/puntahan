@@ -36,21 +36,11 @@ const steps = [
 
 export function OnboardingModal({ onComplete }: OnboardingModalProps) {
   const [step, setStep] = useState(0);
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
-  // Focus the dialog on mount for accessibility
   useEffect(() => {
-    dialogRef.current?.focus();
+    dialogRef.current?.showModal();
   }, []);
-
-  // Escape key closes
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") onComplete();
-    }
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onComplete]);
 
   const handleNext = useCallback(() => {
     if (step < steps.length - 1) {
@@ -67,24 +57,16 @@ export function OnboardingModal({ onComplete }: OnboardingModalProps) {
   const current = steps[step];
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/50"
-      onClick={onComplete}
+    <dialog
+      ref={dialogRef}
+      className="modal-dialog"
+      aria-label="Onboarding walkthrough"
+      onCancel={(e) => { e.preventDefault(); onComplete(); }}
+      onClick={(e) => { if (e.target === e.currentTarget) onComplete(); }}
     >
-      <div
-        ref={dialogRef}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Onboarding walkthrough"
-        tabIndex={-1}
-        className="w-full max-w-md rounded-xl bg-warm-white p-6 shadow-lg mx-4 outline-none"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="w-full rounded-xl bg-warm-white p-6 shadow-lg mx-4">
         {/* Step content */}
-        <div
-          key={step}
-          style={{ animation: "onboarding-slide 0.3s ease-out" }}
-        >
+        <div key={step} style={{ animation: "onboarding-slide 0.3s ease-out" }}>
           <div className="flex h-28 items-center justify-center">
             <span className="text-6xl" role="img" aria-hidden="true">
               {current.icon}
@@ -132,6 +114,6 @@ export function OnboardingModal({ onComplete }: OnboardingModalProps) {
           </div>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }
