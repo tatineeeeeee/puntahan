@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useMutation } from "convex/react";
 import { useConvexAuth } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -27,21 +27,23 @@ export function TipForm({ destinationId, openTrigger }: TipFormProps) {
 
   const [content, setContent] = useState("");
   const [rating, setRating] = useState(0);
-  const [budgetRows, setBudgetRows] = useState(
-    defaultCategories.map((cat) => ({ category: cat, amount: 0 })),
+  const [budgetRows, setBudgetRows] = useState(() =>
+    defaultCategories.map((cat) => ({ id: cat, category: cat, amount: 0 })),
   );
   const [photoIds, setPhotoIds] = useState<string[]>([]);
   const [photoPreviewUrls, setPhotoPreviewUrls] = useState<string[]>([]);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [prevTrigger, setPrevTrigger] = useState(openTrigger ?? 0);
 
-  // Allow parent to programmatically open the form
-  useEffect(() => {
+  // Adjust state during render (no effect needed — avoids stale-UI flash)
+  if ((openTrigger ?? 0) !== prevTrigger) {
+    setPrevTrigger(openTrigger ?? 0);
     if (openTrigger && openTrigger > 0) {
       setShowForm(true);
     }
-  }, [openTrigger]);
+  }
 
   async function handlePhotoSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -110,7 +112,7 @@ export function TipForm({ destinationId, openTrigger }: TipFormProps) {
       setContent("");
       setRating(0);
       setBudgetRows(
-        defaultCategories.map((cat) => ({ category: cat, amount: 0 })),
+        defaultCategories.map((cat) => ({ id: cat, category: cat, amount: 0 })),
       );
       setPhotoIds([]);
       setPhotoPreviewUrls([]);
@@ -162,7 +164,7 @@ export function TipForm({ destinationId, openTrigger }: TipFormProps) {
         </p>
         <div className="space-y-2">
           {budgetRows.map((row, i) => (
-            <div key={i} className="flex gap-2">
+            <div key={row.id} className="flex gap-2">
               <Input
                 value={row.category}
                 onChange={(e) => {
