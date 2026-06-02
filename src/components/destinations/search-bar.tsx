@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface SearchBarProps {
@@ -11,19 +11,28 @@ interface SearchBarProps {
 
 export function SearchBar({ value, onChange, className }: SearchBarProps) {
   const [local, setLocal] = useState(value);
+  const [prevValue, setPrevValue] = useState(value);
 
-  useEffect(() => {
+  // Sync external value change during render — no effect needed
+  if (value !== prevValue) {
+    setPrevValue(value);
     setLocal(value);
-  }, [value]);
+  }
+
+  // Keep latest onChange in a ref so the timer effect never re-subscribes
+  const onChangeRef = useRef(onChange);
+  useLayoutEffect(() => {
+    onChangeRef.current = onChange;
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
       if (local !== value) {
-        onChange(local);
+        onChangeRef.current(local);
       }
     }, 300);
     return () => clearTimeout(timer);
-  }, [local, value, onChange]);
+  }, [local, value]);
 
   return (
     <div className={cn("relative", className)}>
@@ -43,6 +52,7 @@ export function SearchBar({ value, onChange, className }: SearchBarProps) {
       </svg>
       <input
         type="text"
+        aria-label="Search destinations"
         placeholder="Search Boracay, El Nido, Siargao…"
         value={local}
         onChange={(e) => setLocal(e.target.value)}
