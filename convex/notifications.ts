@@ -78,8 +78,6 @@ export const markAllAsRead = mutation({
       )
       .take(500);
 
-    for (const notif of unread) {
-      await ctx.db.patch(notif._id, { isRead: true });
-    }
+    await Promise.all(unread.map((notif) => ctx.db.patch(notif._id, { isRead: true })));
   },
 });

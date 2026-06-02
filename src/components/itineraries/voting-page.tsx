@@ -69,7 +69,7 @@ export function VotingPage({ token }: VotingPageProps) {
     }
   }
 
-  const sorted = [...(suggestions ?? [])].sort((a, b) => b.votes - a.votes);
+  const sorted = (suggestions ?? []).toSorted((a, b) => b.votes - a.votes);
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 space-y-6">

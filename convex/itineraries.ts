@@ -191,8 +191,10 @@ export const update = mutation({
 export const revokeShareLink = mutation({
   args: { id: v.id("itineraries") },
   handler: async (ctx, args) => {
-    const user = await getCurrentUserOrThrow(ctx);
-    const itinerary = await ctx.db.get(args.id);
+    const [user, itinerary] = await Promise.all([
+      getCurrentUserOrThrow(ctx),
+      ctx.db.get(args.id),
+    ]);
     if (!itinerary || itinerary.userId !== user._id) {
       throw new Error("Not authorized");
     }
@@ -203,8 +205,10 @@ export const revokeShareLink = mutation({
 export const rotateShareLink = mutation({
   args: { id: v.id("itineraries") },
   handler: async (ctx, args) => {
-    const user = await getCurrentUserOrThrow(ctx);
-    const itinerary = await ctx.db.get(args.id);
+    const [user, itinerary] = await Promise.all([
+      getCurrentUserOrThrow(ctx),
+      ctx.db.get(args.id),
+    ]);
     if (!itinerary || itinerary.userId !== user._id) {
       throw new Error("Not authorized");
     }
@@ -220,8 +224,10 @@ export const removeCollaborator = mutation({
     userId: v.id("users"),
   },
   handler: async (ctx, args) => {
-    const user = await getCurrentUserOrThrow(ctx);
-    const itinerary = await ctx.db.get(args.id);
+    const [user, itinerary] = await Promise.all([
+      getCurrentUserOrThrow(ctx),
+      ctx.db.get(args.id),
+    ]);
     if (!itinerary || itinerary.userId !== user._id) {
       throw new Error("Not authorized");
     }

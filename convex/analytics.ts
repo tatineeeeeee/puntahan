@@ -60,34 +60,35 @@ export const dashboardStats = query({
     const dayAgo = now - 24 * 60 * 60 * 1000;
     const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
 
-    // Page views last 24h — bound to 10k to prevent dashboard DoS
-    const recentPageViews = await ctx.db
-      .query("analytics_events")
-      .withIndex("by_event_and_date", (q) =>
-        q.eq("event", "page_view").gte("createdAt", dayAgo),
-      )
-      .take(10000);
-
-    const recentTips = await ctx.db
-      .query("analytics_events")
-      .withIndex("by_event_and_date", (q) =>
-        q.eq("event", "tip_created").gte("createdAt", weekAgo),
-      )
-      .take(10000);
-
-    const recentVotes = await ctx.db
-      .query("analytics_events")
-      .withIndex("by_event_and_date", (q) =>
-        q.eq("event", "vote_cast").gte("createdAt", weekAgo),
-      )
-      .take(10000);
-
-    const recentSearches = await ctx.db
-      .query("analytics_events")
-      .withIndex("by_event_and_date", (q) =>
-        q.eq("event", "search").gte("createdAt", weekAgo),
-      )
-      .take(10000);
+    // Fetch all event buckets in parallel — they are independent queries
+    const [recentPageViews, recentTips, recentVotes, recentSearches] =
+      await Promise.all([
+        // Page views last 24h — bound to 10k to prevent dashboard DoS
+        ctx.db
+          .query("analytics_events")
+          .withIndex("by_event_and_date", (q) =>
+            q.eq("event", "page_view").gte("createdAt", dayAgo),
+          )
+          .take(10000),
+        ctx.db
+          .query("analytics_events")
+          .withIndex("by_event_and_date", (q) =>
+            q.eq("event", "tip_created").gte("createdAt", weekAgo),
+          )
+          .take(10000),
+        ctx.db
+          .query("analytics_events")
+          .withIndex("by_event_and_date", (q) =>
+            q.eq("event", "vote_cast").gte("createdAt", weekAgo),
+          )
+          .take(10000),
+        ctx.db
+          .query("analytics_events")
+          .withIndex("by_event_and_date", (q) =>
+            q.eq("event", "search").gte("createdAt", weekAgo),
+          )
+          .take(10000),
+      ]);
 
     const pageCounts: Record<string, number> = {};
     for (const e of recentPageViews) {

@@ -38,8 +38,10 @@ export const pendingTips = query({
 
     return await Promise.all(
       tips.map(async (tip) => {
-        const user = await ctx.db.get(tip.userId);
-        const dest = await ctx.db.get(tip.destinationId);
+        const [user, dest] = await Promise.all([
+          ctx.db.get(tip.userId),
+          ctx.db.get(tip.destinationId),
+        ]);
         return {
           ...tip,
           userName: user?.name ?? "Anonymous",

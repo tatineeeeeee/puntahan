@@ -25,6 +25,7 @@ import type * as notifications from "../notifications.js";
 import type * as photos from "../photos.js";
 import type * as rateLimit from "../rateLimit.js";
 import type * as seed from "../seed.js";
+import type * as seedTips from "../seedTips.js";
 import type * as tips from "../tips.js";
 import type * as tripSuggestions from "../tripSuggestions.js";
 import type * as users from "../users.js";
@@ -54,6 +55,7 @@ declare const fullApi: ApiFromModules<{
   photos: typeof photos;
   rateLimit: typeof rateLimit;
   seed: typeof seed;
+  seedTips: typeof seedTips;
   tips: typeof tips;
   tripSuggestions: typeof tripSuggestions;
   users: typeof users;
