@@ -15,6 +15,14 @@ const regionColors: Record<string, string> = {
   Mindanao: "#8B5CF6",
 };
 
+const CENTER: [number, number] = [12.8797, 121.774]; // Philippines center
+const REGION_BADGE_VARIANT: Record<string, "region-ncr" | "region-luzon" | "region-visayas" | "region-mindanao"> = {
+  NCR: "region-ncr",
+  Luzon: "region-luzon",
+  Visayas: "region-visayas",
+  Mindanao: "region-mindanao",
+};
+
 function createIcon(region: string) {
   const color = regionColors[region] ?? "#78716C";
   return L.divIcon({
@@ -40,18 +48,10 @@ export function MapView({ destinations }: MapViewProps) {
     });
   }, []);
 
-  const center: [number, number] = [12.8797, 121.774]; // Philippines center
-  const regionBadgeVariant: Record<string, "region-ncr" | "region-luzon" | "region-visayas" | "region-mindanao"> = {
-    NCR: "region-ncr",
-    Luzon: "region-luzon",
-    Visayas: "region-visayas",
-    Mindanao: "region-mindanao",
-  };
-
   return (
     <div className="h-125 w-full rounded-xl overflow-hidden border border-warm-gray/20">
       <MapContainer
-        center={center}
+        center={CENTER}
         zoom={6}
         className="h-full w-full"
         scrollWheelZoom={true}
@@ -69,7 +69,7 @@ export function MapView({ destinations }: MapViewProps) {
             <Popup>
               <div className="min-w-45">
                 <p className="font-bold text-sm">{dest.name}</p>
-                <Badge variant={regionBadgeVariant[dest.region] ?? "default"}>
+                <Badge variant={REGION_BADGE_VARIANT[dest.region] ?? "default"}>
                   {dest.region}
                 </Badge>
                 <div className="mt-1">
