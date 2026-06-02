@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -43,21 +43,21 @@ export function HeroGallery({
     if (total > 1) setCurrentIndex((i) => (i - 1 + total) % total);
   }, [total]);
 
-  // Touch swipe support
-  const [touchStart, setTouchStart] = useState<number | null>(null);
+  // Touch swipe support — ref avoids re-render on every touch start
+  const touchStartRef = useRef<number | null>(null);
 
   function handleTouchStart(e: React.TouchEvent) {
-    setTouchStart(e.touches[0].clientX);
+    touchStartRef.current = e.touches[0].clientX;
   }
 
   function handleTouchEnd(e: React.TouchEvent) {
-    if (touchStart === null) return;
-    const diff = touchStart - e.changedTouches[0].clientX;
+    if (touchStartRef.current === null) return;
+    const diff = touchStartRef.current - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 50) {
       if (diff > 0) goNext();
       else goPrev();
     }
-    setTouchStart(null);
+    touchStartRef.current = null;
   }
 
   // Keyboard nav when focused
