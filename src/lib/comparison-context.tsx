@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, useMemo, type ReactNode } from "react";
 import { Id } from "../../convex/_generated/dataModel";
 
 export interface DestinationRef {
@@ -57,10 +57,15 @@ export function ComparisonProvider({ children }: { children: ReactNode }) {
     [selected],
   );
 
-  const selectedIds = selected.map((s) => s.id);
+  const selectedIds = useMemo(() => selected.map((s) => s.id), [selected]);
+
+  const contextValue = useMemo(
+    () => ({ selected, selectedIds, add, remove, clear, isSelected }),
+    [selected, selectedIds, add, remove, clear, isSelected],
+  );
 
   return (
-    <ComparisonContext.Provider value={{ selected, selectedIds, add, remove, clear, isSelected }}>
+    <ComparisonContext.Provider value={contextValue}>
       {children}
     </ComparisonContext.Provider>
   );
