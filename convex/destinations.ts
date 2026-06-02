@@ -34,8 +34,10 @@ export const list = query({
           )
           .take(200);
 
-        const topTip =
-          tips.sort((a, b) => b.weightedScore - a.weightedScore)[0] ?? null;
+        const topTip = tips.reduce<typeof tips[0] | null>(
+          (best, tip) => (!best || tip.weightedScore > best.weightedScore ? tip : best),
+          null,
+        );
 
         if (!topTip) {
           return { ...dest, topTipPreview: null };
@@ -79,8 +81,10 @@ export const search = query({
           )
           .take(200);
 
-        const topTip =
-          tips.sort((a, b) => b.weightedScore - a.weightedScore)[0] ?? null;
+        const topTip = tips.reduce<typeof tips[0] | null>(
+          (best, tip) => (!best || tip.weightedScore > best.weightedScore ? tip : best),
+          null,
+        );
 
         if (!topTip) {
           return { ...dest, topTipPreview: null };
@@ -145,8 +149,10 @@ export const listTopRated = query({
           )
           .take(200);
 
-        const topTip =
-          tips.sort((a, b) => b.weightedScore - a.weightedScore)[0] ?? null;
+        const topTip = tips.reduce<typeof tips[0] | null>(
+          (best, tip) => (!best || tip.weightedScore > best.weightedScore ? tip : best),
+          null,
+        );
 
         let authorName = "Anonymous";
         if (topTip) {
