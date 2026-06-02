@@ -44,6 +44,7 @@ export function PhotoGallery({ destinationId }: PhotoGalleryProps) {
         {validPhotos.map((photo, i) => (
           <button
             key={photo._id}
+            type="button"
             onClick={() => setLightboxIndex(i)}
             className="relative aspect-square overflow-hidden rounded-lg focus:outline-none focus:ring-2 focus:ring-teal"
             aria-label={`View photo: ${photo.caption ?? "Community photo"}`}

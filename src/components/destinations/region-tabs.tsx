@@ -23,6 +23,7 @@ export function RegionTabs({ activeRegion, onRegionChange }: RegionTabsProps) {
         return (
           <button
             key={r.label}
+            type="button"
             aria-pressed={isActive ? "true" : "false"}
             onClick={() => onRegionChange(r.value)}
             className={cn(

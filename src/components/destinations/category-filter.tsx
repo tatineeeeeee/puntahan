@@ -25,6 +25,7 @@ export function CategoryFilter({ activeCategories, onToggle }: CategoryFilterPro
         return (
           <button
             key={cat}
+            type="button"
             onClick={() => onToggle(cat)}
             aria-pressed={isActive}
             aria-label={`Filter by ${cat}`}
