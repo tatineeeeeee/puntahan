@@ -102,7 +102,7 @@ export function DestinationDetail({ slug }: DestinationDetailProps) {
       )}
 
       {/* Content */}
-      <div className="mx-auto max-w-6xl px-4 py-8">
+      <div className="mx-auto max-w-6xl px-4 py-8 pb-32 sm:pb-24">
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Main */}
           <div className="lg:col-span-2 space-y-6">

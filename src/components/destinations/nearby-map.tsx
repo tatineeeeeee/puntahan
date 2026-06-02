@@ -40,7 +40,7 @@ export function NearbyMap({ pins, center }: NearbyMapProps) {
   }, []);
 
   return (
-    <div className="h-48 w-full overflow-hidden rounded-xl">
+    <div className="relative z-0 isolate h-48 w-full overflow-hidden rounded-xl">
       <MapContainer
         center={center}
         zoom={8}
