@@ -62,8 +62,8 @@ export function SharedItineraryView({ token }: SharedItineraryViewProps) {
         </Badge>
       </div>
 
-      {itinerary.days.map((day, i) => (
-        <div key={i} className="rounded-xl bg-sand p-4">
+      {itinerary.days.map((day) => (
+        <div key={day.dayNumber} className="rounded-xl bg-sand p-4">
           <h3 className="font-bold text-sm text-charcoal mb-2">
             Day {day.dayNumber}
           </h3>

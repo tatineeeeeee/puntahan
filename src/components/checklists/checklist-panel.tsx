@@ -95,7 +95,7 @@ export function ChecklistPanel({ itineraryId, categories }: ChecklistPanelProps)
       {/* Items */}
       <div className="space-y-1">
         {checklist.items.map((item, i) => (
-          <div key={i} className="flex items-center gap-2">
+          <div key={item.text} className="flex items-center gap-2">
             <input
               type="checkbox"
               checked={item.isChecked}

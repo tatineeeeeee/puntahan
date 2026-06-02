@@ -149,7 +149,7 @@ export function ItineraryDetail({ itineraryId }: ItineraryDetailProps) {
 
       {/* Days */}
       {itinerary.days.map((day, dayIndex) => (
-        <div key={dayIndex} className="rounded-xl bg-sand p-4 space-y-3">
+        <div key={day.dayNumber} className="rounded-xl bg-sand p-4 space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-sm text-charcoal">
               Day {day.dayNumber}

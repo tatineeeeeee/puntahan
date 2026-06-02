@@ -94,8 +94,8 @@ export function TipCard({ tip }: TipCardProps) {
             Budget Breakdown
           </p>
           <div className="space-y-1">
-            {tip.budgetBreakdown.map((item, i) => (
-              <div key={i} className="flex justify-between text-xs">
+            {tip.budgetBreakdown.map((item) => (
+              <div key={item.category} className="flex justify-between text-xs">
                 <span className="text-warm-gray">{item.category}</span>
                 <span className="font-medium text-charcoal">
                   ₱{item.amount.toLocaleString()}
