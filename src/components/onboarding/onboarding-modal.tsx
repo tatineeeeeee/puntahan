@@ -64,7 +64,7 @@ export function OnboardingModal({ onComplete }: OnboardingModalProps) {
       onCancel={(e) => { e.preventDefault(); onComplete(); }}
       onClick={(e) => { if (e.target === e.currentTarget) onComplete(); }}
     >
-      <div className="w-full rounded-xl bg-warm-white p-6 shadow-lg mx-4">
+      <div className="w-full rounded-xl bg-warm-white p-6 shadow-lg">
         {/* Step content */}
         <div key={step} style={{ animation: "onboarding-slide 0.3s ease-out" }}>
           <div className="flex h-28 items-center justify-center">
