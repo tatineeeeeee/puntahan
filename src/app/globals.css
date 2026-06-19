@@ -24,6 +24,9 @@ dialog.lightbox-dialog {
 dialog.lightbox-dialog::backdrop { display: none; }
 
 dialog.modal-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
   max-width: 28rem;
   width: calc(100% - 2rem);
   border-radius: 0.75rem;
